@@ -1,0 +1,31 @@
+{
+  "id": "", // required
+  "lang": "java", // required
+  "scenario": { // required
+    "type": "migration", // required
+    "meta": { // required
+      "artifactIdFrom": "AAA1", // optional
+      "groupIdFrom": "BBB1",
+      "versionFrom": "0.0.1",
+      "artifactIdTo": "AAA2",
+      "groupIdTo": "BBB2",
+      "versionTo": "0.0.2"
+    }
+  },
+  "patterns": [ // optional
+    {
+      "id": "", // required
+      "timestamp": "", // required
+      "author": "authorId", // required
+      "meta": { // optional
+        "FileName": "Main.Java",
+        "Repo": "githum.com/andrewt0301,myrepo",
+        "Commit": ""
+      },
+      "data": {} // required
+    },
+    {
+      ...
+    }
+  ]
+}
