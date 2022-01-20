@@ -29,7 +29,7 @@ public class Doc {
 
     private Date timestamp = Date.from(Instant.now());
 
-    // Author of patterns could differ from the author of the doc
+    // Contains only ID to some patterns (e.g. FK to the pattern)
     @NonNull
-    private List<Pattern> patterns;
+    private List<String> patterns;
 }

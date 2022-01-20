@@ -9,14 +9,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DocService {
-    private DocRepo docRepo;
+    private final DocRepo docRepo;
 
     @Autowired
     public DocService(final DocRepo docRepo) {
         this.docRepo = docRepo;
     }
 
-    public Doc create(final Doc doc) {
+    public Doc save(final Doc doc) {
         return docRepo.save(doc);
     }
 
