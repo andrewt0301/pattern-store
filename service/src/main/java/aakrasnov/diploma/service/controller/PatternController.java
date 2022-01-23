@@ -30,7 +30,7 @@ public class PatternController {
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping("pattern")
+    @PostMapping("auth/pattern")
     public ResponseEntity<Pattern> savePattern(@RequestBody Pattern pattern) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ptrnService.save(pattern));
     }

@@ -33,7 +33,7 @@ public class DocController {
         return docService.findAll();
     }
 
-    @PostMapping("doc")
+    @PostMapping("auth/doc")
     public ResponseEntity<Doc> saveDoc(@RequestBody Doc doc) {
 //    public Doc saveDoc() {
 //        Doc tmp = new Doc(

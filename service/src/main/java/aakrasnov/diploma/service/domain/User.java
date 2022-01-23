@@ -1,25 +1,53 @@
 package aakrasnov.diploma.service.domain;
 
-import lombok.AllArgsConstructor;
+import java.util.Collection;
+import java.util.Collections;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Data
-@ToString(of = {"id", "login"})
+@ToString(of = {"id", "username"})
 @Document("users")
 @RequiredArgsConstructor
-public class User {
+public class User implements UserDetails {
     @Id
     private String id;
     @NonNull
-    private String login;
+    private String username;
     @NonNull
     private String password;
     @NonNull
     private Role role;
     private boolean isActive = false;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(role);
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isActive;
+    }
 }
