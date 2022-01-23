@@ -1,9 +1,9 @@
 package aakrasnov.diploma.client;
 
 import aakrasnov.diploma.client.filter.Filter;
+import com.google.gson.JsonObject;
 import java.util.Collection;
 import java.util.Optional;
-import javax.json.JsonObject;
 
 public interface ClientApi {
 
