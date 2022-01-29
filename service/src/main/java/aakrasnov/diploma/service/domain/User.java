@@ -2,7 +2,9 @@ package aakrasnov.diploma.service.domain;
 
 import java.util.Collection;
 import java.util.Collections;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -15,6 +17,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 @ToString(of = {"id", "username"})
 @Document("users")
 @RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class User implements UserDetails {
     @Id
     private String id;

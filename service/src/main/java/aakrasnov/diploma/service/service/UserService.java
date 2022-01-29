@@ -5,9 +5,11 @@ import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.repo.UserRepo;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,17 +17,31 @@ public class UserService implements UserDetailsService {
 
     private final UserRepo userRepo;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public UserService(final UserRepo userRepo) {
+    public UserService(final UserRepo userRepo, @Lazy final PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void doTmpActivity() {
-        userRepo.insert(
-            new User("login", "pswd", Role.ADMIN)
+        saveUser(
+            new User("username", "pswd", Role.ADMIN)
         );
         final List<User> users = userRepo.findAll();
         System.out.println(users);
+    }
+
+    public List<User> getUsers() {
+        return userRepo.findAll();
+    }
+
+    public User saveUser(final User user) {
+        final String pswd = user.getPassword();
+        user.setPassword(passwordEncoder.encode(pswd));
+        System.out.println(user.getPassword());
+        return userRepo.save(user);
     }
 
     @Override
