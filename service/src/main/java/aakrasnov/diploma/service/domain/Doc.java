@@ -3,6 +3,8 @@ package aakrasnov.diploma.service.domain;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +12,11 @@ import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@Builder
 @Data
 @ToString(of = {"id", "lang"})
 @RequiredArgsConstructor
+@AllArgsConstructor
 @Document("docs")
 public class Doc {
     @Id
@@ -25,7 +29,7 @@ public class Doc {
     private Scenario scenario;
 
     @NonNull
-    private User author;
+    private String authorId;
 
     private Date timestamp = Date.from(Instant.now());
 

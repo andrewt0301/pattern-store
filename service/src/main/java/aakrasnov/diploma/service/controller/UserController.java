@@ -50,7 +50,7 @@ public class UserController {
     }
 
     @GetMapping("admin/users")
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<String> getUsers() {
         final Gson users = new Gson();
         return ResponseEntity.ok(users.toJson(userService.getUsers()));

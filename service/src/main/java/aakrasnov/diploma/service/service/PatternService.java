@@ -22,7 +22,7 @@ public class PatternService {
     }
 
     public List<Pattern> findByAuthor(final User author) {
-        return ptrnRepo.findPatternByAuthor(author);
+        return ptrnRepo.findPatternByAuthorId(author.getId());
     }
 
     public Pattern save(final Pattern pattern) {
