@@ -65,16 +65,14 @@ typical tasks: replacing used libraries, correcting common errors,
 and restructuring the code according to certain rules. Completing
 these tasks is time-consuming and error-prone, although it is
 possible to automate this process by applying patterns based on an
-abstract syntax tree. Automation of routine actions using templates
-will increase the productivity of developers and the quality of the
-project source code. \\
+abstract syntax tree \cite{c1}. Automation of routine actions using templates will increase the productivity of developers and the quality of the project source code.
 
 The obvious questions that arise in this case are where to store and
 how to distribute these changes. For this purpose a central storage
 will be developed. It is expected that templates can come from
 different sources and be specific to a project (for example, a pet
 project) or a group of projects. Moreover, the set of patterns will
-be constantly updated. These assumptions contribute to provide an opportunity for storing templates, updating them and leaving feedback about usage of existing ones. \\  
+be constantly updated. These assumptions contribute to provide an opportunity for storing templates, updating them and leaving feedback about usage of existing ones.
 
 The remainder of the paper is organized in a following way. In
 Section 2 related literature is reviewed. In Section 3, the
@@ -82,19 +80,69 @@ methodology is described. Section 4 contains discussion about the expected resul
 \\ TODO: INTRO HERE
 
 \section{Literature review}
-Literature reference: \cite{c1}
+\\ TODO: REVIEW HERE
 \subsection{Possible subsection name}
 
 TODO: subsection example if necessary
 
 \section{Methodology}
 
-TODO: methodology
+The main idea is to work out a centralized storage which will contain
+source code change patterns based on an abstract syntax tree. In
+general they are useful only in the case of using a certain set of
+them. For this purpose patterns are combined into documents which
+contain some metadata information. It includes a unique identifier,
+the name of the programming language for which this document is used,
+as well as the application scenario. This scenario contains type
+information (migration, refactoring or an unknown type), whereas each
+pattern also has several descriptive fields, which allow to identify
+it. Moreover, it is possible to get information about the creation
+time, the author of the pattern and some specific metadata.
 
+The whole workflow looks in a following way. Developers create
+different examples of patterns using such approaches as ...(ref1),
+...(ref2), ...(ref3). After that users must be authenticated in order
+to upload mined patterns and have comply with the set limits to be
+able to perform this operation. They should specify metadata
+information to create a new document with these patterns. 
+
+As for an administrator of the system, he can limit the number of
+uploaded patterns, specify some restrictions for the maximum amount of
+uploaded data or just prohibit the upload to a specific user. Another
+available functionality for an administrator is an opportunity to
+modify existing documents by merging some of them, updating and
+deleting.
+
+Asking for upload the same documents is quite common for the process
+of applying patterns from them, therefore it was decided to develop a
+local client cache. Further details of the operation of the cache will
+be given here:
 \begin{itemize}
-\item first item
-\item second item
+    \item It would be great to get a document from the
+local cache if there is no connection to the service and the necessary
+item exists.
+    \item If the service is available and the item exists in the
+local memory, it is necessary to check that the data has not expired
+(for example, the local timestamp of the document and the timestamp of
+the deleted document match).
+    \item If cached documents have been modified locally in some way
+and these changes have been transferred to the service, it is
+necessary to delete such documents from the local cache.
+    \item There is no need to validate the local cache very often. A
+document can be considered fresh (e.g. not expired) if it was
+updated within the specified time interval (for example, 1 hour).
+Immediate refreshing of documents is not critical. It is better to
+avoid redundant requests to the server.
 \end{itemize}
+
+The most common way of using the service is to download existing
+documents from the storage. A user has several filters to obtain only
+necessary documents with patterns. For example, he can specify the
+full description of the library to be replaced during migration, and
+the same for the second one. Another available filter is to get all
+the data for a specific programming language. After downloading
+documents from a centralized repository, patterns are applied using
+the Patternika tool \cite{c1}. 
 
 \section{Expected results}
 
@@ -125,8 +173,10 @@ TODO: Conclusion
 
 \begin{thebibliography}{99}
 \bibitem{delete} TODO: FIX REFERENCES
-\bibitem{c1} International Journal of Computer Applications (0975 – 8887)
-Volume 31– No.8, October 2011
+\bibitem{c1} Andrei Tatarnikov et al., “Patternika: A
+Pattern-Mining-Based Tool for Automatic Library Migration”,
+Proceedings of the 32nd International Symposium on Software
+Reliability Engineering (ISSRE 2021), Wuhan, China, 2021, p. 6.
 \bibitem{c2} Planning for Deep Space Network Operations
 Randall Hill, Jr., Steve Chien, Crista Smyth, Kristina Fayyad, Trish Santos
 Jet Propulsion Laboratory
