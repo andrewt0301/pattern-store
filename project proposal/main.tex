@@ -17,7 +17,7 @@
 
 
 % The following packages can be found on http:\\www.ctan.org
-%\usepackage{graphics} % for pdf, bitmapped graphics files
+\usepackage{graphicx} % for pdf, bitmapped graphics files
 %\usepackage{epsfig} % for postscript graphics files
 %\usepackage{mathptmx} % assumes new font selection scheme installed
 %\usepackage{times} % assumes new font selection scheme installed
@@ -65,27 +65,41 @@ typical tasks: replacing used libraries, correcting common errors,
 and restructuring the code according to certain rules. Completing
 these tasks is time-consuming and error-prone, although it is
 possible to automate this process by applying patterns based on an
-abstract syntax tree \cite{c1}. Automation of routine actions using templates
-will increase the productivity of developers and the quality of the project
-source code.
+abstract syntax tree \cite{c1}. Automation of routine actions using
+templates will increase the productivity of developers and the quality of
+the project source code.
 
 The obvious questions that arise in this case are where to store and
 how to distribute these changes. For this purpose a central storage
 will be developed. It is expected that templates can come from
 different sources and be specific to a project (for example, a pet
 project) or a group of projects. Moreover, the set of patterns will
-be constantly updated. These assumptions contribute to provide an opportunity
-for storing templates, updating them and leaving feedback about usage of
-existing ones.
+be constantly updated. These assumptions contribute to provide an
+opportunity for storing templates, updating them and leaving feedback about
+usage of existing ones.
+
+The following requirements apply to the application being developed. It
+should store patterns which are combined into documents with the addition
+metadata information. It should also be possible to get, put, search and
+update patterns. Besides, an user should be able to leave a feedback about
+the usage of downloaded documents. In addition, the system administrator
+should have an opportunity to set limits on the number of uploaded
+patterns.
 
 The remainder of the paper is organized in a following way. In
 Section 2 related literature is reviewed. In Section 3, the
 methodology is described. Section 4 contains discussion about the expected
 results. The last Section 5 summarizes the paper.
-\\ TODO: INTRO HERE
 
 \section{Literature review}
-\\ TODO: REVIEW HERE
+
+Developers create different examples of patterns using such approaches as
+...(ref1), ...(ref2), ...(ref3)
+TODO: REVIEW HERE
+1. Say about patterns and about the fact that there are no ready-made solutions to the problem of storing and exchanging them yet.
+2. Write that JSON is a very convenient format for storing AST-based data (FIND links).
+3. Next, about the technologies for building client-server applications and storing documents.
+
 \subsection{Possible subsection name}
 
 TODO: subsection example if necessary
@@ -105,11 +119,17 @@ it. Moreover, it is possible to get information about the creation
 time, the author of the pattern and some specific metadata.
 
 The whole workflow looks in a following way. Developers create
-different examples of patterns using such approaches as ...(ref1),
-...(ref2), ...(ref3). After that users must be authenticated in order
+different examples of patterns using the approaches described in the
+previous section. After that users must be authenticated in order
 to upload mined patterns and have comply with the set limits to be
 able to perform this operation. They should specify metadata
 information to create a new document with these patterns. 
+
+\begin{figure}[hbtp]
+    \centerline{\includegraphics[width=0.52\textwidth]{arch}}
+    \caption{Client-server application.}
+    \label{fig:architecture}
+\end{figure}
 
 As for an administrator of the system, he can limit the number of
 uploaded patterns, specify some restrictions for the maximum amount of
@@ -151,7 +171,8 @@ the Patternika tool \cite{c1}.
 
 \section{Expected results}
 
-TODO: expected results
+TODO: let's summarize the final expected result - the output will be a
+program with the features listed above that meets the requirements
 
 \section{Conclusion}
 
@@ -184,36 +205,15 @@ teams and developers. A client-server application with an opportunity of adminis
 
 
 \begin{thebibliography}{99}
-\bibitem{delete} TODO: FIX REFERENCES
 \bibitem{c1} Andrei Tatarnikov et al., “Patternika: A
 Pattern-Mining-Based Tool for Automatic Library Migration”,
 Proceedings of the 32nd International Symposium on Software
 Reliability Engineering (ISSRE 2021), Wuhan, China, 2021, p. 6.
-\bibitem{c2} Planning for Deep Space Network Operations
-Randall Hill, Jr., Steve Chien, Crista Smyth, Kristina Fayyad, Trish Santos
-Jet Propulsion Laboratory
-California Institute of Technology.
-\bibitem{c3} Automating Mid- and Long-Range Scheduling for the NASA Deep Space Network
-Mark D. Johnston* and Daniel Tran*
-*Jet Propulsion Laboratory, California Institute of Technology
-4800 Oak Grove Drive, Pasadena CA USA 91109
-
-\bibitem{c4} A Survey of Transport Protocols for Deep Space
-Communication Networks
-
-International Journal of Computer Applications (0975 – 8887)
-Volume 31– No.8, October 2011
-\bibitem{c5} H. Balakrishnan, V. N. Padmanabhan and R. H. Katz, “The Effects of Asymmetry on TCP Performance," Proc. ACM MOBICOM Hungary, pp. 77-89, September 1997.
-\bibitem{c6} M.Allman, D.Glover, and L.Sanchez, “Enhancing TCP over satellite channels using standard mechanisms,” IETF, RFC 2488, January 1999.
-\bibitem{c7}S.Burleigh, A.Hooke, et al., “Delay-Tolerant Networking: An Approach to Interplanetary Internet,” IEEE Communications Magazine, Vol.41, Issue 6, pp. 128-136, June 2003.
-\bibitem{c8} O. B. Akan, J.Fang and I. F. Akyildiz, “TP-Planet: A Reliable Transport Protocol for InterPlaNetary Internet”, IEEE/SAC, Vol. 22, No. 2, pp 348-61, February 2004.
-
-
- \bibitem{c9} M. Young, The Techincal Writers Handbook. Mill Valley, CA: University
-Science, 1989.
-
-
-
+\bibitem{c2} J. Bader, A. Scott, M. Pradel, and S. Chandra, “Getafix:
+Learning to fix bugs automatically”, Proceedings of the ACM on Programming
+Languages, p. 19, 2019.
+\bibitem{c3} R. Rolim, G. Soares, R. Gheyi, and L. D’Antoni, “Learning
+quick fixes from code repositories,” p. 12, 2018.
 \end{thebibliography}
 
 \end{document}
