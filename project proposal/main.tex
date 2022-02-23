@@ -61,10 +61,10 @@ The collection of patterns covering possible change scenarios is constantly
 increasing.
 An important task is to organise a centralised storage of documents with
 patterns and their distribution to users. 
-The storage must provide the possibility to collect a feedback from users, 
+The storage must provide the possibility to collect feedback from users, 
 which will be used to improve pattern quality. 
 This task has not been solved yet as modern pattern-mining tools are research
-projects that are on the way of becoming industrial products.
+projects that are on the way to becoming industrial products.
 This paper describes a client-server application for storage administering of
 source code change patterns and their usage statistics.
 \end{abstract}
@@ -100,13 +100,13 @@ The following \emph{requirements} apply to the application being developed:
     with the addition of metadata information.
     \item It must also be possible to get, put, search and
     update patterns.
-    \item A user must be able to leave a feedback about the usage of
+    \item A user must be able to leave feedback about the usage of
     downloaded documents.
     \item The system administrator must have an opportunity to set limits on
     the number of uploaded patterns.
 \end{enumerate}
 
-The remainder of the paper is organised in a following way. 
+The remainder of the paper is organised in the following way. 
 In Section~\ref{section:review} related literature is reviewed. 
 In Section~\ref{section:method}, the methodology is described. 
 Section~\ref{section:results} contains discussion about the expected results.
@@ -120,7 +120,7 @@ The main idea is to \emph{mine} AST-based patterns from a history of
 changes (e.g. by browsing commits in open-source project repositories) and 
 apply them to repeat the changes in other source code files that contain
 matching fragments. 
-Patterns are minimised and generalis    ed AST subtrees with editing actions
+Patterns are minimised and generalised AST subtrees with editing actions
 (delete, insert and update) \cite{c9} that describe the changes to be applied.
 
 The task of storing and distributing patterns is not discussed in existing
@@ -135,7 +135,7 @@ format.
 Firstly, it must be a human-readable format that is suitable for
 representing AST-based data. 
 Secondly, it must be compact and appropriate for transferring over a network 
-using a REST (Representational State Transfer) protocol. 
+using a REST (Representational State Transfer) \cite{c12} protocol. 
 Thirdly, it must be suitable for storing complex structured data.
 JSON (JavaScript Object Notation) \cite{c7} is the format that meets mentioned
 requirements.
@@ -166,7 +166,7 @@ scale and store quite large amounts of data.
 
 The main idea is to work out a centralised storage which will contain AST-based
 patterns describing source code changes.
-The whole workflow looks in a following way.
+The whole workflow looks in the following way.
 Developers create different examples of patterns using the approaches described
 in the previous section.
 After that users must be authenticated in order to upload mined patterns and
@@ -177,7 +177,7 @@ In the next step, users can download these documents.
 The Figure~\ref{fig:architecture} specifies the common architecture of the
 application.
 There is a \emph{service} which connects to the \emph{database} and processes
-request from clients. 
+requests from clients. 
 A \emph{client} part provides the list of required functions to interact 
 with patterns, whereas an ordinary user can use these functions via 
 \emph{Web UI} or \emph{CLI}.
@@ -189,7 +189,7 @@ with patterns, whereas an ordinary user can use these functions via
 \end{figure}
 
 \subsection{Server}
-In general patterns are useful only in the case of using a certain set of them.
+In general, patterns are only useful in the case of using a certain set of them.
 For this purpose they are combined into documents which contain some metadata
 information.
 It includes a unique identifier, the name of the programming language for which
@@ -214,9 +214,9 @@ MongoDB is used as a document-oriented database management system \cite{c6}.
 The most common way of using the service is to download existing documents 
 from the storage. 
 A user has several filters to obtain only necessary documents with patterns. 
-For example, he can specify the full description of the library to be replaced
-during migration, and the same for the library which will update the previous
-one. 
+For example, he/she can specify the full description of the library to be
+replaced during migration, and the same for the library which will update 
+the previous one. 
 Another available filter is to get all the data for a specific programming
 language. 
 After downloading documents from a centralised repository, patterns are 
@@ -237,7 +237,7 @@ Further details of the operation of the cache will be given here:
     \item If cached documents have been modified locally in some way
     and these changes have been transferred to the service, such documents
     should be deleted from the local cache.
-    \item There is no need to validate the local cache very often.
+    \item There is no need to validate the local cache too frequently.
     A document can be considered fresh (e.g. not expired) if it is
     updated within the specified time interval (for example, 1 hour).
     Immediate refreshing of documents is not critical. 
@@ -248,7 +248,7 @@ Further details of the operation of the cache will be given here:
 \label{section:results}
 
 The desired result of this work is a client-server application which
-meets mentioned above requirements. 
+meets the aforementioned requirements. 
 It allows to distribute and store patterns.
 An ordinary user will search for documents with patterns and download them
 without authentication, whereas only authenticated users will be able to 
