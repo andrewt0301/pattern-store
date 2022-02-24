@@ -200,6 +200,18 @@ to identify it.
 Moreover, it is possible to get information about the creation time, the author
 of the pattern and some specific metadata.
 
+Furthermore, statistics collection is available for patterns.
+This statistic answers the question of how many times each document has been
+downloaded.
+There are also statistics about each pattern stored in the repository.
+In addition, there are statistics about each pattern stored in the repository,
+giving the following information.
+How many times has each pattern been successfully applied and then approved by
+the user?
+How many times has each pattern been applied unsuccessfully? 
+How many times have changes based on the pattern been proposed but rejected by
+the user?
+
 As for the administrator of the system, he/she can limit the number of uploaded
 patterns, specify some restrictions for the maximum amount of uploaded data 
 or just prohibit the upload to a specific user. 
@@ -211,6 +223,27 @@ application \cite{c5}.
 MongoDB is used as a document-oriented database management system \cite{c6}. 
 
 \subsection{Client}
+The client provides an API that allows to use it as a library.
+The client enables users and administrators to perform the necessary functions,
+as well as provides caching, which is discussed in the following subsection. 
+The functionality is available to the CLI and Web UI, which use the client API
+with implemented business logic.
+
+Administrator functions look like:
+\begin{enumerate}
+    \item User account management (activation, deactivation, assignment of
+    rights).
+    \item Managing documents with public patterns: viewing, adding, deleting,
+    updating.
+    \item Viewing user documents.
+\end{enumerate}
+
+Additional user functions look like:
+\begin{enumerate}
+    \item Creating an account.
+    \item Manage documents in the account: view, add, delete, update documents.
+\end{enumerate}
+
 The most common way of using the service is to download existing documents 
 from the storage. 
 A user has several filters to obtain only necessary documents with patterns. 
@@ -227,7 +260,7 @@ Asking for upload of the same documents is quite common for the process of
 applying patterns from them, therefore it is decided to develop a 
 \emph{local client cache}. 
 Further details of the operation of the cache will be given here:
-\begin{itemize}
+\begin{enumerate}
     \item It must be able to get a document from the local cache, if there
     is no connection to the service and the necessary item exists.
     \item If the service is available and the item exists in the
@@ -242,7 +275,7 @@ Further details of the operation of the cache will be given here:
     updated within the specified time interval (for example, 1 hour).
     Immediate refreshing of documents is not critical. 
     It is better to avoid redundant requests to the server.
-\end{itemize}
+\end{enumerate}
 
 \section{Expected results}
 \label{section:results}
@@ -258,6 +291,9 @@ In addition, a local client cache will be implemented.
 As for the administrator of the system, he/she will have the opportunity to
 limit the available number of uploads per user and to merge and update 
 patterns in the documents. 
+
+After receiving documents from a centralised storage, patterns are 
+applied with the Patternika tool \cite{c1}. 
 
 \section{Conclusion}
 \label{section:conclusion}
