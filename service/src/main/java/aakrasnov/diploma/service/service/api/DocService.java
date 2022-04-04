@@ -1,19 +1,18 @@
-package aakrasnov.diploma.client;
+package aakrasnov.diploma.service.service.api;
 
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
 import java.util.List;
 import java.util.Optional;
 
-public interface ClientApi {
+public interface DocService {
+    Optional<DocDto> findById(String id);
 
-    Optional<DocDto> document(long id);
+    DocDto addDoc(DocDto docDto);
 
-    void deleteById(long id);
+    void deleteById(String id);
 
-    void add(DocDto document);
-
-    void update(long id, DocDto altered);
+    DocDto update(String id, DocDto altered);
 
     List<DocDto> filteredDocuments(Filter filter);
 

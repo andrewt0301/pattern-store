@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PatternService {
+public class PatternServiceImpl {
     private final PatternRepo ptrnRepo;
 
     @Autowired
-    public PatternService(final PatternRepo ptrnRepo) {
+    public PatternServiceImpl(final PatternRepo ptrnRepo) {
         this.ptrnRepo = ptrnRepo;
     }
 

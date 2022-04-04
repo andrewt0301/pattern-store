@@ -13,14 +13,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserServiceImpl implements UserDetailsService {
 
     private final UserRepo userRepo;
 
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(final UserRepo userRepo, @Lazy final PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(final UserRepo userRepo, @Lazy final PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
     }

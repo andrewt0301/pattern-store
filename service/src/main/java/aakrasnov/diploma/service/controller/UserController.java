@@ -1,13 +1,12 @@
 package aakrasnov.diploma.service.controller;
 
 import aakrasnov.diploma.service.domain.User;
-import aakrasnov.diploma.service.service.UserService;
+import aakrasnov.diploma.service.service.UserServiceImpl;
 import com.google.gson.Gson;
 import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @Autowired
-    public UserController(final UserService userService) {
+    public UserController(final UserServiceImpl userService) {
         this.userService = userService;
     }
 

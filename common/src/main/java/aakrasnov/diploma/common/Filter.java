@@ -1,9 +1,7 @@
-package aakrasnov.diploma.client.filter;
+package aakrasnov.diploma.common;
 
 /**
  * Filter for checking a value of the specified in the document.
- * TODO: extract this interface to a separate module because it will
- *  be used in client and server.
  */
 public interface Filter {
     /**

@@ -1,13 +1,14 @@
 package aakrasnov.diploma.service.domain;
 
-import java.time.Instant;
+import aakrasnov.diploma.common.DocDto;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 @Data
 @ToString(of = {"id", "lang"})
-@RequiredArgsConstructor
+@NoArgsConstructor
 @AllArgsConstructor
 @Document("docs")
 public class Doc {
@@ -31,9 +32,38 @@ public class Doc {
     @NonNull
     private String authorId;
 
-    private Date timestamp = Date.from(Instant.now());
+    private Date timestamp;
 
-    // Contains only ID to some patterns (e.g. FK to the pattern)
     @NonNull
-    private List<String> patterns;
+    private List<Pattern> patterns;
+
+    public static DocDto toDto(Doc doc) {
+        DocDto dto = new DocDto();
+        dto.setId(doc.getId());
+        dto.setAuthorId(doc.getAuthorId());
+        dto.setLang(doc.getLang());
+        dto.setTimestamp(doc.getTimestamp());
+        dto.setScenario(Scenario.toDto(doc.getScenario()));
+        dto.setPatterns(
+            doc.getPatterns()
+                .stream().map(Pattern::toDto)
+                .collect(Collectors.toList())
+        );
+        return dto;
+    }
+
+    public static Doc fromDto(DocDto dto) {
+        Doc doc = new Doc();
+        doc.setId(dto.getId());
+        doc.setAuthorId(doc.getAuthorId());
+        doc.setLang(doc.getLang());
+        doc.setTimestamp(doc.getTimestamp());
+        doc.setScenario(Scenario.fromDto(dto.getScenario()));
+        doc.setPatterns(
+            dto.getPatterns()
+                .stream().map(Pattern::fromDto)
+                .collect(Collectors.toList())
+        );
+        return doc;
+    }
 }

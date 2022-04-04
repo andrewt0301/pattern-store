@@ -1,6 +1,6 @@
 package aakrasnov.diploma.service.config;
 
-import aakrasnov.diploma.service.service.UserService;
+import aakrasnov.diploma.service.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,13 +18,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public WebSecurityConfig(
-        final UserService userService,
+        final UserServiceImpl userService,
         @Lazy  final PasswordEncoder passwordEncoder
     ) {
         this.userService = userService;

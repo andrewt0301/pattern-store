@@ -12,6 +12,7 @@ import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.google.gson.Gson;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,21 +54,48 @@ public class DatabaseInitChangeLog {
 
     @ChangeSet(order = "002", id = "init_docs", author = "genryxy")
     public void initDocs(DocRepo docRepo) {
+        Map<String, String> data = new HashMap<>();
+        Map<String, String> meta = new HashMap<>();
+        data.put("data", "here should be json with of pattern");
+        meta.put("fromVersion", "0.0.9");
+        meta.put("toVersion", "1.0.0");
         docRepo.save(
             Doc.builder()
                 .authorId("1")
                 .lang("java")
                 .scenario(new Scenario(Scenario.Type.MIGRATION, new HashMap<>()))
-                .patterns(Arrays.asList("1", "2", "3"))
-                .build()
+                .patterns(
+                    Collections.singletonList(
+                        Pattern.builder()
+                            .id("1")
+                            .authorId("1")
+                            .data(data)
+                            .meta(meta)
+                            .build()
+                    )
+                ).build()
         );
         docRepo.save(
             Doc.builder()
                 .authorId("2")
                 .lang("java")
                 .scenario(new Scenario(Scenario.Type.MIGRATION, new HashMap<>()))
-                .patterns(Arrays.asList("2", "3"))
-                .build()
+                .patterns(
+                    Arrays.asList(
+                        Pattern.builder()
+                            .id("1")
+                            .authorId("1")
+                            .data(data)
+                            .meta(meta)
+                            .build(),
+                        Pattern.builder()
+                            .id("2")
+                            .authorId("1")
+                            .data(data)
+                            .meta(meta)
+                            .build()
+                    )
+                ).build()
         );
     }
 

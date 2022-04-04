@@ -1,5 +1,6 @@
 package aakrasnov.diploma.client.filter;
 
+import aakrasnov.diploma.common.Filter;
 import java.util.Arrays;
 import java.util.Collection;
 

@@ -1,5 +1,7 @@
 package aakrasnov.diploma.client.filter;
 
+import aakrasnov.diploma.common.Filter;
+
 /**
  * Filter by version of the artifact.
  */

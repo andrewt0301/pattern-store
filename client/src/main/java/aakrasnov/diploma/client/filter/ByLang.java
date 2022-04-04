@@ -1,5 +1,7 @@
 package aakrasnov.diploma.client.filter;
 
+import aakrasnov.diploma.common.Filter;
+
 /**
  * Filter by the language for which documents were created.
  */
