@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class DocController {
-    private DocServiceImpl docService;
+    private final DocServiceImpl docService;
 
     @Autowired
     public DocController(final DocServiceImpl docService) {

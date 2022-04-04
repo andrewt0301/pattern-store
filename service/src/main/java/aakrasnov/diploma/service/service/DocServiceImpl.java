@@ -7,6 +7,7 @@ import aakrasnov.diploma.service.repo.DocRepo;
 import aakrasnov.diploma.service.service.api.DocService;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,12 +48,16 @@ public class DocServiceImpl implements DocService {
 
     @Override
     public List<DocDto> filteredDocuments(final Filter filter) {
-        return null;
+        return docRepo.filteredDocuments(filter)
+            .stream().map(Doc::toDto)
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<DocDto> filteredDocuments(final List<Filter> filters) {
-        return null;
+        return docRepo.filteredDocuments(filters)
+            .stream().map(Doc::toDto)
+            .collect(Collectors.toList());
     }
 
 }
