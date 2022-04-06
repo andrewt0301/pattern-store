@@ -39,10 +39,10 @@ public class DocServiceImpl implements DocService {
     }
 
     @Override
-    public DocDto update(final String id, final DocDto altered) {
-        altered.setId(id);
+    public DocDto update(final String id, final DocDto updDto) {
+        updDto.setId(id);
         return Doc.toDto(
-            docRepo.save(Doc.fromDto(altered))
+            docRepo.save(Doc.fromDto(updDto))
         );
     }
 
