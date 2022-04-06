@@ -58,7 +58,7 @@ public class ByFromDep {
          * @param artifact Target artifact id
          */
         public ArtifactId(final String artifact) {
-            super("artifactIdTo", artifact);
+            super("artifactIdFrom", artifact);
         }
     }
 
@@ -72,7 +72,7 @@ public class ByFromDep {
          * @param group Target group id
          */
         public GroupId(final String group) {
-            super("groupIdTo", group);
+            super("groupIdFrom", group);
         }
     }
 

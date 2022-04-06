@@ -10,6 +10,7 @@ import aakrasnov.diploma.service.repo.PatternRepo;
 import aakrasnov.diploma.service.repo.UserRepo;
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,7 +24,6 @@ import java.util.Map;
 public class DatabaseInitChangeLog {
     @ChangeSet(order = "001", id = "init_users", author = "genryxy")
     public void initUsers(UserRepo userRepo) {
-        System.out.println("were triggered");
         userRepo.save(
             User.builder()
                 .id("1")
@@ -52,13 +52,12 @@ public class DatabaseInitChangeLog {
         );
     }
 
-    @ChangeSet(order = "002", id = "init_docs", author = "genryxy")
-    public void initDocs(DocRepo docRepo) {
-        Map<String, String> data = new HashMap<>();
+    @ChangeSet(order = "002", id = "init_docs_migration", author = "genryxy")
+    public void initDocsMigration(DocRepo docRepo) {
+        Map<String, String> data = ImmutableMap.of("data", "here should be json with of pattern");
         Map<String, String> meta = new HashMap<>();
-        data.put("data", "here should be json with of pattern");
-        meta.put("fromVersion", "0.0.9");
-        meta.put("toVersion", "1.0.0");
+        meta.put("versionFrom", "0.0.9");
+        meta.put("versionTo", "1.0.0");
         docRepo.save(
             Doc.builder()
                 .authorId("1")
@@ -99,13 +98,12 @@ public class DatabaseInitChangeLog {
         );
     }
 
-    @ChangeSet(order = "002", id = "init_patterns", author = "genryxy")
+    @ChangeSet(order = "003", id = "init_patterns", author = "genryxy")
     public void initPatterns(PatternRepo patternRepo) {
-        Map<String, String> data = new HashMap<>();
+        Map<String, String> data = ImmutableMap.of("data", "here should be json with of pattern");
         Map<String, String> meta = new HashMap<>();
-        data.put("data", "here should be json with of pattern");
-        meta.put("fromVersion", "0.0.9");
-        meta.put("toVersion", "1.0.0");
+        meta.put("versionFrom", "0.0.9");
+        meta.put("versionTo", "1.0.0");
         patternRepo.save(
             Pattern.builder()
                 .id("1")
@@ -124,9 +122,18 @@ public class DatabaseInitChangeLog {
         );
         Map<String, Object> data3 = new HashMap<>();
         Map<String, String> meta3 = new HashMap<>();
-        data3.put("data", new Gson().toJson(Map.of("node1", Map.of("node2", "val"))));
-        meta3.put("fromVersion", "1.2.3");
-        meta3.put("toVersion", "2.0.1");
+        new HashMap<String, String>() {{
+            put("", "");
+        }};
+        data3.put(
+            "data", new Gson().toJson(
+                ImmutableMap.builder()
+                    .put("node1", ImmutableMap.of("node2", "val"))
+                    .build()
+            )
+        );
+        meta3.put("versionFrom", "1.2.3");
+        meta3.put("versionTo", "2.0.1");
         patternRepo.save(
             Pattern.builder()
                 .id("3")
@@ -134,6 +141,38 @@ public class DatabaseInitChangeLog {
                 .data(data3)
                 .meta(meta3)
                 .build()
+        );
+    }
+
+    @ChangeSet(order = "004", id = "init_docs_refactoring", author = "genryxy")
+    public void initDocsRefactoring(DocRepo docRepo) {
+        Map<String, String> data = ImmutableMap.of("data", "some json with pattern");
+        Map<String, String> meta = new HashMap<>();
+        meta.put("artifactIdFrom", "artifactIdOld");
+        meta.put("artifactIdTo", "artifactIdNew");
+        meta.put("versionFrom", "0.0.9");
+        meta.put("versionTo", "1.0.0");
+        docRepo.save(
+            Doc.builder()
+                .authorId("2")
+                .lang("java")
+                .scenario(new Scenario(Scenario.Type.REFACTORING, new HashMap<>()))
+                .patterns(
+                    Arrays.asList(
+                        Pattern.builder()
+                            .id("1")
+                            .authorId("1")
+                            .data(data)
+                            .meta(meta)
+                            .build(),
+                        Pattern.builder()
+                            .id("2")
+                            .authorId("1")
+                            .data(data)
+                            .meta(meta)
+                            .build()
+                    )
+                ).build()
         );
     }
 }
