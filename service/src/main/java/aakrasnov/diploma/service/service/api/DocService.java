@@ -4,6 +4,7 @@ import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.http.HttpStatus;
 
 /**
  * Logic for interacting with documents.
@@ -31,18 +32,15 @@ public interface DocService {
 
     /**
      * Update document by the specified id with passed dto.
+     * In order for the update to be successful author of the document for
+     * update should be either in the team of the creators of the
+     * document by passed id or an admin.
      * @param id Id of the document for update
      * @param updDto The document with updated info
-     * @return Saved updated document.
+     * @param userId Id of the user, who perform update
+     * @return Result of operation (OK, BAD_REQUEST, FORBIDDEN).
      */
-    DocDto update(String id, DocDto updDto);
-
-    /**
-     * Get collection with documents which match filter.
-     * @param filter Filter to limit documents
-     * @return List of documents which match filter.
-     */
-    List<DocDto> filteredDocuments(Filter filter);
+    HttpStatus update(String id, DocDto updDto, String userId);
 
     /**
      * Get collection with documents which match passed filters.
@@ -50,4 +48,11 @@ public interface DocService {
      * @return List of documents which match filters.
      */
     List<DocDto> filteredDocuments(List<Filter> filters);
+
+    /**
+     * Obtains all existing documents. This operation should be available
+     * only for admin users.
+     * @return All documents.
+     */
+    List<DocDto> getAllDocs();
 }

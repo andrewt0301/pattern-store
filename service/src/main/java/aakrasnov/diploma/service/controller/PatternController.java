@@ -26,9 +26,4 @@ public class PatternController {
     public ResponseEntity<Pattern> savePattern(@RequestBody Pattern pattern) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ptrnService.save(pattern));
     }
-
-    @GetMapping("patterns")
-    public ResponseEntity<List<Pattern>> getPatternsByAuthor(@RequestParam("id") User author) {
-        return ResponseEntity.ok().body(ptrnService.findByAuthor(author));
-    }
 }

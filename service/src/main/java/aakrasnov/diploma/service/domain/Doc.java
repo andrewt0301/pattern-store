@@ -30,7 +30,7 @@ public class Doc {
     private Scenario scenario;
 
     @NonNull
-    private String authorId;
+    private Team team;
 
     private Date timestamp;
 
@@ -40,7 +40,7 @@ public class Doc {
     public static DocDto toDto(Doc doc) {
         DocDto dto = new DocDto();
         dto.setId(doc.getId());
-        dto.setAuthorId(doc.getAuthorId());
+        dto.setTeam(Team.toDto(doc.getTeam()));
         dto.setLang(doc.getLang());
         dto.setTimestamp(doc.getTimestamp());
         dto.setScenario(Scenario.toDto(doc.getScenario()));
@@ -55,7 +55,7 @@ public class Doc {
     public static Doc fromDto(DocDto dto) {
         Doc doc = new Doc();
         doc.setId(dto.getId());
-        doc.setAuthorId(doc.getAuthorId());
+        doc.setTeam(Team.fromDto(dto.getTeam()));
         doc.setLang(doc.getLang());
         doc.setTimestamp(doc.getTimestamp());
         doc.setScenario(Scenario.fromDto(dto.getScenario()));

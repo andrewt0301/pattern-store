@@ -19,7 +19,7 @@ public class DocDto implements Serializable {
 
     private ScenarioDto scenario;
 
-    private String authorId;
+    private TeamDto team;
 
     private Date timestamp;
 

@@ -1,6 +1,7 @@
 {
   "id": "", // required
   "lang": "java", // required
+  "team": { "id":  "teamId"}, // required
   "scenario": { // required
     "type": "migration", // required
     "meta": { // required

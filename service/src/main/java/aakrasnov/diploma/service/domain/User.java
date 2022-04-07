@@ -2,6 +2,8 @@ package aakrasnov.diploma.service.domain;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,12 +26,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class User implements UserDetails {
     @Id
     private String id;
+
     @NonNull
     private String username;
+
     @NonNull
     private String password;
+
     @NonNull
     private Role role;
+
+
+    private Set<Team> teams = new HashSet<>();
+
     private boolean isActive = false;
 
     @Override
