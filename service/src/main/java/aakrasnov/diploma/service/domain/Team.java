@@ -20,7 +20,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @ToString(of = {"id", "name"})
 @Document("patterns")
 public class Team {
-    public static ObjectId COMMON_OBJ_ID = new ObjectId("624f6f6b5bdddf7ee83350a0");
+    public static ObjectId COMMON_TEAM_ID = new ObjectId("624f6f6b5bdddf7ee83350a0");
 
     @Id
     @NonNull
@@ -28,6 +28,9 @@ public class Team {
 
     @NonNull
     private String name;
+
+    @NonNull
+    private String creatorId;
 
     private String invitation;
 

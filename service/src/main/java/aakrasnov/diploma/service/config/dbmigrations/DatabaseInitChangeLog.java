@@ -25,11 +25,13 @@ import org.bson.types.ObjectId;
  */
 @ChangeLog(order = "001")
 public class DatabaseInitChangeLog {
+    public static final String USER_ID = "361d5d8b5bd5adf7ee8793e5";
+
     @ChangeSet(order = "001", id = "init_users", author = "genryxy")
     public void initUsers(UserRepo userRepo) {
         userRepo.save(
             User.builder()
-                .id(strObjId("1"))
+                .id(strObjId(USER_ID))
                 .username("username1")
                 .password("should be encrypted")
                 .role(Role.ADMIN)
@@ -61,18 +63,21 @@ public class DatabaseInitChangeLog {
             Team.builder()
                 .id(strObjId("624f6f6b5bdddf7ee83350a0"))
                 .name("name1")
+                .creatorId(USER_ID)
                 .build()
         );
         teamRepo.save(
             Team.builder()
                 .id(strObjId("2"))
                 .name("name2")
+                .creatorId(USER_ID)
                 .build()
         );
         teamRepo.save(
             Team.builder()
                 .id("3")
                 .name("name3")
+                .creatorId(USER_ID)
                 .invitation("invit-uuid-name3")
                 .build()
         );
@@ -86,8 +91,11 @@ public class DatabaseInitChangeLog {
         meta.put("versionTo", "1.0.0");
         docRepo.save(
             Doc.builder()
-                .team(Team.builder().id(Team.COMMON_OBJ_ID.toString()).name("team1").build())
-                .lang("java")
+                .team(
+                    Team.builder().id(Team.COMMON_TEAM_ID.toString())
+                        .creatorId(strObjId(USER_ID))
+                        .name("team1").build()
+                ).lang("java")
                 .scenario(new Scenario(Scenario.Type.MIGRATION, new HashMap<>()))
                 .patterns(
                     Collections.singletonList(
@@ -102,8 +110,11 @@ public class DatabaseInitChangeLog {
         );
         docRepo.save(
             Doc.builder()
-                .team(Team.builder().id("2").name("team2").build())
-                .lang("java")
+                .team(
+                    Team.builder().id("2")
+                        .creatorId("2")
+                        .name("team2").build()
+                ).lang("java")
                 .scenario(new Scenario(Scenario.Type.MIGRATION, new HashMap<>()))
                 .patterns(
                     Arrays.asList(
@@ -148,9 +159,6 @@ public class DatabaseInitChangeLog {
         );
         Map<String, Object> data3 = new HashMap<>();
         Map<String, String> meta3 = new HashMap<>();
-        new HashMap<String, String>() {{
-            put("", "");
-        }};
         data3.put(
             "data", new Gson().toJson(
                 ImmutableMap.builder()
@@ -180,8 +188,12 @@ public class DatabaseInitChangeLog {
         meta.put("versionTo", "1.0.0");
         docRepo.save(
             Doc.builder()
-                .team(Team.builder().id(Team.COMMON_OBJ_ID.toString()).name("team1").build())
-                .lang("java")
+                .team(
+                    Team.builder()
+                        .id(Team.COMMON_TEAM_ID.toString())
+                        .creatorId(strObjId(USER_ID))
+                        .name("team1").build()
+                ).lang("java")
                 .scenario(new Scenario(Scenario.Type.REFACTORING, new HashMap<>()))
                 .patterns(
                     Arrays.asList(
@@ -205,7 +217,6 @@ public class DatabaseInitChangeLog {
     private static String strObjId(String id) {
         if (id.length() > 2) {
             System.out.println("--------------tmp----------------");
-            System.out.println(new ObjectId(id).toString());
             System.out.println(new ObjectId(id).toHexString());
             return new ObjectId(id).toString();
         }

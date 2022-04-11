@@ -2,10 +2,13 @@ package aakrasnov.diploma.service.controller;
 
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
+import aakrasnov.diploma.service.dto.UpdateRsDto;
 import aakrasnov.diploma.service.filter.FilterByTeamId;
 import aakrasnov.diploma.service.service.api.DocService;
 import java.util.Collections;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 public class DocController {
     private final DocService docService;
@@ -52,7 +56,11 @@ public class DocController {
     ) {
         // TODO: auth update. Get user from context
         String userId = "1";
-        return new ResponseEntity<>(updDoc, docService.update(id, updDoc, userId));
+        UpdateRsDto updRs = docService.update(id, updDoc, userId);
+        if (!StringUtils.isEmpty(updRs.getMsg())) {
+            log.error(updRs.getMsg());
+        }
+        return new ResponseEntity<>(updDoc, updRs.getStatus());
     }
 
     @GetMapping("auth/docs/team/{id}")
@@ -89,7 +97,6 @@ public class DocController {
     public List<DocDto> getDocs() {
         return docService.getAllDocs();
     }
-
 //    @Autowired
 //    private DocRepo docRepo;
 //

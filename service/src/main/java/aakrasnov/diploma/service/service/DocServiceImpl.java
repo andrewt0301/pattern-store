@@ -4,24 +4,21 @@ import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
 import aakrasnov.diploma.service.domain.Doc;
 import aakrasnov.diploma.service.domain.Role;
-import aakrasnov.diploma.service.domain.Team;
+import aakrasnov.diploma.service.domain.User;
+import aakrasnov.diploma.service.dto.UpdateRsDto;
 import aakrasnov.diploma.service.repo.DocRepo;
 import aakrasnov.diploma.service.repo.UserRepo;
 import aakrasnov.diploma.service.service.api.DocService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
-@Service
 public class DocServiceImpl implements DocService {
     private final DocRepo docRepo;
 
     private final UserRepo userRepo;
 
-    @Autowired
     public DocServiceImpl(final DocRepo docRepo, final UserRepo userRepo) {
         this.docRepo = docRepo;
         this.userRepo = userRepo;
@@ -46,22 +43,32 @@ public class DocServiceImpl implements DocService {
     }
 
     @Override
-    public HttpStatus update(final String id, final DocDto updDto, final String userId) {
+    public UpdateRsDto update(final String id, final DocDto updDto, final String userId) {
         Optional<Doc> fromDb = docRepo.findById(id);
+        UpdateRsDto rs = new UpdateRsDto();
         if (!fromDb.isPresent()) {
-            return HttpStatus.BAD_REQUEST;
+            rs.setStatus(HttpStatus.BAD_REQUEST);
+            rs.setMsg(String.format("Doc with id '%s' was not found", id));
+            return rs;
         }
-        boolean isInTeam = fromDb.get().getTeam().equals(Team.fromDto(updDto.getTeam()));
-        boolean isAdmin = userRepo.findById(userId)
-            .map(user -> user.getRole().equals(Role.ADMIN))
-            .orElse(false);
+        Optional<User> user = userRepo.findById(userId);
+        if (!user.isPresent()) {
+            rs.setStatus(HttpStatus.FORBIDDEN);
+            rs.setMsg(String.format("Not found user with id '%s'", userId));
+            return rs;
+        }
+        boolean isInTeam = user.get().getTeams().contains(fromDb.get().getTeam());
+        boolean isAdmin = user.get().getRole().equals(Role.ADMIN);
         if (!isInTeam && !isAdmin) {
-            return HttpStatus.FORBIDDEN;
+            rs.setStatus(HttpStatus.FORBIDDEN);
+            rs.setMsg("Operation is forbidden. You should be in the team or an admin");
+            return rs;
         }
         updDto.setId(id);
         Doc saved = docRepo.save(Doc.fromDto(updDto));
         updDto.setId(saved.getId());
-        return HttpStatus.OK;
+        rs.setStatus(HttpStatus.OK);
+        return rs;
     }
 
     @Override
