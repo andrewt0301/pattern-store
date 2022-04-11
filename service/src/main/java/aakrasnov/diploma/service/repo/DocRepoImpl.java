@@ -2,6 +2,7 @@ package aakrasnov.diploma.service.repo;
 
 import aakrasnov.diploma.common.Filter;
 import aakrasnov.diploma.service.domain.Doc;
+import aakrasnov.diploma.service.utils.FilterArr;
 import java.util.List;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -22,9 +23,16 @@ public class DocRepoImpl implements CustomDocRepo {
         // for nested objects
         // db.inventory.find( { "size.uom": "in" } )
         Query query = new Query();
-        filters.forEach(
-            filter -> query.addCriteria(Criteria.where(filter.key()).is(filter.value()))
-        );
+        new FilterArr(filters).concatValsOfSameKeys()
+            .forEach(
+                (key, vals) -> {
+                    if (vals.size() == 1) {
+                        query.addCriteria(Criteria.where(key).is(vals.get(0)));
+                    } else {
+                        query.addCriteria(Criteria.where(key).in(vals));
+                    }
+                }
+            );
         return mongoTemplate.find(query, Doc.class);
     }
 }
