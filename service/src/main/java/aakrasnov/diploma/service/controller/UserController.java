@@ -1,9 +1,12 @@
 package aakrasnov.diploma.service.controller;
 
 import aakrasnov.diploma.service.domain.User;
-import aakrasnov.diploma.service.service.UserServiceImpl;
+import aakrasnov.diploma.service.dto.AddUserRsDto;
+import aakrasnov.diploma.service.service.api.UserService;
 import com.google.gson.Gson;
 import java.security.Principal;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,17 +16,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 public class UserController {
 
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     @Autowired
-    public UserController(final UserServiceImpl userService) {
+    public UserController(final UserService userService) {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("landing")
     ResponseEntity<String> landingPage(Principal principal) {
         Authentication authentication = (Authentication) principal;
         if (authentication == null) {
@@ -36,22 +40,18 @@ public class UserController {
     }
 
     @PostMapping("admin/user")
-//    @PreAuthorize("hasAuthority('ADMIN')")
-    ResponseEntity<HttpStatus> addUser(Principal principal, @RequestBody User user) {
-        userService.saveUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    @GetMapping("user")
-    ResponseEntity<String> tmp() {
-        userService.doTmpActivity();
-        return ResponseEntity.ok("it's okay");
+    public ResponseEntity<User> addUser(Principal principal, @RequestBody User user) {
+        AddUserRsDto rs = userService.addUser(user);
+        if (!StringUtils.isEmpty(rs.getMsg())) {
+            log.warn(rs.getMsg());
+            return new ResponseEntity<>(rs.getStatus());
+        }
+        return new ResponseEntity<>(rs.getUser(), HttpStatus.CREATED);
     }
 
     @GetMapping("admin/users")
-//    @PreAuthorize("hasAuthority('ADMIN')")
     ResponseEntity<String> getUsers() {
         final Gson users = new Gson();
-        return ResponseEntity.ok(users.toJson(userService.getUsers()));
+        return ResponseEntity.ok(users.toJson(userService.getAll()));
     }
 }

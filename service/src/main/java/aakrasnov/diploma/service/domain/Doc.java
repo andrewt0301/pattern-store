@@ -29,6 +29,7 @@ public class Doc {
     @NonNull
     private Scenario scenario;
 
+    // TODO: set of teams
     @NonNull
     private Team team;
 

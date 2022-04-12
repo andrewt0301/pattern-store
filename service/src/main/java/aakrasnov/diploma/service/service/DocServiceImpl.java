@@ -43,7 +43,7 @@ public class DocServiceImpl implements DocService {
     }
 
     @Override
-    public UpdateRsDto update(final String id, final DocDto updDto, final String userId) {
+    public UpdateRsDto update(final String id, final DocDto updDto, final User user) {
         Optional<Doc> fromDb = docRepo.findById(id);
         UpdateRsDto rs = new UpdateRsDto();
         if (!fromDb.isPresent()) {
@@ -51,14 +51,8 @@ public class DocServiceImpl implements DocService {
             rs.setMsg(String.format("Doc with id '%s' was not found", id));
             return rs;
         }
-        Optional<User> user = userRepo.findById(userId);
-        if (!user.isPresent()) {
-            rs.setStatus(HttpStatus.FORBIDDEN);
-            rs.setMsg(String.format("Not found user with id '%s'", userId));
-            return rs;
-        }
-        boolean isInTeam = user.get().getTeams().contains(fromDb.get().getTeam());
-        boolean isAdmin = user.get().getRole().equals(Role.ADMIN);
+        boolean isInTeam = user.getTeams().contains(fromDb.get().getTeam());
+        boolean isAdmin = user.getRole().equals(Role.ADMIN);
         if (!isInTeam && !isAdmin) {
             rs.setStatus(HttpStatus.FORBIDDEN);
             rs.setMsg("Operation is forbidden. You should be in the team or an admin");

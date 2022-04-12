@@ -1,55 +1,50 @@
 package aakrasnov.diploma.service.service;
 
-import aakrasnov.diploma.service.domain.Role;
 import aakrasnov.diploma.service.domain.User;
+import aakrasnov.diploma.service.dto.AddUserRsDto;
 import aakrasnov.diploma.service.repo.UserRepo;
+import aakrasnov.diploma.service.service.api.UserService;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import java.util.Optional;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
-@Service
-public class UserServiceImpl implements UserDetailsService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
 
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public UserServiceImpl(final UserRepo userRepo, @Lazy final PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(final UserRepo userRepo, final PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void doTmpActivity() {
-        saveUser(
-            new User("username", "pswd", Role.ADMIN)
-        );
-        final List<User> users = userRepo.findAll();
-        System.out.println(users);
-    }
-
-    public List<User> getUsers() {
-        return userRepo.findAll();
-    }
-
-    public User saveUser(final User user) {
+    @Override
+    public AddUserRsDto addUser(final User user) {
+        AddUserRsDto rs = new AddUserRsDto();
+        if (userRepo.findByUsername(user.getUsername()).isPresent()) {
+            rs.setStatus(HttpStatus.BAD_REQUEST);
+            rs.setMsg(
+                String.format("User with username '%s' already exists", user.getUsername())
+            );
+            return rs;
+        }
         final String pswd = user.getPassword();
         user.setPassword(passwordEncoder.encode(pswd));
-        System.out.println(user.getPassword());
-        return userRepo.save(user);
+        // TODO: probably it would be better to activate manually
+        user.setActive(true);
+        rs.setUser(userRepo.save(user));
+        return rs;
     }
 
     @Override
-    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        return userRepo.findByUsername(username).orElseThrow(
-            () -> {
-                throw new UsernameNotFoundException(String.format("User '%s' not found", username));
-            }
-        );
+    public Optional<User> findByUsername(final String username) {
+        return userRepo.findByUsername(username);
+    }
+
+    @Override
+    public List<User> getAll() {
+        return userRepo.findAll();
     }
 }

@@ -36,7 +36,6 @@ public class User implements UserDetails {
     @NonNull
     private Role role;
 
-
     private Set<Team> teams = new HashSet<>();
 
     private boolean isActive = false;

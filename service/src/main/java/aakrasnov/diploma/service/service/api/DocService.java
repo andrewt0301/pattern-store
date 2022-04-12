@@ -2,6 +2,7 @@ package aakrasnov.diploma.service.service.api;
 
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
+import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.dto.UpdateRsDto;
 import java.util.List;
 import java.util.Optional;
@@ -37,10 +38,10 @@ public interface DocService {
      * document by passed id or an admin.
      * @param id Id of the document for update
      * @param updDto The document with updated info
-     * @param userId Id of the user, who perform update
+     * @param user User, who performs update
      * @return Result of operation (OK, BAD_REQUEST, FORBIDDEN) with optional message.
      */
-    UpdateRsDto update(String id, DocDto updDto, String userId);
+    UpdateRsDto update(String id, DocDto updDto, User user);
 
     /**
      * Get collection with documents which match passed filters.

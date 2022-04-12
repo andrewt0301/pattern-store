@@ -1,6 +1,7 @@
 package aakrasnov.diploma.service.service.api;
 
 import aakrasnov.diploma.common.TeamDto;
+import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.dto.UpdateRsDto;
 import java.util.Optional;
 
@@ -18,10 +19,10 @@ public interface TeamService {
      * update should be either a creator of the team or an admin.
      * @param id Id of the team for update
      * @param teamDto The team with updated info
-     * @param userId Id of the user, who perform update
+     * @param user User, who performs update
      * @return Result of operation (OK, BAD_REQUEST, FORBIDDEN) with optional message.
      */
-    UpdateRsDto update(String id, TeamDto teamDto, String userId);
+    UpdateRsDto update(String id, TeamDto teamDto, User user);
 
     /**
      * Update invitation code of the specified team.

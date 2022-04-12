@@ -30,7 +30,7 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public UpdateRsDto update(final String id, final TeamDto teamDto, final String userId) {
+    public UpdateRsDto update(final String id, final TeamDto teamDto, final User user) {
         Optional<Team> fromDb = teamRepo.findById(id);
         UpdateRsDto rs = new UpdateRsDto();
         if (!fromDb.isPresent()) {
@@ -38,14 +38,8 @@ public class TeamServiceImpl implements TeamService {
             rs.setMsg(String.format("Team with id '%s' was not found", id));
             return rs;
         }
-        Optional<User> user = userRepo.findById(userId);
-        if (!user.isPresent()) {
-            rs.setStatus(HttpStatus.FORBIDDEN);
-            rs.setMsg(String.format("Not found user with id '%s'", userId));
-            return rs;
-        }
-        boolean isCreator = user.get().getId().equals(fromDb.get().getCreatorId());
-        boolean isAdmin = user.get().getRole().equals(Role.ADMIN);
+        boolean isCreator = user.getId().equals(fromDb.get().getCreatorId());
+        boolean isAdmin = user.getRole().equals(Role.ADMIN);
         if (!isCreator && !isAdmin) {
             rs.setStatus(HttpStatus.FORBIDDEN);
             rs.setMsg("Operation is forbidden. You should be a creator or an admin");

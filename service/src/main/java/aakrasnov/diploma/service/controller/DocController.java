@@ -2,9 +2,12 @@ package aakrasnov.diploma.service.controller;
 
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
+import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.dto.UpdateRsDto;
 import aakrasnov.diploma.service.filter.FilterByTeamId;
 import aakrasnov.diploma.service.service.api.DocService;
+import aakrasnov.diploma.service.utils.PrincipalConverter;
+import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,7 @@ public class DocController {
 
     @GetMapping("doc/{id}")
     public ResponseEntity<DocDto> getDocById(@PathVariable("id") String id) {
+        // TODO: private docs. I think it is necessary to create set of teams.
         return docService.findById(id)
             .map(value -> ResponseEntity.status(HttpStatus.FOUND).body(value))
             .orElseGet(() -> ResponseEntity.notFound().build());
@@ -44,19 +48,23 @@ public class DocController {
     }
 
     @PostMapping("auth/doc")
-    public ResponseEntity<DocDto> addDoc(@RequestBody DocDto docDto) {
-        // TODO: auth upload
+    public ResponseEntity<DocDto> addDoc(
+        Principal principal,
+        @RequestBody DocDto docDto
+    ) {
+        // TODO: check upload limits
+//        User user = new PrincipalConverter(principal).toUser();
         return new ResponseEntity<>(docService.addDoc(docDto), HttpStatus.CREATED);
     }
 
     @PostMapping("auth/doc/{id}/update")
     public ResponseEntity<DocDto> updateDoc(
+        Principal principal,
         @PathVariable("id") String id,
         @RequestBody DocDto updDoc
     ) {
-        // TODO: auth update. Get user from context
-        String userId = "1";
-        UpdateRsDto updRs = docService.update(id, updDoc, userId);
+        User user = new PrincipalConverter(principal).toUser();
+        UpdateRsDto updRs = docService.update(id, updDoc, user);
         if (!StringUtils.isEmpty(updRs.getMsg())) {
             log.error(updRs.getMsg());
         }
@@ -65,9 +73,13 @@ public class DocController {
 
     @GetMapping("auth/docs/team/{id}")
     public ResponseEntity<List<DocDto>> getDocByTeamId(
+        Principal principal,
         @PathVariable("id") String id
     ) {
-        // TODO: auth get docs by team id.
+        User user = new PrincipalConverter(principal).toUser();
+        if (user.getTeams().stream().noneMatch(team -> id.equals(team.getId()))) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         return new ResponseEntity<>(
             docService.filteredDocuments(Collections.singletonList(new FilterByTeamId(id))),
             HttpStatus.OK
@@ -76,19 +88,22 @@ public class DocController {
 
     @PostMapping("auth/docs/filtered")
     public ResponseEntity<List<DocDto>> docsAuthByFilters(
+        Principal principal,
         @RequestBody List<Filter> filters
     ) {
+        User user = new PrincipalConverter(principal).toUser();
+        user.getTeams().forEach(
+            team -> filters.add(new FilterByTeamId(team.getId()))
+        );
         filters.add(FilterByTeamId.COMMON_TEAM_FILTER);
-        // TODO: add disjunction of filters for user's team
-        // https://stackoverflow.com/questions/23137870/mongodb-check-if-field-is-one-of-many-values
         return ResponseEntity.ok(docService.filteredDocuments(filters));
     }
 
     @GetMapping("admin/doc/{id}/delete")
     public ResponseEntity<HttpStatus> deleteDocById(
+        Principal principal,
         @PathVariable("id") String id
     ) {
-        // TODO: auth delete (only for admin)
         docService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -97,22 +112,5 @@ public class DocController {
     public List<DocDto> getDocs() {
         return docService.getAllDocs();
     }
-//    @Autowired
-//    private DocRepo docRepo;
-//
-//    @GetMapping("hello")
-//    public ResponseEntity<String> hello() {
-//        System.out.println(docRepo.filteredDocuments(Collections.singletonList(new Filter() {
-//            @Override
-//            public String key() {
-//                return "lang";
-//            }
-//
-//            @Override
-//            public String value() {
-//                return "java";
-//            }
-//        })));
-//        return ResponseEntity.ok("hello");
-//    }
+
 }

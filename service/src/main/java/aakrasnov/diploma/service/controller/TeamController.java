@@ -3,6 +3,8 @@ package aakrasnov.diploma.service.controller;
 import aakrasnov.diploma.common.TeamDto;
 import aakrasnov.diploma.service.dto.UpdateRsDto;
 import aakrasnov.diploma.service.service.api.TeamService;
+import aakrasnov.diploma.service.utils.PrincipalConverter;
+import java.security.Principal;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -58,12 +60,15 @@ public class TeamController {
 
     @PostMapping("auth/team/{id}/update")
     public ResponseEntity<TeamDto> updateTeam(
+        Principal principal,
         @PathVariable("id") String id,
         @RequestBody TeamDto teamUpd
     ) {
-        // TODO: auth update. Get user from context
-        String userId = "1";
-        UpdateRsDto updRs = teamService.update(id, teamUpd, userId);
+        UpdateRsDto updRs = teamService.update(
+            id,
+            teamUpd,
+            new PrincipalConverter(principal).toUser()
+        );
         if (!StringUtils.isEmpty(updRs.getMsg())) {
             log.error(updRs.getMsg());
         }
@@ -74,7 +79,6 @@ public class TeamController {
     public ResponseEntity<HttpStatus> deleteTeamById(
         @PathVariable("id") String id
     ) {
-        // TODO: auth delete (only for admin)
         teamService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
