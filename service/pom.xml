@@ -12,7 +12,7 @@
     <artifactId>service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>service</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Backend service for pattern-store</description>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>

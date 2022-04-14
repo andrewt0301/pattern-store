@@ -1,20 +1,16 @@
 package aakrasnov.diploma.service.filter;
 
 import aakrasnov.diploma.common.Filter;
+import aakrasnov.diploma.service.domain.Team;
 
 /**
  * Class for obtaining documents, which were created by the specified team.
  */
 public class FilterByTeamId implements Filter {
     /**
-     * Id team
-     */
-    private static final String COMMON_TEAM_ID = "1";
-
-    /**
      * Alias for common team filter.
      */
-    public static Filter COMMON_TEAM_FILTER = new FilterByTeamId(COMMON_TEAM_ID);
+    public static Filter COMMON_TEAM_FILTER = new FilterByTeamId(Team.COMMON_TEAM_ID.toString());
 
     private final String teamId;
 

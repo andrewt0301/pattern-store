@@ -2,6 +2,8 @@ package aakrasnov.diploma.service.controller;
 
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
+import aakrasnov.diploma.service.domain.Role;
+import aakrasnov.diploma.service.domain.Team;
 import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.dto.UpdateRsDto;
 import aakrasnov.diploma.service.filter.FilterByTeamId;
@@ -32,10 +34,10 @@ public class DocController {
     }
 
     @GetMapping("doc/{id}")
-    public ResponseEntity<DocDto> getDocById(@PathVariable("id") String id) {
-        // TODO: private docs. I think it is necessary to create set of teams.
+    public ResponseEntity<DocDto> getDocCommonById(@PathVariable("id") String id) {
         return docService.findById(id)
-            .map(value -> ResponseEntity.status(HttpStatus.FOUND).body(value))
+            .filter(doc -> doc.getTeam().getId().equals(Team.COMMON_TEAM_ID.toString()))
+            .map(value -> ResponseEntity.status(HttpStatus.OK).body(value))
             .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -45,6 +47,23 @@ public class DocController {
     ) {
         filters.add(FilterByTeamId.COMMON_TEAM_FILTER);
         return ResponseEntity.ok(docService.filteredDocuments(filters));
+    }
+
+    @GetMapping("auth/doc/{id}")
+    public ResponseEntity<DocDto> getDocById(
+        Principal principal,
+        @PathVariable("id") String id
+    ) {
+        User user = new PrincipalConverter(principal).toUser();
+        // TODO: private docs. I think it is necessary to create set of teams who can access doc.
+        return docService.findById(id)
+            .filter(
+                doc -> user.getRole().name().equals(Role.ADMIN.name())
+                       || user.getTeams().stream().anyMatch(
+                    team -> doc.getTeam().getId().equals(team.getId())
+                )
+            ).map(value -> ResponseEntity.status(HttpStatus.OK).body(value))
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping("auth/doc")
@@ -87,7 +106,7 @@ public class DocController {
     }
 
     @PostMapping("auth/docs/filtered")
-    public ResponseEntity<List<DocDto>> docsAuthByFilters(
+    public ResponseEntity<List<DocDto>> docsByFilters(
         Principal principal,
         @RequestBody List<Filter> filters
     ) {

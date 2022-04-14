@@ -17,8 +17,11 @@ import com.google.gson.Gson;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import org.bson.types.ObjectId;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Creates the initial database setup.
@@ -27,30 +30,33 @@ import org.bson.types.ObjectId;
 public class DatabaseInitChangeLog {
     public static final String USER_ID = "361d5d8b5bd5adf7ee8793e5";
 
+    public static final String ADMIN_ID = "93e56f6b5bdddf7ee8b5bd5a";
+
     @ChangeSet(order = "001", id = "init_users", author = "genryxy")
-    public void initUsers(UserRepo userRepo) {
+    public void initUsers(UserRepo userRepo, PasswordEncoder passwordEncoder) {
         userRepo.save(
             User.builder()
                 .id(strObjId(USER_ID))
-                .username("username1")
-                .password("should be encrypted")
-                .role(Role.ADMIN)
+                .username("user")
+                .password(passwordEncoder.encode("user"))
+                .role(Role.USER)
+                .teams(Collections.singleton(commonTeam()))
                 .isActive(true)
                 .build()
         );
         userRepo.save(
             User.builder()
                 .id(strObjId("2"))
-                .username("user")
-                .password("should be encrypted")
-                .role(Role.ADMIN)
+                .username("username")
+                .password(passwordEncoder.encode("username"))
+                .role(Role.USER)
                 .isActive(true)
                 .build()
         );
         userRepo.save(
             User.builder()
                 .username("123")
-                .password("123 should be encrypted")
+                .password(passwordEncoder.encode("123"))
                 .role(Role.USER)
                 .isActive(true)
                 .build()
@@ -59,13 +65,7 @@ public class DatabaseInitChangeLog {
 
     @ChangeSet(order = "002", id = "init_teams", author = "genryxy")
     public void initTeams(TeamRepo teamRepo) {
-        teamRepo.save(
-            Team.builder()
-                .id(strObjId("624f6f6b5bdddf7ee83350a0"))
-                .name("name1")
-                .creatorId(USER_ID)
-                .build()
-        );
+        teamRepo.save(commonTeam());
         teamRepo.save(
             Team.builder()
                 .id(strObjId("2"))
@@ -91,11 +91,9 @@ public class DatabaseInitChangeLog {
         meta.put("versionTo", "1.0.0");
         docRepo.save(
             Doc.builder()
-                .team(
-                    Team.builder().id(Team.COMMON_TEAM_ID.toString())
-                        .creatorId(strObjId(USER_ID))
-                        .name("team1").build()
-                ).lang("java")
+                .id(strObjId("625748988af05121cc0d6189"))
+                .team(commonTeam())
+                .lang("java")
                 .scenario(new Scenario(Scenario.Type.MIGRATION, new HashMap<>()))
                 .patterns(
                     Collections.singletonList(
@@ -188,12 +186,8 @@ public class DatabaseInitChangeLog {
         meta.put("versionTo", "1.0.0");
         docRepo.save(
             Doc.builder()
-                .team(
-                    Team.builder()
-                        .id(Team.COMMON_TEAM_ID.toString())
-                        .creatorId(strObjId(USER_ID))
-                        .name("team1").build()
-                ).lang("java")
+                .team(commonTeam())
+                .lang("java")
                 .scenario(new Scenario(Scenario.Type.REFACTORING, new HashMap<>()))
                 .patterns(
                     Arrays.asList(
@@ -212,6 +206,30 @@ public class DatabaseInitChangeLog {
                     )
                 ).build()
         );
+    }
+
+    @ChangeSet(order = "006", id = "init_admin_pswd_encrypted", author = "genryxy")
+    public void initAdminWithEncryptedPswd(UserRepo userRepo, PasswordEncoder passwordEncoder) {
+        Set<Team> teams = new HashSet<>();
+        teams.add(commonTeam());
+        userRepo.save(
+            User.builder()
+                .id(strObjId(ADMIN_ID))
+                .username("admin")
+                .password(passwordEncoder.encode("admin"))
+                .role(Role.ADMIN)
+                .teams(teams)
+                .isActive(true)
+                .build()
+        );
+    }
+
+    private static Team commonTeam() {
+        return Team.builder()
+            .id(strObjId(Team.COMMON_TEAM_ID.toString()))
+            .name("team1_common")
+            .creatorId(USER_ID)
+            .build();
     }
 
     private static String strObjId(String id) {
