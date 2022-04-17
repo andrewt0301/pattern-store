@@ -2,9 +2,11 @@ package aakrasnov.diploma.service.controller;
 
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
+import aakrasnov.diploma.service.domain.Doc;
 import aakrasnov.diploma.service.domain.Role;
 import aakrasnov.diploma.service.domain.Team;
 import aakrasnov.diploma.service.domain.User;
+import aakrasnov.diploma.service.dto.AddDocRsDto;
 import aakrasnov.diploma.service.dto.UpdateRsDto;
 import aakrasnov.diploma.service.filter.FilterByTeamId;
 import aakrasnov.diploma.service.service.api.DocService;
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -72,8 +75,13 @@ public class DocController {
         @RequestBody DocDto docDto
     ) {
         // TODO: check upload limits
-//        User user = new PrincipalConverter(principal).toUser();
-        return new ResponseEntity<>(docService.addDoc(docDto), HttpStatus.CREATED);
+        User user = new PrincipalConverter(principal).toUser();
+        AddDocRsDto rs = docService.addDoc(docDto);
+        if (!StringUtils.isEmpty(rs.getMsg())) {
+            log.warn(rs.getMsg());
+            return new ResponseEntity<>(rs.getStatus());
+        }
+        return new ResponseEntity<>(Doc.toDto(rs.getDoc()), HttpStatus.CREATED);
     }
 
     @PostMapping("auth/doc/{id}/update")
@@ -118,7 +126,7 @@ public class DocController {
         return ResponseEntity.ok(docService.filteredDocuments(filters));
     }
 
-    @GetMapping("admin/doc/{id}/delete")
+    @DeleteMapping("admin/doc/{id}/delete")
     public ResponseEntity<HttpStatus> deleteDocById(
         Principal principal,
         @PathVariable("id") String id

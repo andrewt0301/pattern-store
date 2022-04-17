@@ -5,6 +5,7 @@ import aakrasnov.diploma.common.Filter;
 import aakrasnov.diploma.service.domain.Doc;
 import aakrasnov.diploma.service.domain.Role;
 import aakrasnov.diploma.service.domain.User;
+import aakrasnov.diploma.service.dto.AddDocRsDto;
 import aakrasnov.diploma.service.dto.UpdateRsDto;
 import aakrasnov.diploma.service.repo.DocRepo;
 import aakrasnov.diploma.service.repo.UserRepo;
@@ -31,10 +32,13 @@ public class DocServiceImpl implements DocService {
     }
 
     @Override
-    public DocDto addDoc(final DocDto docDto) {
-        return Doc.toDto(
+    public AddDocRsDto addDoc(final DocDto docDto) {
+        AddDocRsDto rs = new AddDocRsDto();
+        rs.setDoc(
             docRepo.save(Doc.fromDto(docDto))
         );
+        rs.setStatus(HttpStatus.CREATED);
+        return rs;
     }
 
     @Override

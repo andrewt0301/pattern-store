@@ -1,6 +1,6 @@
 logging:
   level:
-    org.springframework: error
+    org.springframework: debug
     org.springframework.security: debug
 
 spring:

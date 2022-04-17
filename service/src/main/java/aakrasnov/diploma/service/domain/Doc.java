@@ -33,7 +33,7 @@ public class Doc {
     @NonNull
     private Team team;
 
-    private Date timestamp;
+    private String timestamp;
 
     @NonNull
     private List<Pattern> patterns;
@@ -57,8 +57,8 @@ public class Doc {
         Doc doc = new Doc();
         doc.setId(dto.getId());
         doc.setTeam(Team.fromDto(dto.getTeam()));
-        doc.setLang(doc.getLang());
-        doc.setTimestamp(doc.getTimestamp());
+        doc.setLang(dto.getLang());
+        doc.setTimestamp(dto.getTimestamp());
         doc.setScenario(Scenario.fromDto(dto.getScenario()));
         doc.setPatterns(
             dto.getPatterns()

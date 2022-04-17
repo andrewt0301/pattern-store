@@ -1,5 +1,6 @@
 package aakrasnov.diploma.service.config.dbmigrations;
 
+import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.service.domain.Doc;
 import aakrasnov.diploma.service.domain.Pattern;
 import aakrasnov.diploma.service.domain.Role;
@@ -14,6 +15,9 @@ import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
+import java.sql.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,6 +35,8 @@ public class DatabaseInitChangeLog {
     public static final String USER_ID = "361d5d8b5bd5adf7ee8793e5";
 
     public static final String ADMIN_ID = "93e56f6b5bdddf7ee8b5bd5a";
+
+    private static final String TEAM_PRIVATE = "b5bd5adf7b5bd93e56f6d5d8";
 
     @ChangeSet(order = "001", id = "init_users", author = "genryxy")
     public void initUsers(UserRepo userRepo, PasswordEncoder passwordEncoder) {
@@ -68,8 +74,8 @@ public class DatabaseInitChangeLog {
         teamRepo.save(commonTeam());
         teamRepo.save(
             Team.builder()
-                .id(strObjId("2"))
-                .name("name2")
+                .id(strObjId(TEAM_PRIVATE))
+                .name("team2_private")
                 .creatorId(USER_ID)
                 .build()
         );
@@ -94,6 +100,7 @@ public class DatabaseInitChangeLog {
                 .id(strObjId("625748988af05121cc0d6189"))
                 .team(commonTeam())
                 .lang("java")
+                .timestamp(LocalDateTime.now().format(DocDto.DATE_FORMATTER).toString())
                 .scenario(new Scenario(Scenario.Type.MIGRATION, new HashMap<>()))
                 .patterns(
                     Collections.singletonList(

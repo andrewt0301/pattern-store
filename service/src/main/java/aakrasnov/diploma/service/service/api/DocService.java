@@ -3,6 +3,7 @@ package aakrasnov.diploma.service.service.api;
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
 import aakrasnov.diploma.service.domain.User;
+import aakrasnov.diploma.service.dto.AddDocRsDto;
 import aakrasnov.diploma.service.dto.UpdateRsDto;
 import java.util.List;
 import java.util.Optional;
@@ -21,9 +22,9 @@ public interface DocService {
     /**
      * Add a new document to the database.
      * @param docDto Document which should be added
-     * @return Added document.
+     * @return Added document and response status.
      */
-    DocDto addDoc(DocDto docDto);
+    AddDocRsDto addDoc(DocDto docDto);
 
     /**
      * Delete document by the specified id.

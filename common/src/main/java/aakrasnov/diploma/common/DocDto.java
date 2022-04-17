@@ -1,9 +1,11 @@
 package aakrasnov.diploma.common;
 
 import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -12,7 +14,12 @@ import lombok.ToString;
 @ToString(of = {"id", "lang"})
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class DocDto implements Serializable {
+    private final static String DATE_FORMAT = "yyyy:MM:dd HH:mm:ss";
+
+    public final static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
+
     private String id;
 
     private String lang;
@@ -21,7 +28,7 @@ public class DocDto implements Serializable {
 
     private TeamDto team;
 
-    private Date timestamp;
+    private String timestamp;
 
     private List<PatternDto> patterns;
 }

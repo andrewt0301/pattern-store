@@ -1,29 +1,30 @@
 package aakrasnov.diploma.client;
 
 import aakrasnov.diploma.client.domain.User;
+import aakrasnov.diploma.client.dto.AddDocRsDto;
+import aakrasnov.diploma.client.dto.DocsRsDto;
+import aakrasnov.diploma.client.dto.GetDocRsDto;
 import aakrasnov.diploma.client.dto.RsBaseDto;
+import aakrasnov.diploma.client.dto.UpdateDocRsDto;
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
-import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 public interface ClientApi {
     /**
      * Get document from common pool by id.
      * This method is available without authentication.
      * @param id Document id
-     * @return Found document in case of existence.
-     * @throws IOException In case of IO exception.
+     * @return Document and http status.
      */
-    Optional<DocDto> getDocFromCommon(String id) throws IOException;
+    GetDocRsDto getDocFromCommon(String id);
 
     /**
      * Apply passed filters to the documents from common pool.
      * @param filters Filters for applying
-     * @return Filtered documents from common pool.
+     * @return Filtered documents from common pool and http status.
      */
-    List<DocDto> filterDocsFromCommon(List<Filter> filters);
+    DocsRsDto filterDocsFromCommon(List<Filter> filters);
 
     /**
      * Get document by the specified id using passed user.
@@ -31,23 +32,25 @@ public interface ClientApi {
      * in order to get documents.
      * @param id Document id
      * @param user User identity
-     * @return Document
+     * @return Document and http status.
      */
-    Optional<DocDto> getDoc(String id, User user);
+    GetDocRsDto getDoc(String id, User user);
 
     /**
      * Delete document by the specified id.
      * @param id Document id
      * @param user User identity
+     * @return {@link org.apache.http.HttpStatus} of request and message.
      */
-    void deleteById(String id, User user);
+    RsBaseDto deleteById(String id, User user);
 
     /**
      * Add a new document.
      * @param document Document for addition
      * @param user User identity
+     * @return Added document and http status.
      */
-    void add(DocDto document, User user);
+    AddDocRsDto add(DocDto document, User user);
 
     /**
      * Update existed document by the passed document for the specified id.
@@ -56,13 +59,13 @@ public interface ClientApi {
      * @param user User identity
      * @return Updated document.
      */
-    RsBaseDto update(String id, DocDto docUpd, User user);
+    UpdateDocRsDto update(String id, DocDto docUpd, User user);
 
     /**
      * Apply passed filters to the documents.
      * @param filters Filters for applying
      * @param user User identity
-     * @return Filtered documents.
+     * @return Filtered documents and http status.
      */
-    List<DocDto> filterDocuments(List<Filter> filters, User user);
+    DocsRsDto filterDocuments(List<Filter> filters, User user);
 }
