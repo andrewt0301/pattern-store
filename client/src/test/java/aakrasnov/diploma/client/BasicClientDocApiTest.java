@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 /**
  * This test should run after starting server.
  */
-class BasicClientApiTest {
+class BasicClientDocApiTest {
     public static final String LOCALHOST = "http://localhost:8080";
 
     public static final String ADMIN_USERNAME = "admin";
@@ -54,7 +54,7 @@ class BasicClientApiTest {
 
     @Test
     public void getFromCommonById() {
-        GetDocRsDto doc = new BasicClientApi(httpClient, LOCALHOST)
+        GetDocRsDto doc = new BasicClientDocApi(httpClient, LOCALHOST)
             .getDocFromCommon(DOC_COMMON);
         MatcherAssert.assertThat(
             "Document from mongock scripts must exist",
@@ -70,7 +70,7 @@ class BasicClientApiTest {
 
     @Test
     public void getAllDocsFromCommon() {
-        DocsRsDto docs = new BasicClientApi(httpClient, LOCALHOST)
+        DocsRsDto docs = new BasicClientDocApi(httpClient, LOCALHOST)
             .filterDocsFromCommon(Collections.emptyList());
         MatcherAssert.assertThat(
             "Documents should not be null",
@@ -88,7 +88,7 @@ class BasicClientApiTest {
     public void getDocForAdmin() {
         MatcherAssert.assertThat(
             "Saved document should be obtained for admin",
-            new BasicClientApi(httpClient, LOCALHOST)
+            new BasicClientDocApi(httpClient, LOCALHOST)
                 .getDoc(
                     DOC_COMMON,
                     new User(ADMIN_USERNAME, ADMIN_PSWD)
@@ -101,7 +101,7 @@ class BasicClientApiTest {
     public void getDocWhenUserFromTeam() {
         MatcherAssert.assertThat(
             "Saved document should be obtained for user from team",
-            new BasicClientApi(httpClient, LOCALHOST)
+            new BasicClientDocApi(httpClient, LOCALHOST)
                 .getDoc(
                     DOC_COMMON,
                     new User(USER_USERNAME, USER_PSWD)
@@ -115,7 +115,7 @@ class BasicClientApiTest {
     public void deleteDocByIdForAdmin() {
         MatcherAssert.assertThat(
             "Should return OK for successful delete or if document is absent",
-            new BasicClientApi(httpClient, LOCALHOST)
+            new BasicClientDocApi(httpClient, LOCALHOST)
                 .deleteById(
                     DOC_COMMON,
                     new User(ADMIN_USERNAME, ADMIN_PSWD)
@@ -128,7 +128,7 @@ class BasicClientApiTest {
     public void returnForbiddenForDeleteByUserWhoNotAdmin() {
         MatcherAssert.assertThat(
             "Should be forbidden for not admin",
-            new BasicClientApi(httpClient, LOCALHOST)
+            new BasicClientDocApi(httpClient, LOCALHOST)
                 .deleteById(
                     DOC_COMMON,
                     new User(USER_USERNAME, USER_PSWD)
@@ -140,7 +140,7 @@ class BasicClientApiTest {
     @Test
     public void addDocumentByUser() {
         DocDto toAdd = getDoc();
-        AddDocRsDto docRs = new BasicClientApi(
+        AddDocRsDto docRs = new BasicClientDocApi(
             httpClient, LOCALHOST
         ).add(toAdd, new User(USER_USERNAME, USER_PSWD));
         MatcherAssert.assertThat(
@@ -157,7 +157,7 @@ class BasicClientApiTest {
 
     @Test
     public void filterDocsForUser() {
-        DocsRsDto docs = new BasicClientApi(httpClient, LOCALHOST)
+        DocsRsDto docs = new BasicClientDocApi(httpClient, LOCALHOST)
             .filterDocuments(
                 Collections.singletonList(
                     new Filter.Wrap("scenario.type", ScenarioDto.Type.FOR_TEST.name())
@@ -179,7 +179,7 @@ class BasicClientApiTest {
     @Test
     public void updateDoc() {
         String lang = "new lang java";
-        BasicClientApi clientApi = new BasicClientApi(httpClient, LOCALHOST);
+        BasicClientDocApi clientApi = new BasicClientDocApi(httpClient, LOCALHOST);
         GetDocRsDto docRs = clientApi.getDocFromCommon(DOC_COMMON);
         docRs.getDocDto().setLang(lang);
         UpdateDocRsDto updDoc = clientApi.update(

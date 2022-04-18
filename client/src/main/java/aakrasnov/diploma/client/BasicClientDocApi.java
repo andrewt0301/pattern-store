@@ -28,7 +28,7 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.util.EntityUtils;
 
 @Slf4j
-final class BasicClientApi implements ClientApi {
+final class BasicClientDocApi implements ClientDocApi {
 
     private final HttpClient httpClient;
 
@@ -40,7 +40,7 @@ final class BasicClientApi implements ClientApi {
      */
     private final String base;
 
-    BasicClientApi(final HttpClient httpClient, final String base) {
+    BasicClientDocApi(final HttpClient httpClient, final String base) {
         this.httpClient = httpClient;
         this.base = addSlashIfAbsent(base);
         this.gson = new Gson();

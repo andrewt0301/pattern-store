@@ -10,7 +10,7 @@ import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
 import java.util.List;
 
-public interface ClientApi {
+public interface ClientDocApi {
     /**
      * Get document from common pool by id.
      * This method is available without authentication.

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class BasicClientApiBadCredsTest {
+public class BasicClientDocApiBadCredsTest {
     private static CloseableHttpClient httpClient;
 
     @BeforeAll
@@ -28,9 +28,9 @@ public class BasicClientApiBadCredsTest {
 
     @Test
     public void emptyForNotExistedUser() {
-        GetDocRsDto rs = new BasicClientApi(httpClient, BasicClientApiTest.LOCALHOST)
+        GetDocRsDto rs = new BasicClientDocApi(httpClient, BasicClientDocApiTest.LOCALHOST)
             .getDoc(
-                BasicClientApiTest.DOC_COMMON,
+                BasicClientDocApiTest.DOC_COMMON,
                 new User("not exist", "wrong pswd")
             );
         MatcherAssert.assertThat(
