@@ -16,6 +16,6 @@ public class ScenarioDto implements Serializable {
     private Map<String, String> meta;
 
     public enum Type {
-        MIGRATION, REFACTORING, UNKNOWN
+        MIGRATION, REFACTORING, UNKNOWN, FOR_TEST
     }
 }

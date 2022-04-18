@@ -16,7 +16,7 @@ public class Scenario {
     private Map<String, String> meta;
 
     public enum Type {
-        MIGRATION, REFACTORING, UNKNOWN
+        MIGRATION, REFACTORING, UNKNOWN, FOR_TEST
     }
 
     public static ScenarioDto toDto(Scenario scenario) {

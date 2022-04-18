@@ -15,8 +15,6 @@ import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
-import java.sql.Date;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -89,8 +87,8 @@ public class DatabaseInitChangeLog {
         );
     }
 
-    @ChangeSet(order = "003", id = "init_docs_migration", author = "genryxy")
-    public void initDocsMigration(DocRepo docRepo) {
+    @ChangeSet(order = "003", id = "init_docs", author = "genryxy")
+    public void initDocs(DocRepo docRepo) {
         Map<String, String> data = ImmutableMap.of("data", "here should be json with of pattern");
         Map<String, String> meta = new HashMap<>();
         meta.put("versionFrom", "0.0.9");
@@ -131,6 +129,32 @@ public class DatabaseInitChangeLog {
                             .build(),
                         Pattern.builder()
                             .id(strObjId("2"))
+                            .authorId("1")
+                            .data(data)
+                            .meta(meta)
+                            .build()
+                    )
+                ).build()
+        );
+        Team teamRef = new Team();
+        teamRef.setName("refactoring team");
+        teamRef.setCreatorId(USER_ID);
+        teamRef.setInvitation("some invite uuid code");
+        docRepo.save(
+            Doc.builder()
+                .team(teamRef)
+                .lang("java")
+                .scenario(new Scenario(Scenario.Type.REFACTORING, new HashMap<>()))
+                .patterns(
+                    Arrays.asList(
+                        Pattern.builder()
+                            .id(strObjId("1"))
+                            .authorId("1")
+                            .data(data)
+                            .meta(meta)
+                            .build(),
+                        Pattern.builder()
+                            .id("2")
                             .authorId("1")
                             .data(data)
                             .meta(meta)
@@ -183,29 +207,27 @@ public class DatabaseInitChangeLog {
         );
     }
 
-    @ChangeSet(order = "005", id = "init_docs_refactoring", author = "genryxy")
-    public void initDocsRefactoring(DocRepo docRepo) {
+    @ChangeSet(order = "005", id = "init_docs_test", author = "genryxy")
+    public void initDocsTest(DocRepo docRepo) {
         Map<String, String> data = ImmutableMap.of("data", "some json with pattern");
         Map<String, String> meta = new HashMap<>();
         meta.put("artifactIdFrom", "artifactIdOld");
         meta.put("artifactIdTo", "artifactIdNew");
         meta.put("versionFrom", "0.0.9");
         meta.put("versionTo", "1.0.0");
+        Team teamTest = new Team();
+        teamTest.setName("test team");
+        teamTest.setCreatorId(USER_ID);
+        teamTest.setInvitation("some invite uuid code for test team");
         docRepo.save(
             Doc.builder()
-                .team(commonTeam())
+                .team(teamTest)
                 .lang("java")
-                .scenario(new Scenario(Scenario.Type.REFACTORING, new HashMap<>()))
+                .scenario(new Scenario(Scenario.Type.FOR_TEST, new HashMap<>()))
                 .patterns(
-                    Arrays.asList(
+                    Collections.singletonList(
                         Pattern.builder()
                             .id(strObjId("1"))
-                            .authorId("1")
-                            .data(data)
-                            .meta(meta)
-                            .build(),
-                        Pattern.builder()
-                            .id("2")
                             .authorId("1")
                             .data(data)
                             .meta(meta)

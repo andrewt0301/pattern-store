@@ -62,9 +62,9 @@ class BasicClientApiTest {
             Matchers.notNullValue()
         );
         MatcherAssert.assertThat(
-            "Lang for dummy document is wrong",
-            doc.getDocDto().getLang(),
-            new IsEqual<>("java")
+            "Scenario for dummy document is wrong",
+            doc.getDocDto().getScenario().getType(),
+            new IsEqual<>(ScenarioDto.Type.MIGRATION)
         );
     }
 
@@ -157,10 +157,11 @@ class BasicClientApiTest {
 
     @Test
     public void filterDocsForUser() {
+        System.out.println(ScenarioDto.Type.FOR_TEST.name());
         DocsRsDto docs = new BasicClientApi(httpClient, LOCALHOST)
             .filterDocuments(
                 Collections.singletonList(
-                    new Filter.Wrap("scenario.type", ScenarioDto.Type.REFACTORING.name())
+                    new Filter.Wrap("scenario.type", ScenarioDto.Type.FOR_TEST.name())
                 ),
                 new User(USER_USERNAME, USER_PSWD)
             );
@@ -170,7 +171,7 @@ class BasicClientApiTest {
             Matchers.notNullValue()
         );
         MatcherAssert.assertThat(
-            "Should be exactly 1 document with refactoring for user 'user'",
+            "Should be exactly 1 document with 'FOR_TEST' scenario for user 'user'",
             docs.getDocs().size(),
             new IsEqual<>(1)
         );
