@@ -14,6 +14,7 @@ import aakrasnov.diploma.service.repo.UserRepo;
 import com.github.cloudyrock.mongock.ChangeLog;
 import com.github.cloudyrock.mongock.ChangeSet;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -36,6 +37,8 @@ public class DatabaseInitChangeLog {
 
     private static final String TEAM_PRIVATE = "b5bd5adf7b5bd93e56f6d5d8";
 
+    private static final String TEAM_TEST = "aaccbbffdd11223344556677";
+
     @ChangeSet(order = "001", id = "init_users", author = "genryxy")
     public void initUsers(UserRepo userRepo, PasswordEncoder passwordEncoder) {
         userRepo.save(
@@ -44,7 +47,7 @@ public class DatabaseInitChangeLog {
                 .username("user")
                 .password(passwordEncoder.encode("user"))
                 .role(Role.USER)
-                .teams(Collections.singleton(commonTeam()))
+                .teams(Sets.newHashSet(commonTeam(), testTeam()))
                 .isActive(true)
                 .build()
         );
@@ -70,6 +73,7 @@ public class DatabaseInitChangeLog {
     @ChangeSet(order = "002", id = "init_teams", author = "genryxy")
     public void initTeams(TeamRepo teamRepo) {
         teamRepo.save(commonTeam());
+        teamRepo.save(testTeam());
         teamRepo.save(
             Team.builder()
                 .id(strObjId(TEAM_PRIVATE))
@@ -215,13 +219,9 @@ public class DatabaseInitChangeLog {
         meta.put("artifactIdTo", "artifactIdNew");
         meta.put("versionFrom", "0.0.9");
         meta.put("versionTo", "1.0.0");
-        Team teamTest = new Team();
-        teamTest.setName("test team");
-        teamTest.setCreatorId(USER_ID);
-        teamTest.setInvitation("some invite uuid code for test team");
         docRepo.save(
             Doc.builder()
-                .team(teamTest)
+                .team(testTeam())
                 .lang("java")
                 .scenario(new Scenario(Scenario.Type.FOR_TEST, new HashMap<>()))
                 .patterns(
@@ -259,6 +259,15 @@ public class DatabaseInitChangeLog {
             .name("team1_common")
             .creatorId(USER_ID)
             .build();
+    }
+
+    private static Team testTeam(){
+        Team teamTest = new Team();
+        teamTest.setId(TEAM_TEST);
+        teamTest.setName("test team");
+        teamTest.setCreatorId(USER_ID);
+        teamTest.setInvitation("some invite uuid code for test team");
+        return teamTest;
     }
 
     private static String strObjId(String id) {

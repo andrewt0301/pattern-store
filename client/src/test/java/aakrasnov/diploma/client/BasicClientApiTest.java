@@ -78,9 +78,9 @@ class BasicClientApiTest {
             Matchers.notNullValue()
         );
         MatcherAssert.assertThat(
-            "Should be exactly 2 documents from common pool",
+            "Should be exactly 1 document from common pool",
             docs.getDocs().size(),
-            new IsEqual<>(2)
+            new IsEqual<>(1)
         );
     }
 
@@ -157,7 +157,6 @@ class BasicClientApiTest {
 
     @Test
     public void filterDocsForUser() {
-        System.out.println(ScenarioDto.Type.FOR_TEST.name());
         DocsRsDto docs = new BasicClientApi(httpClient, LOCALHOST)
             .filterDocuments(
                 Collections.singletonList(
