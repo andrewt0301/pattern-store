@@ -1,13 +1,13 @@
 package aakrasnov.diploma.common;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.List;
 import lombok.Data;
 
 @Data
 public class StatisticDto implements Serializable {
     private String documentId;
-    private Map<String, UsageDto> success;
-    private Map<String, UsageDto> failure;
-    private Map<String, UsageDto> download;
+    private List<UsageDto> success;
+    private List<UsageDto> failure;
+    private List<UsageDto> download;
 }

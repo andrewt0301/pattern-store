@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 @Builder
 @Data
@@ -18,11 +19,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id", "name"})
 @ToString(of = {"id", "name"})
-@Document("teams")
+@Document(DocumentNames.TEAMS)
 public class Team {
     public static ObjectId COMMON_TEAM_ID = new ObjectId("624f6f6b5bdddf7ee83350a0");
 
-    @Id
+    @MongoId(targetType = FieldType.STRING)
     @NonNull
     private String id;
 

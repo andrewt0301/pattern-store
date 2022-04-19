@@ -1,39 +1,57 @@
-{
-  "document_id": "abab123456789123456789dd", // required
-  "success": { // required
-    "pattern_id_1": {
-      "count": 0
-    },
-    "pattern_id_2": {
-      "count": 16
-    },
-    "pattern_id_3": {
-      "count": 42
-    }
-  },
-  "failure": { // required
-    "pattern_id_1": {
-      "count": 10
-    },
-    "pattern_id_2": {
-      "count": 15
-    },
-    "pattern_id_3": {
-      "count": 7
-    }
-  },
-  "download": { // required
-    "pattern_id_1": {
-      "count": 1
-    },
-    "pattern_id_2": {
-      "count": 1
-    },
-    "pattern_id_3": {
-      "count": 1
-    },
-    "pattern_id_4": {
-      "count": 1
+[
+  {
+    // required
+    "documentId": "abab123456789123456789dd",
+    "patterns": {
+      // required
+      "success": [
+        {
+          "patternId": "pattern_id_1",
+          "count": 0
+        },
+        {
+          "patternId": "pattern_id_2",
+          "count": 16
+        },
+        {
+          "patternId": "pattern_id_3",
+          "count": 42
+        }
+      ],
+      // required,
+      "failure": [
+        {
+          "patternId": "pattern_id_1",
+          "count": 10
+        },
+        {
+          "patternId": "pattern_id_2",
+          "count": 15
+        },
+        {
+          "patternId": "pattern_id_3",
+          "count": 7
+        }
+      ],
+      // required
+      "download": [
+        {
+          "patternId": "pattern_id_1",
+          "count": 1
+        },
+        {
+          "patternId": "pattern_id_2",
+          "count": 1
+        },
+        {
+          "patternId": "pattern_id_3",
+          "count": 1
+        },
+        {
+          "patternId": "pattern_id_4",
+          "count": 1
+        }
+      ]
     }
   }
-}
+]

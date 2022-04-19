@@ -27,10 +27,12 @@ import org.bson.types.ObjectId;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * Creates the initial database setup.
+ * Create the initial database setup.
  */
 @ChangeLog(order = "001")
 public class DatabaseInitChangeLog {
+    public static final String DOC_ID = "625748988af05121cc0d6189";
+
     public static final String USER_ID = "361d5d8b5bd5adf7ee8793e5";
 
     public static final String ADMIN_ID = "93e56f6b5bdddf7ee8b5bd5a";
@@ -99,7 +101,7 @@ public class DatabaseInitChangeLog {
         meta.put("versionTo", "1.0.0");
         docRepo.save(
             Doc.builder()
-                .id(strObjId("625748988af05121cc0d6189"))
+                .id(strObjId(DOC_ID))
                 .team(commonTeam())
                 .lang("java")
                 .timestamp(LocalDateTime.now().format(DocDto.DATE_FORMATTER).toString())

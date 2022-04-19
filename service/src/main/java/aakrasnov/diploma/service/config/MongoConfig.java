@@ -4,9 +4,11 @@ import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
 import java.util.Collection;
 import java.util.Collections;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 
@@ -41,5 +43,10 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     @Override
     public Collection<String> getMappingBasePackages() {
         return Collections.singleton("aakrasnov.diploma.service");
+    }
+
+    @Bean
+    public MongoDatabase storeDb() {
+        return super.mongoClient().getDatabase(dbName);
     }
 }

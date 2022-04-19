@@ -12,7 +12,7 @@ public interface PatternService {
     Optional<PatternDto> getById(final String id);
 
     /**
-     * Add a new team to the database.
+     * Add a new pattern to the database.
      * @param patternDto Pattern which should be added
      * @return Added pattern.
      */

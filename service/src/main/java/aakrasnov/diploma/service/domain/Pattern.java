@@ -9,14 +9,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(of = {"id", "timestamp"})
-@Document("patterns")
+@Document(DocumentNames.PATTERN)
 public class Pattern {
+    @MongoId(targetType = FieldType.STRING)
     private String id;
 
     private Date timestamp;

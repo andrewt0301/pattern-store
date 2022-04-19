@@ -1,7 +1,6 @@
 package aakrasnov.diploma.service.domain;
 
 import aakrasnov.diploma.common.DocDto;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -10,17 +9,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 
 @Builder
 @Data
 @ToString(of = {"id", "lang"})
 @NoArgsConstructor
 @AllArgsConstructor
-@Document("docs")
+@Document(DocumentNames.DOCS)
 public class Doc {
-    @Id
+    @MongoId(targetType = FieldType.STRING)
     private String id;
 
     @NonNull

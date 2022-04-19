@@ -11,20 +11,21 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Builder
 @Data
 @ToString(of = {"id", "username"})
-@Document("users")
 @RequiredArgsConstructor
 @AllArgsConstructor
 @NoArgsConstructor
+@Document(DocumentNames.USERS)
 public class User implements UserDetails {
-    @Id
+    @MongoId(targetType = FieldType.STRING)
     private String id;
 
     @NonNull
