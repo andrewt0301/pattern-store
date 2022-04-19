@@ -42,7 +42,11 @@ public class StatisticServiceImpl implements StatisticService {
         docs.forEach(
             doc -> stataPtrnsRepo.save(doc.getStataPtrns())
         );
-        res.setStatisticDocs(stataDocRepo.saveAll(docs));
+        res.setStatisticDocs(
+            stataDocRepo.saveAll(docs).stream()
+                .map(StatisticDoc::toDto)
+                .collect(Collectors.toList())
+        );
         res.setStatus(HttpStatus.CREATED);
         return res;
     }

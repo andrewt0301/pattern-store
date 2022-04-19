@@ -25,6 +25,7 @@ public class StatisticDoc implements Serializable {
 
     public static StatisticDoc fromDto(StatisticDto dto) {
         StatisticDoc stata = new StatisticDoc();
+        stata.setId(dto.getId());
         stata.setDocumentId(dto.getDocumentId());
         stata.getStataPtrns().setSuccess(Usage.toListUsage(dto.getSuccess()));
         stata.getStataPtrns().setFailure(Usage.toListUsage(dto.getFailure()));
@@ -34,6 +35,7 @@ public class StatisticDoc implements Serializable {
 
     public static StatisticDto toDto(StatisticDoc stata) {
         StatisticDto dto = new StatisticDto();
+        dto.setId(stata.getId());
         dto.setDocumentId(stata.getDocumentId());
         dto.setSuccess(Usage.toListUsageDto(stata.getStataPtrns().getSuccess()));
         dto.setFailure(Usage.toListUsageDto(stata.getStataPtrns().getFailure()));

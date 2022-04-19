@@ -1,6 +1,6 @@
-package aakrasnov.diploma.client.dto;
+package aakrasnov.diploma.client.dto.stata;
 
-import aakrasnov.diploma.common.DocDto;
+import aakrasnov.diploma.client.dto.RsBaseDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -8,6 +8,5 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class AddDocRsDto extends RsBaseDto {
-    private DocDto docDto;
+public class GetDownloadDocsRsDto extends RsBaseDto {
 }

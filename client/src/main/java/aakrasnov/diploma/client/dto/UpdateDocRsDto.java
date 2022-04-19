@@ -8,7 +8,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class UpdateDocRsDto extends RsBaseDto{
+public class UpdateDocRsDto extends RsBaseDto {
     private DocDto docDto;
 }
 
