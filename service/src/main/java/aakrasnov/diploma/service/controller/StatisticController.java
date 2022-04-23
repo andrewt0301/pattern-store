@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@RequestMapping("statistic")
+@RequestMapping("${server.api}/statistic")
 @RestController
 public class StatisticController {
     @Autowired

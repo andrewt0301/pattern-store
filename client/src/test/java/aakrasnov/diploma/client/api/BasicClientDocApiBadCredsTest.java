@@ -1,4 +1,4 @@
-package aakrasnov.diploma.client;
+package aakrasnov.diploma.client.api;
 
 import aakrasnov.diploma.client.domain.User;
 import aakrasnov.diploma.client.dto.GetDocRsDto;

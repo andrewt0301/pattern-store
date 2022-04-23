@@ -15,6 +15,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
 server:
+  api: /api
   port: 8080
 
 

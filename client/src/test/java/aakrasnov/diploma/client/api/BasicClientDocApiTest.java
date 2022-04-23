@@ -1,5 +1,6 @@
-package aakrasnov.diploma.client;
+package aakrasnov.diploma.client.api;
 
+import aakrasnov.diploma.client.api.BasicClientDocApi;
 import aakrasnov.diploma.client.domain.User;
 import aakrasnov.diploma.client.dto.AddDocRsDto;
 import aakrasnov.diploma.client.dto.DocsRsDto;
@@ -28,7 +29,7 @@ import org.junit.jupiter.api.Test;
  * This test should run after starting server.
  */
 class BasicClientDocApiTest {
-    public static final String LOCALHOST = "http://localhost:8080";
+    public static final String LOCALHOST = "http://localhost:8080/api";
 
     public static final String ADMIN_USERNAME = "admin";
 

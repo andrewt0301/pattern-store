@@ -1,4 +1,4 @@
-package aakrasnov.diploma.client;
+package aakrasnov.diploma.client.api;
 
 import aakrasnov.diploma.client.domain.User;
 import aakrasnov.diploma.client.dto.AddDocRsDto;
@@ -6,6 +6,8 @@ import aakrasnov.diploma.client.dto.DocsRsDto;
 import aakrasnov.diploma.client.dto.GetDocRsDto;
 import aakrasnov.diploma.client.dto.RsBaseDto;
 import aakrasnov.diploma.client.dto.UpdateDocRsDto;
+import aakrasnov.diploma.client.http.AddSlash;
+import aakrasnov.diploma.client.http.RqExecution;
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
 import com.google.gson.Gson;
@@ -28,7 +30,7 @@ import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.util.EntityUtils;
 
 @Slf4j
-final class BasicClientDocApi implements ClientDocApi {
+public final class BasicClientDocApi implements ClientDocApi {
 
     private final HttpClient httpClient;
 
@@ -40,9 +42,9 @@ final class BasicClientDocApi implements ClientDocApi {
      */
     private final String base;
 
-    BasicClientDocApi(final HttpClient httpClient, final String base) {
+    public BasicClientDocApi(final HttpClient httpClient, final String base) {
         this.httpClient = httpClient;
-        this.base = addSlashIfAbsent(base);
+        this.base = new AddSlash(base).addIfAbsent();
         this.gson = new Gson();
     }
 
@@ -51,9 +53,8 @@ final class BasicClientDocApi implements ClientDocApi {
         HttpGet rq = new HttpGet(full(String.format("doc/%s", id)));
         GetDocRsDto res = new GetDocRsDto();
         try {
-            Optional<HttpResponse> rsp = execAnSetStatus(
-                rq, res,
-                HttpStatus.SC_OK,
+            Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
+                res,
                 String.format("Failed to get document from common pool by id '%s'", id)
             );
             if (rsp.isPresent()) {
@@ -77,9 +78,8 @@ final class BasicClientDocApi implements ClientDocApi {
         try {
             StringEntity entity = new StringEntity(gson.toJson(filters));
             rq.setEntity(entity);
-            Optional<HttpResponse> rsp = execAnSetStatus(
-                rq, res,
-                HttpStatus.SC_OK,
+            Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
+                res,
                 String.format(
                     "Failed to filter documents from common pool by filters '%s'", filters
                 )
@@ -104,9 +104,8 @@ final class BasicClientDocApi implements ClientDocApi {
         GetDocRsDto res = new GetDocRsDto();
         try {
             addBasicAuthorization(rq, user, res);
-            Optional<HttpResponse> rsp = execAnSetStatus(
-                rq, res,
-                HttpStatus.SC_OK,
+            Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
+                res,
                 String.format("Failed to get document by id '%s'", id)
             );
             if (rsp.isPresent()) {
@@ -127,9 +126,8 @@ final class BasicClientDocApi implements ClientDocApi {
         HttpDelete rq = new HttpDelete(full(String.format("admin/doc/%s/delete", id)));
         RsBaseDto res = new RsBaseDto();
         addBasicAuthorization(rq, user, res);
-        execAnSetStatus(
-            rq, res,
-            HttpStatus.SC_OK,
+        new RqExecution(httpClient, rq).execAnSetStatus(
+            res,
             String.format("Failed to delete document by id '%s'", id)
         );
         return res;
@@ -144,10 +142,10 @@ final class BasicClientDocApi implements ClientDocApi {
             addBasicAuthorization(rq, user, res);
             StringEntity entity = new StringEntity(gson.toJson(document));
             rq.setEntity(entity);
-            Optional<HttpResponse> rsp = execAnSetStatus(
-                rq, res,
-                HttpStatus.SC_CREATED,
-                String.format("Failed to add document '%s'", document)
+            Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
+                res,
+                String.format("Failed to add document '%s'", document),
+                HttpStatus.SC_CREATED
             );
             if (rsp.isPresent()) {
                 res.setDocDto(
@@ -171,9 +169,8 @@ final class BasicClientDocApi implements ClientDocApi {
             addBasicAuthorization(rq, user, res);
             StringEntity entity = new StringEntity(gson.toJson(docUpd));
             rq.setEntity(entity);
-            Optional<HttpResponse> rsp = execAnSetStatus(
-                rq, res,
-                HttpStatus.SC_OK,
+            Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
+                res,
                 String.format("Failed to update doc with id '%s' with '%s'", id, docUpd.toString())
             );
             if (rsp.isPresent()) {
@@ -198,9 +195,8 @@ final class BasicClientDocApi implements ClientDocApi {
             addBasicAuthorization(rq, user, res);
             StringEntity entity = new StringEntity(gson.toJson(filters));
             rq.setEntity(entity);
-            Optional<HttpResponse> rsp = execAnSetStatus(
-                rq, res,
-                HttpStatus.SC_OK,
+            Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
+                res,
                 String.format("Failed to filter documents by id '%s'", filters)
             );
             if (rsp.isPresent()) {
@@ -217,14 +213,7 @@ final class BasicClientDocApi implements ClientDocApi {
         return res;
     }
 
-    private static String addSlashIfAbsent(String base) {
-        if (!base.endsWith("/")) {
-            return String.format("%s/", base);
-        }
-        return base;
-    }
-
-    private static void addJsonHeaderTo(HttpPost rq) {
+    static void addJsonHeaderTo(HttpPost rq) {
         rq.addHeader("Content-type", "application/json");
     }
 
@@ -247,24 +236,4 @@ final class BasicClientDocApi implements ClientDocApi {
         return String.format("%s%s", base, uri);
     }
 
-    private Optional<HttpResponse> execAnSetStatus(
-        HttpRequestBase request, RsBaseDto res, int successStatus, String errMsg
-    ) {
-        try {
-            HttpResponse rsp = httpClient.execute(request);
-            if (rsp.getStatusLine().getStatusCode() == successStatus) {
-                res.setStatus(successStatus);
-                return Optional.of(rsp);
-            } else {
-                log.error("status: {}", rsp.getStatusLine().toString());
-                res.setStatus(rsp.getStatusLine().getStatusCode());
-                res.setMsg(rsp.getStatusLine().getReasonPhrase());
-            }
-        } catch (IOException exc) {
-            log.error(errMsg, exc);
-            res.setStatus(HttpStatus.SC_BAD_REQUEST);
-            res.setMsg(errMsg);
-        }
-        return Optional.empty();
-    }
 }

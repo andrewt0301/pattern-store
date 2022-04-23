@@ -1,4 +1,4 @@
-package aakrasnov.diploma.client;
+package aakrasnov.diploma.client.api;
 
 import aakrasnov.diploma.client.dto.stata.AddStataRsDto;
 import aakrasnov.diploma.client.dto.stata.GetDownloadDocsRsDto;

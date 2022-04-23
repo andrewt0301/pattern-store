@@ -2,6 +2,7 @@ package aakrasnov.diploma.service.config;
 
 import aakrasnov.diploma.service.domain.Role;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -20,6 +21,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${server.api}")
+    private String apiPrefix;
+
     @Autowired
     public WebSecurityConfig(
         final UserDetailsService userDetailsService,
@@ -34,8 +38,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
             .authorizeRequests()
                 .antMatchers("/actuator/**").permitAll()
-                .antMatchers("/admin/**").hasAuthority(Role.ADMIN.getAuthority())
-                .antMatchers("/auth/**").authenticated()
+                .antMatchers(String.format("%s/admin/**", apiPrefix))
+                    .hasAuthority(Role.ADMIN.getAuthority())
+                .antMatchers(String.format("%s/auth/**", apiPrefix))
+                    .authenticated()
                 .anyRequest().permitAll()
             .and()
                 .httpBasic()
