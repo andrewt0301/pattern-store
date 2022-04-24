@@ -81,7 +81,7 @@ public class DocController {
         AddDocRsDto rs = docService.addDoc(docDto);
         if (!StringUtils.isEmpty(rs.getMsg())) {
             log.warn(rs.getMsg());
-            return new ResponseEntity<>(rs.getStatus());
+            return new ResponseEntity<>(HttpStatus.valueOf(rs.getStatus()));
         }
         return new ResponseEntity<>(Doc.toDto(rs.getDoc()), HttpStatus.CREATED);
     }
@@ -97,7 +97,7 @@ public class DocController {
         if (!StringUtils.isEmpty(updRs.getMsg())) {
             log.error(updRs.getMsg());
         }
-        return new ResponseEntity<>(updDoc, updRs.getStatus());
+        return new ResponseEntity<>(updDoc, HttpStatus.valueOf(updRs.getStatus()));
     }
 
     @GetMapping("auth/docs/team/{id}")

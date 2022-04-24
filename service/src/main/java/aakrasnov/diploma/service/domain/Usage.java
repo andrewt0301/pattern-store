@@ -1,10 +1,12 @@
 package aakrasnov.diploma.service.domain;
 
-import aakrasnov.diploma.common.UsageDto;
+import aakrasnov.diploma.common.stata.UsageDto;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,15 +41,19 @@ public class Usage implements Serializable {
     }
 
     public static List<Usage> toListUsage(List<UsageDto> dtos) {
-        return dtos.stream()
+        return Optional.ofNullable(dtos).map(
+            vals -> vals.stream()
             .map(Usage::fromDto)
-            .collect(Collectors.toList());
+            .collect(Collectors.toList())
+        ).orElse(new ArrayList<>());
     }
 
     public static List<UsageDto> toListUsageDto(List<Usage> usages) {
-        return usages.stream()
+        return Optional.ofNullable(usages).map(
+            vals -> vals.stream()
             .map(Usage::toDto)
-            .collect(Collectors.toList());
+            .collect(Collectors.toList())
+        ).orElse(new ArrayList<>());
     }
 
 //    public static Map<String, Usage> toMapUsage(Map<String, UsageDto> entries) {

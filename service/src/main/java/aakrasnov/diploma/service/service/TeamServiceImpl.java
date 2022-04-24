@@ -34,21 +34,21 @@ public class TeamServiceImpl implements TeamService {
         Optional<Team> fromDb = teamRepo.findById(id);
         UpdateRsDto rs = new UpdateRsDto();
         if (!fromDb.isPresent()) {
-            rs.setStatus(HttpStatus.BAD_REQUEST);
+            rs.setStatus(HttpStatus.BAD_REQUEST.value());
             rs.setMsg(String.format("Team with id '%s' was not found", id));
             return rs;
         }
         boolean isCreator = user.getId().equals(fromDb.get().getCreatorId());
         boolean isAdmin = user.getRole().equals(Role.ADMIN);
         if (!isCreator && !isAdmin) {
-            rs.setStatus(HttpStatus.FORBIDDEN);
+            rs.setStatus(HttpStatus.FORBIDDEN.value());
             rs.setMsg("Operation is forbidden. You should be a creator or an admin");
             return rs;
         }
         teamDto.setId(id);
         Team saved = teamRepo.save(Team.fromDto(teamDto));
         teamDto.setId(saved.getId());
-        rs.setStatus(HttpStatus.OK);
+        rs.setStatus(HttpStatus.OK.value());
         return rs;
     }
 

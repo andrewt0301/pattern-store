@@ -1,13 +1,13 @@
-package aakrasnov.diploma.service.dto.stata;
+package aakrasnov.diploma.common.stata;
 
-import aakrasnov.diploma.service.dto.StatusBaseDto;
+import aakrasnov.diploma.common.RsBaseDto;
 import java.util.Map;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class GetStataMergedDocRsDto extends StatusBaseDto {
+public class GetStataMergedDocRsDto extends RsBaseDto {
     private String docId;
 
     private Map<String, Integer> success;

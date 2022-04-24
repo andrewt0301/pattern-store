@@ -1,14 +1,14 @@
 package aakrasnov.diploma.service.service.api;
 
-import aakrasnov.diploma.common.StatisticDto;
+import aakrasnov.diploma.common.stata.StatisticDto;
 import aakrasnov.diploma.service.domain.StatisticDoc;
 import aakrasnov.diploma.service.domain.StatisticPtrns;
 import aakrasnov.diploma.service.domain.Usage;
-import aakrasnov.diploma.service.dto.stata.AddStataRsDto;
-import aakrasnov.diploma.service.dto.stata.GetDownloadDocsRsDto;
+import aakrasnov.diploma.common.stata.AddStataRsDto;
+import aakrasnov.diploma.common.stata.GetDownloadDocsRsDto;
 import aakrasnov.diploma.service.dto.stata.GetStataDocRsDto;
-import aakrasnov.diploma.service.dto.stata.GetStataMergedDocRsDto;
-import aakrasnov.diploma.service.dto.stata.GetStataMergedPtrnsRsDto;
+import aakrasnov.diploma.common.stata.GetStataMergedDocRsDto;
+import aakrasnov.diploma.common.stata.GetStataMergedPtrnsRsDto;
 import aakrasnov.diploma.service.dto.stata.GetStataPtrnsRsDto;
 import java.util.List;
 import java.util.Set;

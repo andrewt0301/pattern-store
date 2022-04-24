@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
     public AddUserRsDto addUser(final User user) {
         AddUserRsDto rs = new AddUserRsDto();
         if (userRepo.findByUsername(user.getUsername()).isPresent()) {
-            rs.setStatus(HttpStatus.BAD_REQUEST);
+            rs.setStatus(HttpStatus.BAD_REQUEST.value());
             rs.setMsg(
                 String.format("User with username '%s' already exists", user.getUsername())
             );

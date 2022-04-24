@@ -46,7 +46,7 @@ public class UserController {
         AddUserRsDto rs = userService.addUser(user);
         if (!StringUtils.isEmpty(rs.getMsg())) {
             log.warn(rs.getMsg());
-            return new ResponseEntity<>(rs.getStatus());
+            return new ResponseEntity<>(HttpStatus.valueOf(rs.getStatus()));
         }
         return new ResponseEntity<>(rs.getUser(), HttpStatus.CREATED);
     }

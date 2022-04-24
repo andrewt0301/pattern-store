@@ -1,6 +1,6 @@
 package aakrasnov.diploma.client.http;
 
-import aakrasnov.diploma.client.dto.RsBaseDto;
+import aakrasnov.diploma.common.RsBaseDto;
 import java.io.IOException;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +34,7 @@ public final class RqExecution {
                 return Optional.of(rsp);
             } else {
                 log.error("status: {}", rsp.getStatusLine().toString());
+                log.error(errMsg);
                 res.setStatus(rsp.getStatusLine().getStatusCode());
                 res.setMsg(rsp.getStatusLine().getReasonPhrase());
             }

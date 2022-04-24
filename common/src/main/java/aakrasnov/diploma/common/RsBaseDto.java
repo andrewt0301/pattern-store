@@ -1,4 +1,4 @@
-package aakrasnov.diploma.client.dto;
+package aakrasnov.diploma.common;
 
 import lombok.Data;
 

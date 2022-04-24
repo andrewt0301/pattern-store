@@ -1,4 +1,4 @@
-package aakrasnov.diploma.common;
+package aakrasnov.diploma.common.stata;
 
 import java.io.Serializable;
 import java.util.List;

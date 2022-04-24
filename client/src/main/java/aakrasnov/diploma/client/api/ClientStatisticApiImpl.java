@@ -1,17 +1,16 @@
 package aakrasnov.diploma.client.api;
 
-import aakrasnov.diploma.client.dto.stata.AddStataRsDto;
-import aakrasnov.diploma.client.dto.stata.GetDownloadDocsRsDto;
-import aakrasnov.diploma.client.dto.stata.GetStataDocRsDto;
-import aakrasnov.diploma.client.dto.stata.GetStataMergedDocRsDto;
-import aakrasnov.diploma.client.dto.stata.GetStataMergedPtrnsRsDto;
-import aakrasnov.diploma.client.dto.stata.GetStataPtrnsRsDto;
+import aakrasnov.diploma.client.dto.stata.GetStataDocRs;
+import aakrasnov.diploma.client.dto.stata.GetStataPtrnsRs;
 import aakrasnov.diploma.client.http.AddSlash;
 import aakrasnov.diploma.client.http.RqExecution;
-import aakrasnov.diploma.common.StatisticDto;
+import aakrasnov.diploma.common.stata.AddStataRsDto;
+import aakrasnov.diploma.common.stata.GetDownloadDocsRsDto;
+import aakrasnov.diploma.common.stata.GetStataMergedDocRsDto;
+import aakrasnov.diploma.common.stata.GetStataMergedPtrnsRsDto;
+import aakrasnov.diploma.common.stata.StatisticDto;
 import com.google.gson.Gson;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -51,18 +50,15 @@ public class ClientStatisticApiImpl implements ClientStatisticApi {
             rq.setEntity(entity);
             Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
                 res,
-                String.format(
-                    "Failed to upload statistic '%s'", statistics
-                )
+                String.format("Failed to upload statistic '%s'", statistics),
+                HttpStatus.SC_CREATED
             );
             if (rsp.isPresent()) {
-                res.setStatistics(
-                    Arrays.asList(
-                        gson.fromJson(
-                            EntityUtils.toString(rsp.get().getEntity()),
-                            StatisticDto[].class
-                        )
-                    )
+                res.setStatisticDocs(
+                    gson.fromJson(
+                        EntityUtils.toString(rsp.get().getEntity()),
+                        AddStataRsDto.class
+                    ).getStatisticDocs()
                 );
             }
         } catch (IOException exc) {
@@ -73,7 +69,7 @@ public class ClientStatisticApiImpl implements ClientStatisticApi {
     }
 
     @Override
-    public GetStataPtrnsRsDto getStatisticForPatterns(final Set<String> patternIds) {
+    public GetStataPtrnsRs getStatisticForPatterns(final Set<String> patternIds) {
         return null;
     }
 
@@ -83,7 +79,7 @@ public class ClientStatisticApiImpl implements ClientStatisticApi {
     }
 
     @Override
-    public GetStataDocRsDto getStatisticForDoc(final String docId) {
+    public GetStataDocRs getStatisticForDoc(final String docId) {
         return null;
     }
 

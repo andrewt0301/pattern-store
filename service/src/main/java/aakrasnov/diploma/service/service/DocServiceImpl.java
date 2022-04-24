@@ -37,7 +37,7 @@ public class DocServiceImpl implements DocService {
         rs.setDoc(
             docRepo.save(Doc.fromDto(docDto))
         );
-        rs.setStatus(HttpStatus.CREATED);
+        rs.setStatus(HttpStatus.CREATED.value());
         return rs;
     }
 
@@ -51,21 +51,21 @@ public class DocServiceImpl implements DocService {
         Optional<Doc> fromDb = docRepo.findById(id);
         UpdateRsDto rs = new UpdateRsDto();
         if (!fromDb.isPresent()) {
-            rs.setStatus(HttpStatus.BAD_REQUEST);
+            rs.setStatus(HttpStatus.BAD_REQUEST.value());
             rs.setMsg(String.format("Doc with id '%s' was not found", id));
             return rs;
         }
         boolean isInTeam = user.getTeams().contains(fromDb.get().getTeam());
         boolean isAdmin = user.getRole().equals(Role.ADMIN);
         if (!isInTeam && !isAdmin) {
-            rs.setStatus(HttpStatus.FORBIDDEN);
+            rs.setStatus(HttpStatus.FORBIDDEN.value());
             rs.setMsg("Operation is forbidden. You should be in the team or an admin");
             return rs;
         }
         updDto.setId(id);
         Doc saved = docRepo.save(Doc.fromDto(updDto));
         updDto.setId(saved.getId());
-        rs.setStatus(HttpStatus.OK);
+        rs.setStatus(HttpStatus.OK.value());
         return rs;
     }
 

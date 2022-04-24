@@ -75,7 +75,7 @@ public class TeamController {
         if (!StringUtils.isEmpty(updRs.getMsg())) {
             log.error(updRs.getMsg());
         }
-        return new ResponseEntity<>(teamUpd, updRs.getStatus());
+        return new ResponseEntity<>(teamUpd, HttpStatus.valueOf(updRs.getStatus()));
     }
 
     @DeleteMapping("admin/team/{id}/delete")

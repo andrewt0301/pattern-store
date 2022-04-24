@@ -1,13 +1,13 @@
 package aakrasnov.diploma.service.service;
 
-import aakrasnov.diploma.common.StatisticDto;
+import aakrasnov.diploma.common.stata.StatisticDto;
 import aakrasnov.diploma.service.domain.StatisticDoc;
 import aakrasnov.diploma.service.domain.StatisticPtrns;
-import aakrasnov.diploma.service.dto.stata.AddStataRsDto;
-import aakrasnov.diploma.service.dto.stata.GetDownloadDocsRsDto;
+import aakrasnov.diploma.common.stata.AddStataRsDto;
+import aakrasnov.diploma.common.stata.GetDownloadDocsRsDto;
 import aakrasnov.diploma.service.dto.stata.GetStataDocRsDto;
-import aakrasnov.diploma.service.dto.stata.GetStataMergedDocRsDto;
-import aakrasnov.diploma.service.dto.stata.GetStataMergedPtrnsRsDto;
+import aakrasnov.diploma.common.stata.GetStataMergedDocRsDto;
+import aakrasnov.diploma.common.stata.GetStataMergedPtrnsRsDto;
 import aakrasnov.diploma.service.dto.stata.GetStataPtrnsRsDto;
 import aakrasnov.diploma.service.repo.stata.StatisticDocRepo;
 import aakrasnov.diploma.service.repo.stata.StatisticPtrnsRepo;
@@ -40,14 +40,17 @@ public class StatisticServiceImpl implements StatisticService {
         ).collect(Collectors.toList());
         AddStataRsDto res = new AddStataRsDto();
         docs.forEach(
-            doc -> stataPtrnsRepo.save(doc.getStataPtrns())
+            doc -> {
+                StatisticPtrns stataPtrns = stataPtrnsRepo.save(doc.getStataPtrns());
+                doc.getStataPtrns().setId(stataPtrns.getId());
+            }
         );
         res.setStatisticDocs(
             stataDocRepo.saveAll(docs).stream()
                 .map(StatisticDoc::toDto)
                 .collect(Collectors.toList())
         );
-        res.setStatus(HttpStatus.CREATED);
+        res.setStatus(HttpStatus.CREATED.value());
         return res;
     }
 
@@ -55,14 +58,14 @@ public class StatisticServiceImpl implements StatisticService {
     public GetStataPtrnsRsDto getStatisticForPatterns(final Set<String> patternIds) {
         GetStataPtrnsRsDto res = new GetStataPtrnsRsDto();
         res.setPtrnsStatas(stataPtrnsRepo.getStatisticForPtrns(patternIds));
-        res.setStatus(HttpStatus.OK);
+        res.setStatus(HttpStatus.OK.value());
         return res;
     }
 
     @Override
     public GetStataMergedPtrnsRsDto getStatisticMergedForPatterns(final Set<String> patternIds) {
         GetStataPtrnsRsDto stataPtrns = getStatisticForPatterns(patternIds);
-        if (!stataPtrns.getStatus().is2xxSuccessful()) {
+        if (!HttpStatus.valueOf(stataPtrns.getStatus()).is2xxSuccessful()) {
             GetStataMergedPtrnsRsDto res = new GetStataMergedPtrnsRsDto();
             res.setStatus(stataPtrns.getStatus());
             res.setMsg(stataPtrns.getMsg());
@@ -75,14 +78,14 @@ public class StatisticServiceImpl implements StatisticService {
     public GetStataDocRsDto getStatisticForDoc(final String docId) {
         GetStataDocRsDto res = new GetStataDocRsDto();
         res.setDocStatas(stataDocRepo.getStatisticForDoc(docId));
-        res.setStatus(HttpStatus.OK);
+        res.setStatus(HttpStatus.OK.value());
         return res;
     }
 
     @Override
     public GetStataMergedDocRsDto getStatisticUsageMergedForDoc(final String docId) {
         GetStataDocRsDto stataDoc = getStatisticForDoc(docId);
-        if (!stataDoc.getStatus().is2xxSuccessful()) {
+        if (!HttpStatus.valueOf(stataDoc.getStatus()).is2xxSuccessful()) {
             GetStataMergedDocRsDto res = new GetStataMergedDocRsDto();
             res.setDocId(docId);
             res.setStatus(stataDoc.getStatus());
@@ -103,7 +106,7 @@ public class StatisticServiceImpl implements StatisticService {
                 doc -> downloads.put(doc.get_id(), doc.getCount())
             );
         res.setDocsDownloads(downloads);
-        res.setStatus(HttpStatus.OK);
+        res.setStatus(HttpStatus.OK.value());
         return res;
     }
 
@@ -136,7 +139,7 @@ public class StatisticServiceImpl implements StatisticService {
         res.setSuccess(success);
         res.setFailure(failure);
         res.setDownload(download);
-        res.setStatus(HttpStatus.OK);
+        res.setStatus(HttpStatus.OK.value());
         return res;
     }
 }

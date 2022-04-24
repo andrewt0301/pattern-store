@@ -1,6 +1,6 @@
 package aakrasnov.diploma.service.domain;
 
-import aakrasnov.diploma.common.StatisticDto;
+import aakrasnov.diploma.common.stata.StatisticDto;
 import java.io.Serializable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,9 +27,11 @@ public class StatisticDoc implements Serializable {
         StatisticDoc stata = new StatisticDoc();
         stata.setId(dto.getId());
         stata.setDocumentId(dto.getDocumentId());
-        stata.getStataPtrns().setSuccess(Usage.toListUsage(dto.getSuccess()));
-        stata.getStataPtrns().setFailure(Usage.toListUsage(dto.getFailure()));
-        stata.getStataPtrns().setDownload(Usage.toListUsage(dto.getDownload()));
+        StatisticPtrns stataPtrns = new StatisticPtrns();
+        stataPtrns.setSuccess(Usage.toListUsage(dto.getSuccess()));
+        stataPtrns.setFailure(Usage.toListUsage(dto.getFailure()));
+        stataPtrns.setDownload(Usage.toListUsage(dto.getDownload()));
+        stata.setStataPtrns(stataPtrns);
         return stata;
     }
 
