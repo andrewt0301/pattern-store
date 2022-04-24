@@ -58,9 +58,9 @@ public final class BasicClientDocApi implements ClientDocApi {
                 String.format("Failed to get document from common pool by id '%s'", id)
             );
             if (rsp.isPresent()) {
-                res.setDocDto(
-                    gson.fromJson(EntityUtils.toString(rsp.get().getEntity()), DocDto.class)
-                );
+                String body = EntityUtils.toString(rsp.get().getEntity());
+                log.info(body);
+                res.setDocDto(gson.fromJson(body, DocDto.class));
                 return res;
             }
         } catch (IOException exc) {
@@ -85,10 +85,10 @@ public final class BasicClientDocApi implements ClientDocApi {
                 )
             );
             if (rsp.isPresent()) {
+                String body = EntityUtils.toString(rsp.get().getEntity());
+                log.info(body);
                 res.setDocs(
-                    Arrays.asList(
-                        gson.fromJson(EntityUtils.toString(rsp.get().getEntity()), DocDto[].class)
-                    )
+                    Arrays.asList(gson.fromJson(body, DocDto[].class))
                 );
             }
         } catch (IOException exc) {
@@ -109,9 +109,9 @@ public final class BasicClientDocApi implements ClientDocApi {
                 String.format("Failed to get document by id '%s'", id)
             );
             if (rsp.isPresent()) {
-                res.setDocDto(
-                    gson.fromJson(EntityUtils.toString(rsp.get().getEntity()), DocDto.class)
-                );
+                String body = EntityUtils.toString(rsp.get().getEntity());
+                log.info(body);
+                res.setDocDto(gson.fromJson(body, DocDto.class));
                 return res;
             }
         } catch (IOException exc) {
@@ -148,9 +148,9 @@ public final class BasicClientDocApi implements ClientDocApi {
                 HttpStatus.SC_CREATED
             );
             if (rsp.isPresent()) {
-                res.setDocDto(
-                    gson.fromJson(EntityUtils.toString(rsp.get().getEntity()), DocDto.class)
-                );
+                String body = EntityUtils.toString(rsp.get().getEntity());
+                log.info(body);
+                res.setDocDto(gson.fromJson(body, DocDto.class));
                 return res;
             }
         } catch (IOException exc) {
@@ -174,9 +174,9 @@ public final class BasicClientDocApi implements ClientDocApi {
                 String.format("Failed to update doc with id '%s' with '%s'", id, docUpd.toString())
             );
             if (rsp.isPresent()) {
-                res.setDocDto(
-                    gson.fromJson(EntityUtils.toString(rsp.get().getEntity()), DocDto.class)
-                );
+                String body = EntityUtils.toString(rsp.get().getEntity());
+                log.info(body);
+                res.setDocDto(gson.fromJson(body, DocDto.class));
                 return res;
             }
         } catch (IOException exc) {
@@ -200,10 +200,10 @@ public final class BasicClientDocApi implements ClientDocApi {
                 String.format("Failed to filter documents by id '%s'", filters)
             );
             if (rsp.isPresent()) {
+                String body = EntityUtils.toString(rsp.get().getEntity());
+                log.info(body);
                 res.setDocs(
-                    Arrays.asList(
-                        gson.fromJson(EntityUtils.toString(rsp.get().getEntity()), DocDto[].class)
-                    )
+                    Arrays.asList(gson.fromJson(body, DocDto[].class))
                 );
             }
         } catch (IOException exc) {
