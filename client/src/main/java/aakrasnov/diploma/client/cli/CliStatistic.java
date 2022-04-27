@@ -123,10 +123,10 @@ public class CliStatistic implements Callable<String> {
             res = getByDocId(cmd.doc, merged);
         }
         if (cmd.patterns != null) {
-            res = getByPatternsId();
+            res = getByPatternsId(cmd.patterns, merged);
         }
         if (cmd.patternsFile != null) {
-            res = getFromPatternsIdFile();
+            res = getFromPatternsIdFile(cmd.patternsFile, merged);
         }
         if (cmd.downloadsDocs != null) {
             res = clientStatistic.getDownloadsCountForDocs(
@@ -138,16 +138,17 @@ public class CliStatistic implements Callable<String> {
                 getIdsFromFile(cmd.downloadsDocsFile)
             );
         }
-        String resText = convertToPrettyIfNeed(res);
+        String resText = convertToPrettyIfNeed(res, prettyString);
         if (outFile != null) {
             Path path = Paths.get(outFile);
             try {
-                if (appendFile) {
+                if (Files.exists(path) && appendFile) {
                     Files.write(
                         path,
                         Collections.singleton(resText),
                         StandardOpenOption.APPEND
                     );
+                    System.out.println("Used append option for data to output file");
                 } else {
                     Files.write(
                         path,
@@ -155,6 +156,7 @@ public class CliStatistic implements Callable<String> {
                         StandardOpenOption.CREATE
                     );
                 }
+                System.out.printf("Data was written to the file '%s'%n", outFile);
             } catch (IOException exc) {
                 throw new StatisticFileOutputException (
                     String.format("Failed to output data to file '%s'", outFile),
@@ -177,7 +179,6 @@ public class CliStatistic implements Callable<String> {
             );
         }
         try {
-            System.out.println(new String(Files.readAllBytes(source)));
             res = clientStatistic.sendDocStatistic(
                 gson.fromJson(
                     new String(Files.readAllBytes(source)),
@@ -203,10 +204,10 @@ public class CliStatistic implements Callable<String> {
         return res;
     }
 
-    private RsBaseDto getByPatternsId() {
+    private RsBaseDto getByPatternsId(String[] patterns, boolean isMerged) {
         RsBaseDto res;
-        Set<String> ids = new HashSet<>(Arrays.asList(cmd.patterns));
-        if (merged) {
+        Set<String> ids = new HashSet<>(Arrays.asList(patterns));
+        if (isMerged) {
             res = clientStatistic.getStatisticMergedForPatterns(ids);
         } else {
             res = clientStatistic.getStatisticForPatterns(ids);
@@ -214,10 +215,10 @@ public class CliStatistic implements Callable<String> {
         return res;
     }
 
-    private RsBaseDto getFromPatternsIdFile() {
+    private RsBaseDto getFromPatternsIdFile(String patternsFile, boolean isMerged) {
         RsBaseDto res;
-        Set<String> ids = getIdsFromFile(cmd.patternsFile);
-        if (merged) {
+        Set<String> ids = getIdsFromFile(patternsFile);
+        if (isMerged) {
             res = clientStatistic.getStatisticMergedForPatterns(ids);
         } else {
             res = clientStatistic.getStatisticForPatterns(ids);
@@ -225,9 +226,9 @@ public class CliStatistic implements Callable<String> {
         return res;
     }
 
-    private String convertToPrettyIfNeed(RsBaseDto res) {
+    private String convertToPrettyIfNeed(RsBaseDto res, boolean isPretty) {
         String resText;
-        if (prettyString) {
+        if (isPretty) {
             resText = new GsonBuilder().setPrettyPrinting()
                 .create().toJson(res);
         } else {
