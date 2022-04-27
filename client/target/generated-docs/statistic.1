@@ -2,12 +2,12 @@
 .\"     Title: statistic
 .\"    Author: [see the "AUTHOR(S)" section]
 .\" Generator: Asciidoctor 2.0.10
-.\"      Date: 2022-04-27
+.\"      Date: 2022-04-28
 .\"    Manual: Statistic Manual
 .\"    Source: 
 .\"  Language: English
 .\"
-.TH "STATISTIC" "1" "2022-04-27" "" "Statistic Manual"
+.TH "STATISTIC" "1" "2022-04-28" "" "Statistic Manual"
 .ie \n(.g .ds Aq \(aq
 .el       .ds Aq '
 .ss \n[.ss] 0
@@ -31,13 +31,63 @@
 statistic \- Command for obtaining statistic about usage of documents and patterns.
 .SH "SYNOPSIS"
 .sp
-\fBstatistic\fP [\fB\-\-docId\fP=\fI<docId>\fP]
+\fBstatistic\fP [\fB\-\-appendFile\fP] [\fB\-\-merged\fP] [\fB\-\-prettyString\fP] [\fB\-\-file\fP=\fI<outFile>\fP]
+(\fB\-\-docId\fP=\fI<doc>\fP | \fB\-\-sendStataFile\fP=\fI<statisticFile>\fP |
+\fB\-\-ptrnsId\fP=\fI<patterns>\fP [\fB\-\-ptrnsId\fP=\fI<patterns>\fP]... |
+\fB\-\-ptrnsIdFile\fP=\fI<patternsFile>\fP | \fB\-\-downloadDocsId\fP=\fI<downloadsDocs>\fP
+[\fB\-\-downloadDocsId\fP=\fI<downloadsDocs>\fP]... |
+\fB\-\-downloadDocsIdFile\fP=\fI<downloadsDocsFile>\fP)
 .SH "DESCRIPTION"
 .sp
 Command for obtaining statistic about usage of documents and patterns.
 .SH "OPTIONS"
 .sp
-\fB\-\-docId\fP=\fI<docId>\fP
+\fB\-\-appendFile\fP
+.RS 4
+If the file by the specified path exists, this flag allows to append content to existed instead of creating a new one.
+.RE
+.sp
+\fB\-\-docId\fP=\fI<doc>\fP
 .RS 4
 Id of document
+.RE
+.sp
+\fB\-\-downloadDocsId\fP=\fI<downloadsDocs>\fP
+.RS 4
+Ids of docs for which it is necessary to calculate number of downloads. You can specify multiple values. For example: ... \-\-downloadDocsId doc_1 \-\-downloadDocsId doc_2 ...
+.RE
+.sp
+\fB\-\-downloadDocsIdFile\fP=\fI<downloadsDocsFile>\fP
+.RS 4
+Path to the file with doc ids. Each id should be on a new line.
+.RE
+.sp
+\fB\-\-file\fP=\fI<outFile>\fP
+.RS 4
+Path to the file with output results. If it is not used the results will be printed in the console.
+.RE
+.sp
+\fB\-\-merged, \-\-mergedStata\fP
+.RS 4
+Merge results with statistics if this flag is specified.
+.RE
+.sp
+\fB\-\-prettyString\fP
+.RS 4
+Convert got file with statistic to string.
+.RE
+.sp
+\fB\-\-ptrnsId, \-\-patternsId\fP=\fI<patterns>\fP
+.RS 4
+Ids of patterns. You can specify multiple values. For example: ... \-\-patternsId ptrn_1 \-\-patternsId ptrn_2 ...
+.RE
+.sp
+\fB\-\-ptrnsIdFile, \-\-patternsIdFile\fP=\fI<patternsFile>\fP
+.RS 4
+Path to the file with patterns ids. Each id should be on a new line.
+.RE
+.sp
+\fB\-\-sendStataFile, \-\-sendStatisticFile\fP=\fI<statisticFile>\fP
+.RS 4
+Path to the file with statistic which would be sent. The content of this file should castable to the list of StatisticDto.
 .RE

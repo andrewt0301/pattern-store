@@ -449,7 +449,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">Synopsis</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>statistic</strong> [<strong>--docId</strong>=<em>&lt;docId&gt;</em>]</p>
+<p><strong>statistic</strong> [<strong>--appendFile</strong>] [<strong>--merged</strong>] [<strong>--prettyString</strong>] [<strong>--file</strong>=<em>&lt;outFile&gt;</em>]
+          (<strong>--docId</strong>=<em>&lt;doc&gt;</em> | <strong>--sendStataFile</strong>=<em>&lt;statisticFile&gt;</em> |
+          <strong>--ptrnsId</strong>=<em>&lt;patterns&gt;</em> [<strong>--ptrnsId</strong>=<em>&lt;patterns&gt;</em>]&#8230;&#8203; |
+          <strong>--ptrnsIdFile</strong>=<em>&lt;patternsFile&gt;</em> | <strong>--downloadDocsId</strong>=<em>&lt;downloadsDocs&gt;</em>
+          [<strong>--downloadDocsId</strong>=<em>&lt;downloadsDocs&gt;</em>]&#8230;&#8203; |
+          <strong>--downloadDocsIdFile</strong>=<em>&lt;downloadsDocsFile&gt;</em>)</p>
 </div>
 </div>
 </div>
@@ -466,9 +471,45 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><strong>--docId</strong>=<em>&lt;docId&gt;</em></dt>
+<dt class="hdlist1"><strong>--appendFile</strong></dt>
+<dd>
+<p>If the file by the specified path exists, this flag allows to append content to existed instead of creating a new one.</p>
+</dd>
+<dt class="hdlist1"><strong>--docId</strong>=<em>&lt;doc&gt;</em></dt>
 <dd>
 <p>Id of document</p>
+</dd>
+<dt class="hdlist1"><strong>--downloadDocsId</strong>=<em>&lt;downloadsDocs&gt;</em></dt>
+<dd>
+<p>Ids of docs for which it is necessary to calculate number of downloads. You can specify multiple values. For example: &#8230;&#8203; --downloadDocsId doc_1 --downloadDocsId doc_2 &#8230;&#8203;</p>
+</dd>
+<dt class="hdlist1"><strong>--downloadDocsIdFile</strong>=<em>&lt;downloadsDocsFile&gt;</em></dt>
+<dd>
+<p>Path to the file with doc ids. Each id should be on a new line.</p>
+</dd>
+<dt class="hdlist1"><strong>--file</strong>=<em>&lt;outFile&gt;</em></dt>
+<dd>
+<p>Path to the file with output results. If it is not used the results will be printed in the console.</p>
+</dd>
+<dt class="hdlist1"><strong>--merged, --mergedStata</strong></dt>
+<dd>
+<p>Merge results with statistics if this flag is specified.</p>
+</dd>
+<dt class="hdlist1"><strong>--prettyString</strong></dt>
+<dd>
+<p>Convert got file with statistic to string.</p>
+</dd>
+<dt class="hdlist1"><strong>--ptrnsId, --patternsId</strong>=<em>&lt;patterns&gt;</em></dt>
+<dd>
+<p>Ids of patterns. You can specify multiple values. For example: &#8230;&#8203; --patternsId ptrn_1 --patternsId ptrn_2 &#8230;&#8203;</p>
+</dd>
+<dt class="hdlist1"><strong>--ptrnsIdFile, --patternsIdFile</strong>=<em>&lt;patternsFile&gt;</em></dt>
+<dd>
+<p>Path to the file with patterns ids. Each id should be on a new line.</p>
+</dd>
+<dt class="hdlist1"><strong>--sendStataFile, --sendStatisticFile</strong>=<em>&lt;statisticFile&gt;</em></dt>
+<dd>
+<p>Path to the file with statistic which would be sent. The content of this file should castable to the list of StatisticDto.</p>
 </dd>
 </dl>
 </div>
@@ -478,7 +519,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="footer">
 <div id="footer-text">
 Version <br>
-Last updated 2022-04-27 09:58:52 +0300
+Last updated 2022-04-28 01:16:53 +0300
 </div>
 </div>
 </body>

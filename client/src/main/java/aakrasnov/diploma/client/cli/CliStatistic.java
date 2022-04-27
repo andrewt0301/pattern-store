@@ -1,6 +1,7 @@
 package aakrasnov.diploma.client.cli;
 
 import aakrasnov.diploma.client.api.ClientStatisticApi;
+import aakrasnov.diploma.client.api.ClientStatisticApiImpl;
 import aakrasnov.diploma.client.exception.BadInputIdsFileException;
 import aakrasnov.diploma.client.exception.PatternsIdFileNotFoundException;
 import aakrasnov.diploma.client.exception.StatisticFileOutputException;
@@ -21,6 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClients;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -107,6 +110,10 @@ public class CliStatistic implements Callable<String> {
     private final ClientStatisticApi clientStatistic;
 
     private Gson gson;
+
+    public CliStatistic() {
+        this(new ClientStatisticApiImpl(HttpClients.createDefault(), "http://localhost:8080"));
+    }
 
     public CliStatistic(final ClientStatisticApi clientStatistic) {
         this.clientStatistic = clientStatistic;
