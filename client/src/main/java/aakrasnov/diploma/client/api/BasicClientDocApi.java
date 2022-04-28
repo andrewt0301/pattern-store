@@ -130,6 +130,7 @@ public final class BasicClientDocApi implements ClientDocApi {
             res,
             String.format("Failed to delete document by id '%s'", id)
         );
+        log.info(String.format("Deleted document by id '%s'", id));
         return res;
     }
 

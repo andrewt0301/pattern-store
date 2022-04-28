@@ -4,9 +4,8 @@ import com.google.gson.Gson;
 import java.io.Serializable;
 import java.util.List;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.FieldType;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
 /**
  * Database document for storing statistic about usage of patterns.
@@ -14,7 +13,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 @Data
 @Document(DocumentNames.STATISTIC_PTRNS)
 public class StatisticPtrns implements Serializable {
-    @MongoId(targetType = FieldType.STRING)
+    @Id
     private String id;
 
     private List<Usage> success;

@@ -9,9 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.FieldType;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
 @Builder
 @Data
@@ -20,7 +19,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 @AllArgsConstructor
 @Document(DocumentNames.DOCS)
 public class Doc {
-    @MongoId(targetType = FieldType.STRING)
+    @Id
     private String id;
 
     @NonNull

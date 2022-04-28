@@ -31,7 +31,55 @@
 document \- Command for interacting with documents from the database and local cache.
 .SH "SYNOPSIS"
 .sp
-\fBdocument\fP
+\fBdocument\fP [\fB\-u\fP=\fI<username>\fP \fB\-p\fP=\fI<password>\fP] [\fB\-\-keyFltr\fP=\fI<key>\fP \fB\-\-valFltr\fP=\fI<value>\fP]
+[\fB\-\-getById\fP=\fI<getDocId>\fP | \fB\-\-deleteById\fP=\fI<deleteDocId>\fP |
+\fB\-\-addDocFile\fP=\fI<addDocFile>\fP | \fB\-\-filterMode\fP | \fB\-\-getAll\fP]
 .SH "DESCRIPTION"
 .sp
 Command for interacting with documents from the database and local cache.
+.SH "OPTIONS"
+.sp
+\fB\-\-addDocFile\fP=\fI<addDocFile>\fP
+.RS 4
+Path to the file with document for addition
+.RE
+.sp
+\fB\-\-deleteById\fP=\fI<deleteDocId>\fP
+.RS 4
+Id of document for removing
+.RE
+.sp
+\fB\-\-filterMode\fP
+.RS 4
+This mode should activated for passing filters\(aq values
+.RE
+.sp
+\fB\-\-getAll\fP
+.RS 4
+Get all documents from database. If you are not authenticated, only docs from common pool will be shown. If you are successfully authenticated, all available docs for your teams will be shown.
+.RE
+.sp
+\fB\-\-getById\fP=\fI<getDocId>\fP
+.RS 4
+Id of document for obtaining
+.RE
+.sp
+\fB\-\-keyFltr, \-\-keyFilter\fP=\fI<key>\fP
+.RS 4
+Key for filter. Option \-\-filterMode should be passed.
+.RE
+.sp
+\fB\-p\fP, \fB\-\-password\fP=\fI<password>\fP
+.RS 4
+User password
+.RE
+.sp
+\fB\-u\fP, \fB\-\-username\fP=\fI<username>\fP
+.RS 4
+Username for authentication
+.RE
+.sp
+\fB\-\-valFltr, \-\-valueFlt, \-\-valFilter, \-\-valueFilter\fP=\fI<value>\fP
+.RS 4
+Value for filter. Option \-\-filterMode should be passed.
+.RE

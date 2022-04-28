@@ -14,6 +14,7 @@ import aakrasnov.diploma.service.utils.PrincipalConverter;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +41,15 @@ public class DocController {
 
     @GetMapping("doc/{id}")
     public ResponseEntity<DocDto> getDocCommonById(@PathVariable("id") String id) {
-        return docService.findById(id)
-            .filter(doc -> doc.getTeam().getId().equals(Team.COMMON_TEAM_ID.toString()))
+        Optional<DocDto> docDto = docService.findById(id);
+        return docDto.filter(doc -> doc.getTeam().getId().equals(Team.COMMON_TEAM_ID.toString()))
             .map(value -> ResponseEntity.status(HttpStatus.OK).body(value))
-            .orElseGet(() -> ResponseEntity.notFound().build());
+            .orElseGet(() -> {
+                if (docDto.isPresent()) {
+                    return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                }
+                return ResponseEntity.notFound().build();
+            });
     }
 
     @PostMapping("docs/filtered")
@@ -61,14 +67,19 @@ public class DocController {
     ) {
         User user = new PrincipalConverter(principal).toUser();
         // TODO: private docs. I think it is necessary to create set of teams who can access doc.
-        return docService.findById(id)
-            .filter(
-                doc -> user.getRole().name().equals(Role.ADMIN.name())
-                       || user.getTeams().stream().anyMatch(
-                    team -> doc.getTeam().getId().equals(team.getId())
-                )
-            ).map(value -> ResponseEntity.status(HttpStatus.OK).body(value))
-            .orElseGet(() -> ResponseEntity.notFound().build());
+        Optional<DocDto> docDto = docService.findById(id);
+        return docDto.filter(
+            doc -> user.getRole().name().equals(Role.ADMIN.name())
+                   || user.getTeams().stream().anyMatch(
+                team -> doc.getTeam().getId().equals(team.getId())
+            )
+        ).map(value -> ResponseEntity.status(HttpStatus.OK).body(value))
+        .orElseGet(() -> {
+            if (docDto.isPresent()) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+            return ResponseEntity.notFound().build();
+        });
     }
 
     @PostMapping("auth/doc")

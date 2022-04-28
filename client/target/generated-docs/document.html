@@ -449,7 +449,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">Synopsis</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>document</strong></p>
+<p><strong>document</strong> [<strong>-u</strong>=<em>&lt;username&gt;</em> <strong>-p</strong>=<em>&lt;password&gt;</em>] [<strong>--keyFltr</strong>=<em>&lt;key&gt;</em> <strong>--valFltr</strong>=<em>&lt;value&gt;</em>]
+         [<strong>--getById</strong>=<em>&lt;getDocId&gt;</em> | <strong>--deleteById</strong>=<em>&lt;deleteDocId&gt;</em> |
+         <strong>--addDocFile</strong>=<em>&lt;addDocFile&gt;</em> | <strong>--filterMode</strong> | <strong>--getAll</strong>]</p>
 </div>
 </div>
 </div>
@@ -461,11 +463,56 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_options">Options</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>--addDocFile</strong>=<em>&lt;addDocFile&gt;</em></dt>
+<dd>
+<p>Path to the file with document for addition</p>
+</dd>
+<dt class="hdlist1"><strong>--deleteById</strong>=<em>&lt;deleteDocId&gt;</em></dt>
+<dd>
+<p>Id of document for removing</p>
+</dd>
+<dt class="hdlist1"><strong>--filterMode</strong></dt>
+<dd>
+<p>This mode should activated for passing filters' values</p>
+</dd>
+<dt class="hdlist1"><strong>--getAll</strong></dt>
+<dd>
+<p>Get all documents from database. If you are not authenticated, only docs from common pool will be shown. If you are successfully authenticated, all available docs for your teams will be shown.</p>
+</dd>
+<dt class="hdlist1"><strong>--getById</strong>=<em>&lt;getDocId&gt;</em></dt>
+<dd>
+<p>Id of document for obtaining</p>
+</dd>
+<dt class="hdlist1"><strong>--keyFltr, --keyFilter</strong>=<em>&lt;key&gt;</em></dt>
+<dd>
+<p>Key for filter. Option --filterMode should be passed.</p>
+</dd>
+<dt class="hdlist1"><strong>-p</strong>, <strong>--password</strong>=<em>&lt;password&gt;</em></dt>
+<dd>
+<p>User password</p>
+</dd>
+<dt class="hdlist1"><strong>-u</strong>, <strong>--username</strong>=<em>&lt;username&gt;</em></dt>
+<dd>
+<p>Username for authentication</p>
+</dd>
+<dt class="hdlist1"><strong>--valFltr, --valueFlt, --valFilter, --valueFilter</strong>=<em>&lt;value&gt;</em></dt>
+<dd>
+<p>Value for filter. Option --filterMode should be passed.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
 Version <br>
-Last updated 2022-04-28 01:16:53 +0300
+Last updated 2022-04-28 09:10:11 +0300
 </div>
 </div>
 </body>

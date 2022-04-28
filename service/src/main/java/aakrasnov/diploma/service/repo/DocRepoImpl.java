@@ -4,6 +4,8 @@ import aakrasnov.diploma.common.Filter;
 import aakrasnov.diploma.service.domain.Doc;
 import aakrasnov.diploma.service.utils.FilterArr;
 import java.util.List;
+import java.util.stream.Collectors;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -27,9 +29,20 @@ public class DocRepoImpl implements CustomDocRepo {
             .forEach(
                 (key, vals) -> {
                     if (vals.size() == 1) {
-                        query.addCriteria(Criteria.where(key).is(vals.get(0)));
+                        if (key.toLowerCase().endsWith("id")) {
+                            query.addCriteria(Criteria.where(key)
+                                .is(new ObjectId(vals.get(0))));
+                        } else {
+                            query.addCriteria(Criteria.where(key).is(vals.get(0)));
+                        }
                     } else {
-                        query.addCriteria(Criteria.where(key).in(vals));
+                        if (key.toLowerCase().endsWith("id")) {
+                            query.addCriteria(Criteria.where(key)
+                                .in(vals.stream().map(ObjectId::new).collect(Collectors.toList()))
+                            );
+                        } else {
+                            query.addCriteria(Criteria.where(key).in(vals));
+                        }
                     }
                 }
             );

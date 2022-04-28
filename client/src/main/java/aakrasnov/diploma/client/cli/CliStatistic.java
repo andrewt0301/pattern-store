@@ -3,7 +3,7 @@ package aakrasnov.diploma.client.cli;
 import aakrasnov.diploma.client.api.ClientStatisticApi;
 import aakrasnov.diploma.client.api.ClientStatisticApiImpl;
 import aakrasnov.diploma.client.exception.BadInputIdsFileException;
-import aakrasnov.diploma.client.exception.PatternsIdFileNotFoundException;
+import aakrasnov.diploma.client.exception.InputFileNotFoundException;
 import aakrasnov.diploma.client.exception.StatisticFileOutputException;
 import aakrasnov.diploma.common.RsBaseDto;
 import aakrasnov.diploma.common.stata.DocIdDto;
@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClients;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
@@ -181,7 +180,7 @@ public class CliStatistic implements Callable<String> {
         RsBaseDto res;
         Path source = Paths.get(file);
         if (!Files.exists(source)) {
-            throw new PatternsIdFileNotFoundException(
+            throw new InputFileNotFoundException(
                 String.format("File '%s' does not exist", file)
             );
         }
@@ -247,7 +246,7 @@ public class CliStatistic implements Callable<String> {
     private static Set<String> getIdsFromFile(String file) {
         Path source = Paths.get(file);
         if (!Files.exists(source)) {
-            throw new PatternsIdFileNotFoundException(
+            throw new InputFileNotFoundException(
                 String.format("File '%s' does not exist", file)
             );
         }

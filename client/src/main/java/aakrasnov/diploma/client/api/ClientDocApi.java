@@ -68,4 +68,6 @@ public interface ClientDocApi {
      * @return Filtered documents and http status.
      */
     DocsRsDto filterDocuments(List<Filter> filters, User user);
+
+    // TODO: getAllDocs, getDocsByTeamId
 }
