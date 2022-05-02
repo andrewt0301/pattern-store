@@ -10,8 +10,8 @@ public class FilterByTeamId implements Filter {
     /**
      * Alias for common team filter.
      */
-//    public static Filter COMMON_TEAM_FILTER = new FilterByTeamId(Team.COMMON_TEAM_ID.toString());
-    public static Filter COMMON_TEAM_FILTER = new Filter.Wrap("team.name", "team1_common");
+    public static Filter COMMON_TEAM_FILTER = new FilterByTeamId(Team.COMMON_TEAM_ID.toString());
+//    public static Filter COMMON_TEAM_FILTER = new Filter.Wrap("team.name", "team1_common");
 
     private final String teamId;
 
@@ -21,7 +21,7 @@ public class FilterByTeamId implements Filter {
 
     @Override
     public String key() {
-        return "team._id";
+        return "team.id";
     }
 
     @Override

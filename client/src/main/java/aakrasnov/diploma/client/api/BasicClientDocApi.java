@@ -4,12 +4,13 @@ import aakrasnov.diploma.client.domain.User;
 import aakrasnov.diploma.client.dto.AddDocRsDto;
 import aakrasnov.diploma.client.dto.DocsRsDto;
 import aakrasnov.diploma.client.dto.GetDocRsDto;
-import aakrasnov.diploma.common.RsBaseDto;
 import aakrasnov.diploma.client.dto.UpdateDocRsDto;
 import aakrasnov.diploma.client.http.AddSlash;
+import aakrasnov.diploma.client.http.ExceptionCatcher;
 import aakrasnov.diploma.client.http.RqExecution;
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
+import aakrasnov.diploma.common.RsBaseDto;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.util.Arrays;
@@ -75,7 +76,7 @@ public final class BasicClientDocApi implements ClientDocApi {
         HttpPost rq = new HttpPost(full("docs/filtered"));
         addJsonHeaderTo(rq);
         DocsRsDto res = new DocsRsDto();
-        try {
+        new ExceptionCatcher.IOCatcher<>(() -> {
             StringEntity entity = new StringEntity(gson.toJson(filters));
             rq.setEntity(entity);
             Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
@@ -91,10 +92,27 @@ public final class BasicClientDocApi implements ClientDocApi {
                     Arrays.asList(gson.fromJson(body, DocDto[].class))
                 );
             }
-        } catch (IOException exc) {
-            log.error("Failed to convert entity", exc);
-            res.setStatus(HttpStatus.SC_BAD_REQUEST);
-        }
+        }).runAndSetFail(res);
+        return res;
+    }
+
+    @Override
+    public DocsRsDto getAllDocsFromCommon() {
+        HttpPost rq = new HttpPost(full("docs/filtered"));
+        addJsonHeaderTo(rq);
+        DocsRsDto res = new DocsRsDto();
+        new ExceptionCatcher.IOCatcher<>(() -> {
+            Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
+                res, "Failed to get all documents from common pool"
+            );
+            if (rsp.isPresent()) {
+                String body = EntityUtils.toString(rsp.get().getEntity());
+                log.info(body);
+                res.setDocs(
+                    Arrays.asList(gson.fromJson(body, DocDto[].class))
+                );
+            }
+        }).runAndSetFail(res);
         return res;
     }
 
@@ -102,7 +120,7 @@ public final class BasicClientDocApi implements ClientDocApi {
     public GetDocRsDto getDoc(final String id, final User user) {
         HttpGet rq = new HttpGet(full(String.format("auth/doc/%s", id)));
         GetDocRsDto res = new GetDocRsDto();
-        try {
+        new ExceptionCatcher.IOCatcher<>(() -> {
             addBasicAuthorization(rq, user, res);
             Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
                 res,
@@ -112,12 +130,8 @@ public final class BasicClientDocApi implements ClientDocApi {
                 String body = EntityUtils.toString(rsp.get().getEntity());
                 log.info(body);
                 res.setDocDto(gson.fromJson(body, DocDto.class));
-                return res;
             }
-        } catch (IOException exc) {
-            log.error("Failed to convert entity", exc);
-            res.setStatus(HttpStatus.SC_BAD_REQUEST);
-        }
+        }).runAndSetFail(res);
         return res;
     }
 
@@ -139,7 +153,7 @@ public final class BasicClientDocApi implements ClientDocApi {
         HttpPost rq = new HttpPost(full("auth/doc"));
         addJsonHeaderTo(rq);
         AddDocRsDto res = new AddDocRsDto();
-        try {
+        new ExceptionCatcher.IOCatcher<>(() -> {
             addBasicAuthorization(rq, user, res);
             StringEntity entity = new StringEntity(gson.toJson(document));
             rq.setEntity(entity);
@@ -152,12 +166,8 @@ public final class BasicClientDocApi implements ClientDocApi {
                 String body = EntityUtils.toString(rsp.get().getEntity());
                 log.info(body);
                 res.setDocDto(gson.fromJson(body, DocDto.class));
-                return res;
             }
-        } catch (IOException exc) {
-            log.error("Failed to convert entity", exc);
-            res.setStatus(HttpStatus.SC_BAD_REQUEST);
-        }
+        }).runAndSetFail(res);
         return res;
     }
 
@@ -166,7 +176,7 @@ public final class BasicClientDocApi implements ClientDocApi {
         HttpPost rq = new HttpPost(full(String.format("auth/doc/%s/update", id)));
         addJsonHeaderTo(rq);
         UpdateDocRsDto res = new UpdateDocRsDto();
-        try {
+        new ExceptionCatcher.IOCatcher<>(() -> {
             addBasicAuthorization(rq, user, res);
             StringEntity entity = new StringEntity(gson.toJson(docUpd));
             rq.setEntity(entity);
@@ -178,12 +188,8 @@ public final class BasicClientDocApi implements ClientDocApi {
                 String body = EntityUtils.toString(rsp.get().getEntity());
                 log.info(body);
                 res.setDocDto(gson.fromJson(body, DocDto.class));
-                return res;
             }
-        } catch (IOException exc) {
-            log.error("Failed to convert entity", exc);
-            res.setStatus(HttpStatus.SC_BAD_REQUEST);
-        }
+        }).runAndSetFail(res);
         return res;
     }
 
@@ -192,7 +198,7 @@ public final class BasicClientDocApi implements ClientDocApi {
         HttpPost rq = new HttpPost(full("auth/docs/filtered"));
         addJsonHeaderTo(rq);
         DocsRsDto res = new DocsRsDto();
-        try {
+        new ExceptionCatcher.IOCatcher<>(() -> {
             addBasicAuthorization(rq, user, res);
             StringEntity entity = new StringEntity(gson.toJson(filters));
             rq.setEntity(entity);
@@ -207,11 +213,18 @@ public final class BasicClientDocApi implements ClientDocApi {
                     Arrays.asList(gson.fromJson(body, DocDto[].class))
                 );
             }
-        } catch (IOException exc) {
-            log.error("Failed to convert entity", exc);
-            res.setStatus(HttpStatus.SC_BAD_REQUEST);
-        }
+        }).runAndSetFail(res);
         return res;
+    }
+
+    @Override
+    public DocsRsDto getAllDocsForUser(final User user) {
+        return null;
+    }
+
+    @Override
+    public DocsRsDto getDocsByTeamId(final String teamId, final User user) {
+        return null;
     }
 
     static void addJsonHeaderTo(HttpPost rq) {

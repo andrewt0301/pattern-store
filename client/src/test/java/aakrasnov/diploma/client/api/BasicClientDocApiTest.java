@@ -1,6 +1,5 @@
 package aakrasnov.diploma.client.api;
 
-import aakrasnov.diploma.client.api.BasicClientDocApi;
 import aakrasnov.diploma.client.domain.User;
 import aakrasnov.diploma.client.dto.AddDocRsDto;
 import aakrasnov.diploma.client.dto.DocsRsDto;

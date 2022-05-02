@@ -27,6 +27,12 @@ public interface ClientDocApi {
     DocsRsDto filterDocsFromCommon(List<Filter> filters);
 
     /**
+     * Get all documents from db from common pool.
+     * @return All documents from common pool.
+     */
+    DocsRsDto getAllDocsFromCommon();
+
+    /**
      * Get document by the specified id using passed user.
      * User should be authenticated and have access to the document
      * in order to get documents.
@@ -69,5 +75,20 @@ public interface ClientDocApi {
      */
     DocsRsDto filterDocuments(List<Filter> filters, User user);
 
-    // TODO: getAllDocs, getDocsByTeamId
+    /**
+     * Get all documents available for passed user from db.
+     * For admin all documents should be returned.
+     * @param user User identity
+     * @return All documents which are available for passed user.
+     */
+    DocsRsDto getAllDocsForUser(User user);
+
+    /**
+     * Get all docs which connected to the specified team.
+     * The user must be a member of the team.
+     * @param teamId Team id
+     * @param user User identity
+     * @return All docs for the specified team, which is one of user's team.
+     */
+    DocsRsDto getDocsByTeamId(String teamId, User user);
 }
