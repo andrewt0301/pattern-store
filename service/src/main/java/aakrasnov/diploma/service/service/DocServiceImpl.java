@@ -64,7 +64,7 @@ public class DocServiceImpl implements DocService {
         }
         updDto.setId(id);
         Doc saved = docRepo.save(Doc.fromDto(updDto));
-        updDto.setId(saved.getId());
+        updDto.setId(saved.getId().toHexString());
         rs.setStatus(HttpStatus.OK.value());
         return rs;
     }

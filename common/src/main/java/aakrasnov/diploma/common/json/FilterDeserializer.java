@@ -16,7 +16,6 @@ public class FilterDeserializer extends JsonDeserializer<Filter> {
     ) throws IOException {
         ObjectCodec oc = jsonParser.getCodec();
         JsonNode node = oc.readTree(jsonParser);
-        System.out.println(node);
         return new Filter.Wrap(node.get("key").asText(), node.get("value").asText());
     }
 }

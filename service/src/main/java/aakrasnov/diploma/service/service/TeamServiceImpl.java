@@ -47,7 +47,7 @@ public class TeamServiceImpl implements TeamService {
         }
         teamDto.setId(id);
         Team saved = teamRepo.save(Team.fromDto(teamDto));
-        teamDto.setId(saved.getId());
+        teamDto.setId(saved.getId().toHexString());
         rs.setStatus(HttpStatus.OK.value());
         return rs;
     }

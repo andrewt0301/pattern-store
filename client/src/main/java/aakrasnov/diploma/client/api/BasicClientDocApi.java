@@ -12,7 +12,6 @@ import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
 import aakrasnov.diploma.common.RsBaseDto;
 import com.google.gson.Gson;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -53,7 +52,7 @@ public final class BasicClientDocApi implements ClientDocApi {
     public GetDocRsDto getDocFromCommon(final String id) {
         HttpGet rq = new HttpGet(full(String.format("doc/%s", id)));
         GetDocRsDto res = new GetDocRsDto();
-        try {
+        new ExceptionCatcher.IOCatcher<>(() -> {
             Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
                 res,
                 String.format("Failed to get document from common pool by id '%s'", id)
@@ -62,12 +61,8 @@ public final class BasicClientDocApi implements ClientDocApi {
                 String body = EntityUtils.toString(rsp.get().getEntity());
                 log.info(body);
                 res.setDocDto(gson.fromJson(body, DocDto.class));
-                return res;
             }
-        } catch (IOException exc) {
-            log.error("Failed to convert entity", exc);
-            res.setStatus(HttpStatus.SC_BAD_REQUEST);
-        }
+        }).runAndSetFail(res);
         return res;
     }
 
@@ -144,7 +139,9 @@ public final class BasicClientDocApi implements ClientDocApi {
             res,
             String.format("Failed to delete document by id '%s'", id)
         );
-        log.info(String.format("Deleted document by id '%s'", id));
+        if (res.getStatus() == HttpStatus.SC_OK) {
+            log.info(String.format("Deleted document by id '%s'", id));
+        }
         return res;
     }
 

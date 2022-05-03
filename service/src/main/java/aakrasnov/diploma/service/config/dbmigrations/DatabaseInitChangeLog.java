@@ -35,7 +35,25 @@ public class DatabaseInitChangeLog {
 
     public static final String USER_ID = "361d5d8b5bd5adf7ee8793e5";
 
+    public static final String USER_OTHER_TEAMS_ID = "123321123321123321123321";
+
     public static final String ADMIN_ID = "93e56f6b5bdddf7ee8b5bd5a";
+
+    static final String PATTERN_1_ID = "111111111111111111111111";
+
+    static final String PATTERN_2_ID = "222222222222222222222222";
+
+    static final String PATTERN_3_ID = "333333333333333333333333";
+
+    static final String PATTERN_4_ID = "444444444444444444444444";
+
+    static final String PATTERN_5_ID = "555555555555555555555555";
+
+    static final String PATTERN_6_ID = "666666666666666666666666";
+
+    static final String PATTERN_7_ID = "777777777777777777777777";
+
+    static final String PATTERN_8_ID = "888888888888888888888888";
 
     private static final String TEAM_PRIVATE = "b5bd5adf7b5bd93e56f6d5d8";
 
@@ -45,28 +63,31 @@ public class DatabaseInitChangeLog {
     public void initUsers(UserRepo userRepo, PasswordEncoder passwordEncoder) {
         userRepo.save(
             User.builder()
-                .id(strObjId(USER_ID))
+                .id(new ObjectId(USER_ID))
                 .username("user")
                 .password(passwordEncoder.encode("user"))
                 .role(Role.USER)
-                .teams(Sets.newHashSet(commonTeam(), testTeam()))
+                .teams(Sets.newHashSet(commonTeam(), testTeam(), refactoringTeam()))
                 .isActive(true)
                 .build()
         );
         userRepo.save(
             User.builder()
-                .id(strObjId("2"))
+                .id(new ObjectId(ADMIN_ID))
+                .username("admin")
+                .password(passwordEncoder.encode("admin"))
+                .role(Role.ADMIN)
+                .teams(Sets.newHashSet(commonTeam()))
+                .isActive(true)
+                .build()
+        );
+        userRepo.save(
+            User.builder()
+                .id(new ObjectId(USER_OTHER_TEAMS_ID))
                 .username("username")
                 .password(passwordEncoder.encode("username"))
                 .role(Role.USER)
-                .isActive(true)
-                .build()
-        );
-        userRepo.save(
-            User.builder()
-                .username("123")
-                .password(passwordEncoder.encode("123"))
-                .role(Role.USER)
+                .teams(Sets.newHashSet(commonTeam(), otherTeamPrivate()))
                 .isActive(true)
                 .build()
         );
@@ -78,16 +99,16 @@ public class DatabaseInitChangeLog {
         teamRepo.save(testTeam());
         teamRepo.save(
             Team.builder()
-                .id(strObjId(TEAM_PRIVATE))
+                .id(new ObjectId(TEAM_PRIVATE))
                 .name("team2_private")
-                .creatorId(USER_ID)
+                .creatorId(new ObjectId(USER_OTHER_TEAMS_ID))
                 .build()
         );
         teamRepo.save(
             Team.builder()
-                .id("3")
+                .id(new ObjectId("bbbbbbbbbbbbbbbbbbbbbbbb"))
                 .name("name3")
-                .creatorId(USER_ID)
+                .creatorId(new ObjectId(USER_OTHER_TEAMS_ID))
                 .invitation("invit-uuid-name3")
                 .build()
         );
@@ -101,7 +122,7 @@ public class DatabaseInitChangeLog {
         meta.put("versionTo", "1.0.0");
         docRepo.save(
             Doc.builder()
-                .id(strObjId(DOC_ID))
+                .id(new ObjectId(DOC_ID))
                 .team(commonTeam())
                 .lang("java")
                 .timestamp(LocalDateTime.now().format(DocDto.DATE_FORMATTER).toString())
@@ -109,8 +130,8 @@ public class DatabaseInitChangeLog {
                 .patterns(
                     Collections.singletonList(
                         Pattern.builder()
-                            .id(strObjId("1"))
-                            .authorId("1")
+                            .id(new ObjectId(PATTERN_8_ID))
+                            .authorId(new ObjectId(USER_ID))
                             .data(data)
                             .meta(meta)
                             .build()
@@ -119,49 +140,42 @@ public class DatabaseInitChangeLog {
         );
         docRepo.save(
             Doc.builder()
-                .team(
-                    Team.builder().id("2")
-                        .creatorId("2")
-                        .name("team2").build()
-                ).lang("java")
+                .team(otherTeamPrivate())
+                .lang("java")
                 .scenario(new Scenario(Scenario.Type.MIGRATION, new HashMap<>()))
                 .patterns(
                     Arrays.asList(
                         Pattern.builder()
-                            .id(strObjId("1"))
-                            .authorId("1")
+                            .id(new ObjectId(PATTERN_6_ID))
+                            .authorId(new ObjectId(USER_ID))
                             .data(data)
                             .meta(meta)
                             .build(),
                         Pattern.builder()
-                            .id(strObjId("2"))
-                            .authorId("1")
+                            .id(new ObjectId(PATTERN_7_ID))
+                            .authorId(new ObjectId(USER_ID))
                             .data(data)
                             .meta(meta)
                             .build()
                     )
                 ).build()
         );
-        Team teamRef = new Team();
-        teamRef.setName("refactoring team");
-        teamRef.setCreatorId(USER_ID);
-        teamRef.setInvitation("some invite uuid code");
         docRepo.save(
             Doc.builder()
-                .team(teamRef)
+                .team(refactoringTeam())
                 .lang("java")
                 .scenario(new Scenario(Scenario.Type.REFACTORING, new HashMap<>()))
                 .patterns(
                     Arrays.asList(
                         Pattern.builder()
-                            .id(strObjId("1"))
-                            .authorId("1")
+                            .id(new ObjectId(PATTERN_4_ID))
+                            .authorId(new ObjectId(USER_ID))
                             .data(data)
                             .meta(meta)
                             .build(),
                         Pattern.builder()
-                            .id("2")
-                            .authorId("1")
+                            .id(new ObjectId(PATTERN_5_ID))
+                            .authorId(new ObjectId(USER_ID))
                             .data(data)
                             .meta(meta)
                             .build()
@@ -178,16 +192,16 @@ public class DatabaseInitChangeLog {
         meta.put("versionTo", "1.0.0");
         patternRepo.save(
             Pattern.builder()
-                .id(strObjId("1"))
-                .authorId("1")
+                .id(new ObjectId(PATTERN_1_ID))
+                .authorId(new ObjectId(USER_ID))
                 .data(data)
                 .meta(meta)
                 .build()
         );
         patternRepo.save(
             Pattern.builder()
-                .id(strObjId("2"))
-                .authorId("1")
+                .id(new ObjectId(PATTERN_2_ID))
+                .authorId(new ObjectId(USER_ID))
                 .data(data)
                 .meta(meta)
                 .build()
@@ -205,8 +219,8 @@ public class DatabaseInitChangeLog {
         meta3.put("versionTo", "2.0.1");
         patternRepo.save(
             Pattern.builder()
-                .id(strObjId("3"))
-                .authorId("2")
+                .id(new ObjectId(PATTERN_3_ID))
+                .authorId(new ObjectId(USER_ID))
                 .data(data3)
                 .meta(meta3)
                 .build()
@@ -229,8 +243,8 @@ public class DatabaseInitChangeLog {
                 .patterns(
                     Collections.singletonList(
                         Pattern.builder()
-                            .id(strObjId("1"))
-                            .authorId("1")
+                            .id(new ObjectId("222222111111111111111111"))
+                            .authorId(new ObjectId(USER_ID))
                             .data(data)
                             .meta(meta)
                             .build()
@@ -245,7 +259,7 @@ public class DatabaseInitChangeLog {
         teams.add(commonTeam());
         userRepo.save(
             User.builder()
-                .id(strObjId(ADMIN_ID))
+                .id(new ObjectId(ADMIN_ID))
                 .username("admin")
                 .password(passwordEncoder.encode("admin"))
                 .role(Role.ADMIN)
@@ -257,27 +271,35 @@ public class DatabaseInitChangeLog {
 
     private static Team commonTeam() {
         return Team.builder()
-            .id(strObjId(Team.COMMON_TEAM_ID.toString()))
+            .id(Team.COMMON_TEAM_ID)
             .name("team1_common")
-            .creatorId(USER_ID)
+            .creatorId(new ObjectId(USER_ID))
             .build();
     }
 
-    private static Team testTeam(){
+    private static Team testTeam() {
         Team teamTest = new Team();
-        teamTest.setId(TEAM_TEST);
+        teamTest.setId(new ObjectId(TEAM_TEST));
         teamTest.setName("test team");
-        teamTest.setCreatorId(USER_ID);
+        teamTest.setCreatorId(new ObjectId(USER_ID));
         teamTest.setInvitation("some invite uuid code for test team");
         return teamTest;
     }
 
-    private static String strObjId(String id) {
-        if (id.length() > 2) {
-            System.out.println("--------------tmp----------------");
-            System.out.println(new ObjectId(id).toHexString());
-            return new ObjectId(id).toString();
-        }
-        return id;
+    private static Team refactoringTeam() {
+        Team teamRef = new Team();
+        teamRef.setId(new ObjectId("eeeaaadddbbbccc111222333"));
+        teamRef.setName("refactoring team");
+        teamRef.setCreatorId(new ObjectId(USER_ID));
+        teamRef.setInvitation("some invite uuid code");
+        return teamRef;
+    }
+
+    private static Team otherTeamPrivate() {
+        return Team.builder()
+            .id(new ObjectId(TEAM_PRIVATE))
+            .name("team2_private")
+            .creatorId(new ObjectId(USER_OTHER_TEAMS_ID))
+            .build();
     }
 }

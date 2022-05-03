@@ -1,23 +1,27 @@
 package aakrasnov.diploma.service.service;
 
-import aakrasnov.diploma.common.stata.StatisticDto;
-import aakrasnov.diploma.service.domain.StatisticDoc;
-import aakrasnov.diploma.service.domain.StatisticPtrns;
 import aakrasnov.diploma.common.stata.AddStataRsDto;
 import aakrasnov.diploma.common.stata.GetDownloadDocsRsDto;
-import aakrasnov.diploma.service.dto.stata.GetStataDocRsDto;
+import aakrasnov.diploma.common.stata.GetStataDocRsDto;
 import aakrasnov.diploma.common.stata.GetStataMergedDocRsDto;
 import aakrasnov.diploma.common.stata.GetStataMergedPtrnsRsDto;
-import aakrasnov.diploma.service.dto.stata.GetStataPtrnsRsDto;
+import aakrasnov.diploma.common.stata.GetStataPtrnsRsDto;
+import aakrasnov.diploma.common.stata.StatisticDocDto;
+import aakrasnov.diploma.common.stata.StatisticDto;
+import aakrasnov.diploma.common.stata.StatisticPtrnsDto;
+import aakrasnov.diploma.service.domain.StatisticDoc;
+import aakrasnov.diploma.service.domain.StatisticPtrns;
 import aakrasnov.diploma.service.repo.stata.StatisticDocRepo;
 import aakrasnov.diploma.service.repo.stata.StatisticPtrnsRepo;
 import aakrasnov.diploma.service.service.api.StatisticService;
 import aakrasnov.diploma.service.utils.MergeUsage;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 
 public class StatisticServiceImpl implements StatisticService {
@@ -57,7 +61,11 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public GetStataPtrnsRsDto getStatisticForPatterns(final Set<String> patternIds) {
         GetStataPtrnsRsDto res = new GetStataPtrnsRsDto();
-        res.setPtrnsStatas(stataPtrnsRepo.getStatisticForPtrns(patternIds));
+        res.setPtrnsStatas(
+            stataPtrnsRepo.getStatisticForPtrns(toObjectIds(patternIds))
+                .stream().map(StatisticPtrns::toDto)
+                .collect(Collectors.toList())
+        );
         res.setStatus(HttpStatus.OK.value());
         return res;
     }
@@ -77,7 +85,11 @@ public class StatisticServiceImpl implements StatisticService {
     @Override
     public GetStataDocRsDto getStatisticForDoc(final String docId) {
         GetStataDocRsDto res = new GetStataDocRsDto();
-        res.setDocStatas(stataDocRepo.getStatisticForDoc(docId));
+        res.setDocStatas(
+            stataDocRepo.getStatisticForDoc(new ObjectId(docId))
+                .stream().map(StatisticDoc::toDocDto)
+                .collect(Collectors.toList())
+        );
         res.setStatus(HttpStatus.OK.value());
         return res;
     }
@@ -101,7 +113,7 @@ public class StatisticServiceImpl implements StatisticService {
     public GetDownloadDocsRsDto getDownloadsCountForDocs(final Set<String> docIds) {
         GetDownloadDocsRsDto res = new GetDownloadDocsRsDto();
         Map<String, Integer> downloads = new HashMap<>();
-        stataDocRepo.getDownloadsCountForDocs(docIds)
+        stataDocRepo.getDownloadsCountForDocs(toObjectIds(docIds))
             .forEach(
                 doc -> downloads.put(doc.get_id(), doc.getCount())
             );
@@ -110,10 +122,10 @@ public class StatisticServiceImpl implements StatisticService {
         return res;
     }
 
-    private static GetStataMergedDocRsDto mergeDocStata(final List<StatisticDoc> docStatas) {
+    private static GetStataMergedDocRsDto mergeDocStata(final List<StatisticDocDto> docStatas) {
         GetStataMergedDocRsDto res = new GetStataMergedDocRsDto();
         GetStataMergedPtrnsRsDto mergedPtrns = mergePtrnsStata(
-            docStatas.stream().map(StatisticDoc::getStataPtrns).collect(Collectors.toList())
+            docStatas.stream().map(StatisticDocDto::getStataPtrns).collect(Collectors.toList())
         );
         res.setSuccess(mergedPtrns.getSuccess());
         res.setFailure(mergedPtrns.getFailure());
@@ -123,7 +135,7 @@ public class StatisticServiceImpl implements StatisticService {
     }
 
     private static GetStataMergedPtrnsRsDto mergePtrnsStata(
-        final List<StatisticPtrns> ptrnsStatas
+        final List<StatisticPtrnsDto> ptrnsStatas
     ) {
         GetStataMergedPtrnsRsDto res = new GetStataMergedPtrnsRsDto();
         Map<String, Integer> success = new HashMap<>();
@@ -141,5 +153,10 @@ public class StatisticServiceImpl implements StatisticService {
         res.setDownload(download);
         res.setStatus(HttpStatus.OK.value());
         return res;
+    }
+
+    private Set<ObjectId> toObjectIds(Collection<String> ids) {
+        return ids.stream().map(ObjectId::new)
+            .collect(Collectors.toSet());
     }
 }

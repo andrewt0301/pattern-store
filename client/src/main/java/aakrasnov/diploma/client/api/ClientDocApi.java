@@ -4,10 +4,10 @@ import aakrasnov.diploma.client.domain.User;
 import aakrasnov.diploma.client.dto.AddDocRsDto;
 import aakrasnov.diploma.client.dto.DocsRsDto;
 import aakrasnov.diploma.client.dto.GetDocRsDto;
-import aakrasnov.diploma.common.RsBaseDto;
 import aakrasnov.diploma.client.dto.UpdateDocRsDto;
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
+import aakrasnov.diploma.common.RsBaseDto;
 import java.util.List;
 
 public interface ClientDocApi {

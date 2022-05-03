@@ -1,14 +1,15 @@
 package aakrasnov.diploma.client.api;
 
-import aakrasnov.diploma.client.dto.stata.GetStataDocRs;
-import aakrasnov.diploma.client.dto.stata.GetStataPtrnsRs;
 import aakrasnov.diploma.client.http.AddSlash;
+import aakrasnov.diploma.client.http.ExceptionCatcher;
 import aakrasnov.diploma.client.http.RqExecution;
 import aakrasnov.diploma.common.stata.AddStataRsDto;
 import aakrasnov.diploma.common.stata.DocIdDto;
 import aakrasnov.diploma.common.stata.GetDownloadDocsRsDto;
+import aakrasnov.diploma.common.stata.GetStataDocRsDto;
 import aakrasnov.diploma.common.stata.GetStataMergedDocRsDto;
 import aakrasnov.diploma.common.stata.GetStataMergedPtrnsRsDto;
+import aakrasnov.diploma.common.stata.GetStataPtrnsRsDto;
 import aakrasnov.diploma.common.stata.StatisticDto;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class ClientStatisticApiImpl implements ClientStatisticApi {
         HttpPost rq = new HttpPost(full("statistic"));
         BasicClientDocApi.addJsonHeaderTo(rq);
         AddStataRsDto res = new AddStataRsDto();
-        try {
+        new ExceptionCatcher.IOCatcher<>(() -> {
             StringEntity entity = new StringEntity(gson.toJson(statistics));
             rq.setEntity(entity);
             Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
@@ -61,19 +62,16 @@ public class ClientStatisticApiImpl implements ClientStatisticApi {
                     gson.fromJson(body, AddStataRsDto.class).getStatisticDocs()
                 );
             }
-        } catch (IOException exc) {
-            log.error("Failed to convert entity", exc);
-            res.setStatus(HttpStatus.SC_BAD_REQUEST);
-        }
+        }).runAndSetFail(res);
         return res;
     }
 
     @Override
-    public GetStataPtrnsRs getStatisticForPatterns(final Set<String> patternIds) {
+    public GetStataPtrnsRsDto getStatisticForPatterns(final Set<String> patternIds) {
         HttpPost rq = new HttpPost(full("statistic/patterns/usage"));
         BasicClientDocApi.addJsonHeaderTo(rq);
-        GetStataPtrnsRs res = new GetStataPtrnsRs();
-        try {
+        GetStataPtrnsRsDto res = new GetStataPtrnsRsDto();
+        new ExceptionCatcher.IOCatcher<>(() -> {
             StringEntity entity = new StringEntity(gson.toJson(patternIds));
             rq.setEntity(entity);
             Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
@@ -85,13 +83,10 @@ public class ClientStatisticApiImpl implements ClientStatisticApi {
                 String body = EntityUtils.toString(rsp.get().getEntity());
                 log.info(body);
                 res.setPtrnsStatas(
-                    gson.fromJson(body, GetStataPtrnsRs.class).getPtrnsStatas()
+                    gson.fromJson(body, GetStataPtrnsRsDto.class).getPtrnsStatas()
                 );
             }
-        } catch (IOException exc) {
-            log.error("Failed to convert entity", exc);
-            res.setStatus(HttpStatus.SC_BAD_REQUEST);
-        }
+        }).runAndSetFail(res);
         return res;
     }
 
@@ -121,11 +116,11 @@ public class ClientStatisticApiImpl implements ClientStatisticApi {
     }
 
     @Override
-    public GetStataDocRs getStatisticForDoc(final DocIdDto docIdDto) {
+    public GetStataDocRsDto getStatisticForDoc(final DocIdDto docIdDto) {
         HttpPost rq = new HttpPost(full("statistic/doc/usage"));
         BasicClientDocApi.addJsonHeaderTo(rq);
-        GetStataDocRs res = new GetStataDocRs();
-        try {
+        GetStataDocRsDto res = new GetStataDocRsDto();
+        new ExceptionCatcher.IOCatcher<>(() -> {
             StringEntity entity = new StringEntity(gson.toJson(docIdDto));
             rq.setEntity(entity);
             Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
@@ -137,13 +132,10 @@ public class ClientStatisticApiImpl implements ClientStatisticApi {
                 String body = EntityUtils.toString(rsp.get().getEntity());
                 log.info(body);
                 res.setDocStatas(
-                    gson.fromJson(body, GetStataDocRs.class).getDocStatas()
+                    gson.fromJson(body, GetStataDocRsDto.class).getDocStatas()
                 );
             }
-        } catch (IOException exc) {
-            log.error("Failed to convert entity", exc);
-            res.setStatus(HttpStatus.SC_BAD_REQUEST);
-        }
+        }).runAndSetFail(res);
         return res;
     }
 

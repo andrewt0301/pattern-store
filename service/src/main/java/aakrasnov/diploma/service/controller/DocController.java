@@ -71,7 +71,7 @@ public class DocController {
         return docDto.filter(
             doc -> user.getRole().name().equals(Role.ADMIN.name())
                    || user.getTeams().stream().anyMatch(
-                team -> doc.getTeam().getId().equals(team.getId())
+                team -> doc.getTeam().getId().equals(team.getId().toHexString())
             )
         ).map(value -> ResponseEntity.status(HttpStatus.OK).body(value))
         .orElseGet(() -> {
@@ -117,7 +117,10 @@ public class DocController {
         @PathVariable("id") String id
     ) {
         User user = new PrincipalConverter(principal).toUser();
-        if (user.getTeams().stream().noneMatch(team -> id.equals(team.getId()))) {
+        if (
+            user.getTeams().stream()
+                .noneMatch(team -> id.equals(team.getId().toHexString()))
+        ) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<>(
@@ -133,7 +136,7 @@ public class DocController {
     ) {
         User user = new PrincipalConverter(principal).toUser();
         user.getTeams().forEach(
-            team -> filters.add(new FilterByTeamId(team.getId()))
+            team -> filters.add(new FilterByTeamId(team.getId().toString()))
         );
         filters.add(FilterByTeamId.COMMON_TEAM_FILTER);
         return ResponseEntity.ok(docService.filteredDocuments(filters));

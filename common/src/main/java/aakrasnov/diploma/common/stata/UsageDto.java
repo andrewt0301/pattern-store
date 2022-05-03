@@ -5,6 +5,7 @@ import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Data
 @NoArgsConstructor
@@ -15,6 +16,7 @@ public class UsageDto implements Serializable {
      */
     private int count;
 
+    @NonNull
     private String patternId;
 
     private Map<String, String> meta;

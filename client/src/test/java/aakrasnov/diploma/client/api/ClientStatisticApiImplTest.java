@@ -1,11 +1,11 @@
 package aakrasnov.diploma.client.api;
 
-import aakrasnov.diploma.client.dto.stata.GetStataDocRs;
-import aakrasnov.diploma.client.dto.stata.GetStataPtrnsRs;
 import aakrasnov.diploma.common.stata.AddStataRsDto;
 import aakrasnov.diploma.common.stata.DocIdDto;
 import aakrasnov.diploma.common.stata.GetDownloadDocsRsDto;
+import aakrasnov.diploma.common.stata.GetStataDocRsDto;
 import aakrasnov.diploma.common.stata.GetStataMergedDocRsDto;
+import aakrasnov.diploma.common.stata.GetStataPtrnsRsDto;
 import aakrasnov.diploma.common.stata.StatisticDto;
 import aakrasnov.diploma.common.stata.UsageDto;
 import com.google.common.collect.ImmutableSet;
@@ -29,6 +29,10 @@ import org.junit.jupiter.api.Test;
 class ClientStatisticApiImplTest {
     public static final String LOCALHOST = "http://localhost:8080/api";
 
+    static final String PATTERN_1_ID = "111111111111111111111111";
+
+    static final String PATTERN_2_ID = "222222222222222222222222";
+
     private static CloseableHttpClient httpClient;
 
     @BeforeAll
@@ -45,7 +49,7 @@ class ClientStatisticApiImplTest {
     void sendStatisticAboutDocs() {
         List<StatisticDto> toSend = new ArrayList<>();
         StatisticDto stata = new StatisticDto();
-        String ptrnId = "pattern_id_test_add";
+        String ptrnId = "addd0caddd0caddd0c000001";
         stata.setDocumentId(BasicClientDocApiTest.DOC_COMMON);
         stata.setSuccess(null);
         stata.setFailure(new ArrayList<>());
@@ -72,10 +76,10 @@ class ClientStatisticApiImplTest {
 
     @Test
     void getStatisticByPatternsId() {
-        String frst = "ptrn_1";
-        String scnd = "ptrn_2";
+        String frst = PATTERN_1_ID;
+        String scnd = PATTERN_2_ID;
         Set<String> patternIds = ImmutableSet.of(frst, scnd);
-        GetStataPtrnsRs res = new ClientStatisticApiImpl(httpClient, LOCALHOST)
+        GetStataPtrnsRsDto res = new ClientStatisticApiImpl(httpClient, LOCALHOST)
             .getStatisticForPatterns(patternIds);
         MatcherAssert.assertThat(
             "Status should be OK",
@@ -83,9 +87,9 @@ class ClientStatisticApiImplTest {
             new IsEqual<>(HttpStatus.SC_OK)
         );
         MatcherAssert.assertThat(
-            "Should be 3 pattern statistics in db after db initialization",
+            "Should be 4 pattern statistics in db after db initialization",
             res.getPtrnsStatas().size(),
-            new IsEqual<>(3)
+            new IsEqual<>(4)
         );
         MatcherAssert.assertThat(
             "Should contain entries for both patterns",
@@ -98,25 +102,24 @@ class ClientStatisticApiImplTest {
 
     @Test
     void getMergedStatisticByPatternId() {
-        Set<String> patternIds = ImmutableSet.of("ptrn_1");
-        GetStataPtrnsRs res = new ClientStatisticApiImpl(httpClient, LOCALHOST)
-            .getStatisticForPatterns(patternIds);
+        GetStataPtrnsRsDto res = new ClientStatisticApiImpl(httpClient, LOCALHOST)
+            .getStatisticForPatterns(ImmutableSet.of(PATTERN_1_ID));
         MatcherAssert.assertThat(
             "Status should be OK",
             res.getStatus(),
             new IsEqual<>(HttpStatus.SC_OK)
         );
         MatcherAssert.assertThat(
-            "Should be 3 pattern in db after db initialization",
+            "Should be 4 pattern in db after db initialization",
             res.getPtrnsStatas().size(),
-            new IsEqual<>(3)
+            new IsEqual<>(4)
         );
     }
 
     @Test
     void getStatisticByDocId() {
         String docId = "11335577992244668800abcd";
-        GetStataDocRs res = new ClientStatisticApiImpl(httpClient, LOCALHOST)
+        GetStataDocRsDto res = new ClientStatisticApiImpl(httpClient, LOCALHOST)
             .getStatisticForDoc(new DocIdDto(docId));
         MatcherAssert.assertThat(
             "Status should be OK",
@@ -129,12 +132,12 @@ class ClientStatisticApiImplTest {
             new IsEqual<>(2)
         );
         MatcherAssert.assertThat(
-            "Should contain 3 entries for document",
+            "Should contain 4 entries for document",
             res.getDocStatas().get(0)
                 .getStataPtrns()
                 .getDownload()
                 .size(),
-            new IsEqual<>(3)
+            new IsEqual<>(4)
         );
     }
 
@@ -149,13 +152,13 @@ class ClientStatisticApiImplTest {
             new IsEqual<>(HttpStatus.SC_OK)
         );
         MatcherAssert.assertThat(
-            "Should be 3 entries in success in db after db initialization",
+            "Should be 4 entries in success in db after db initialization",
             res.getDownload().size(),
-            new IsEqual<>(3)
+            new IsEqual<>(4)
         );
         MatcherAssert.assertThat(
             "Total result should be properly calculated",
-            res.getSuccess().get("ptrn_1"),
+            res.getSuccess().get(PATTERN_1_ID),
             new IsEqual<>(19)
         );
     }

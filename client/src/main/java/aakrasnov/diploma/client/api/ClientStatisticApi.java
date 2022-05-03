@@ -1,12 +1,12 @@
 package aakrasnov.diploma.client.api;
 
-import aakrasnov.diploma.client.dto.stata.GetStataDocRs;
-import aakrasnov.diploma.client.dto.stata.GetStataPtrnsRs;
 import aakrasnov.diploma.common.stata.AddStataRsDto;
 import aakrasnov.diploma.common.stata.DocIdDto;
 import aakrasnov.diploma.common.stata.GetDownloadDocsRsDto;
+import aakrasnov.diploma.common.stata.GetStataDocRsDto;
 import aakrasnov.diploma.common.stata.GetStataMergedDocRsDto;
 import aakrasnov.diploma.common.stata.GetStataMergedPtrnsRsDto;
+import aakrasnov.diploma.common.stata.GetStataPtrnsRsDto;
 import aakrasnov.diploma.common.stata.StatisticDto;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +24,7 @@ public interface ClientStatisticApi {
      * @param patternIds Patterns ids
      * @return Statistic for patterns with status.
      */
-    GetStataPtrnsRs getStatisticForPatterns(Set<String> patternIds);
+    GetStataPtrnsRsDto getStatisticForPatterns(Set<String> patternIds);
 
     /**
      * Merge statistic for the patterns if they are included in several
@@ -40,7 +40,7 @@ public interface ClientStatisticApi {
      * @param docIdDto Document id
      * @return Get statistic for the specified document with status.
      */
-    GetStataDocRs getStatisticForDoc(DocIdDto docIdDto);
+    GetStataDocRsDto getStatisticForDoc(DocIdDto docIdDto);
 
     /**
      * Merge statistic for the document if it is included in several

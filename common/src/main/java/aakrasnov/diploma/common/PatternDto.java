@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
 
 @Builder
@@ -19,6 +20,7 @@ public class PatternDto implements Serializable {
 
     private Date timestamp;
 
+    @NonNull
     private String authorId;
 
     private Map<String, String> meta;

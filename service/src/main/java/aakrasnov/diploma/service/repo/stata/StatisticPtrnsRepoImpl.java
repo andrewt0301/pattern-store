@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.bson.BsonDocument;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 
 public class StatisticPtrnsRepoImpl implements CustomStatisticPtrnsRepo {
     private final MongoDatabase storeDb;
@@ -22,7 +23,7 @@ public class StatisticPtrnsRepoImpl implements CustomStatisticPtrnsRepo {
     }
 
     @Override
-    public List<StatisticPtrns> getStatisticForPtrns(final Set<String> ptrnIds) {
+    public List<StatisticPtrns> getStatisticForPtrns(final Set<ObjectId> ptrnIds) {
         return Streams.stream(
             storeDb.getCollection(DocumentNames.STATISTIC_PTRNS)
                 .find(
@@ -39,7 +40,7 @@ public class StatisticPtrnsRepoImpl implements CustomStatisticPtrnsRepo {
                     StatisticPtrns stata = StatisticPtrns.fromJson(
                         bsonDoc.toJson()
                     );
-                    stata.setId(bsonDoc.getString("_id").getValue());
+                    stata.setId(bsonDoc.getObjectId("_id").getValue());
                     stata.setSuccess(filterUsage(stata.getSuccess(), ptrnIds));
                     stata.setFailure(filterUsage(stata.getFailure(), ptrnIds));
                     stata.setDownload(filterUsage(stata.getDownload(), ptrnIds));
@@ -48,7 +49,7 @@ public class StatisticPtrnsRepoImpl implements CustomStatisticPtrnsRepo {
             ).collect(Collectors.toList());
     }
 
-    private static List<Usage> filterUsage(List<Usage> src, Set<String> ptrnIds) {
+    private static List<Usage> filterUsage(List<Usage> src, Set<ObjectId> ptrnIds) {
         return src.stream().filter(
             usage -> ptrnIds.contains(usage.getPatternId())
         ).collect(Collectors.toList());

@@ -10,23 +10,30 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import org.bson.types.ObjectId;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Getter
+@Setter
+@ToString
 public class Usage implements Serializable {
-    private String patternId;
+    private ObjectId patternId;
     private Integer count;
     private Map<String, String> meta;
 
     public Usage(String patternId, int count) {
-        this(patternId, count, new HashMap<>());
+        this(new ObjectId(patternId), count, new HashMap<>());
     }
 
     public static Usage fromDto(UsageDto dto) {
         Usage usage = new Usage();
-        usage.setPatternId(dto.getPatternId());
+        usage.setPatternId(new ObjectId(dto.getPatternId()));
         usage.setCount(dto.getCount());
         usage.setMeta(dto.getMeta());
         return usage;
@@ -34,7 +41,7 @@ public class Usage implements Serializable {
 
     public static UsageDto toDto(Usage usage) {
         UsageDto dto = new UsageDto();
-        dto.setPatternId(usage.getPatternId());
+        dto.setPatternId(usage.getPatternId().toHexString());
         dto.setCount(usage.getCount());
         dto.setMeta(usage.getMeta());
         return dto;

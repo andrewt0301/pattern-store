@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 
 public class StatisticDocRepoImpl implements CustomStatisticDocRepo {
     private final MongoDatabase storeDb;
@@ -26,7 +27,7 @@ public class StatisticDocRepoImpl implements CustomStatisticDocRepo {
     }
 
     @Override
-    public List<DownloadDocDb> getDownloadsCountForDocs(final Set<String> ids) {
+    public List<DownloadDocDb> getDownloadsCountForDocs(final Set<ObjectId> ids) {
         return Streams.stream(
             storeDb.getCollection(DocumentNames.STATISTIC_DOCS)
                 .aggregate(
@@ -38,22 +39,22 @@ public class StatisticDocRepoImpl implements CustomStatisticDocRepo {
         ).map(Bson::toBsonDocument)
         .map(
             bson -> new DownloadDocDb(
-                bson.getString("_id").getValue(),
+                bson.getObjectId("_id").getValue().toHexString(),
                 bson.getInt32("count").getValue()
             )
         ).collect(Collectors.toList());
     }
 
     @Override
-    public List<StatisticDoc> getStatisticForDoc(final String docId) {
+    public List<StatisticDoc> getStatisticForDoc(final ObjectId docId) {
         return Streams.stream(
             storeDb.getCollection(DocumentNames.STATISTIC_DOCS)
                 .find(Filters.eq("documentId", docId))
         ).map(Bson::toBsonDocument)
         .map(
             bson -> new StatisticDoc(
-                bson.getObjectId("_id").getValue().toHexString(),
-                bson.getString("documentId").getValue(),
+                bson.getObjectId("_id").getValue(),
+                bson.getObjectId("documentId").getValue(),
                 StatisticPtrns.fromJson(
                     bson.get("stataPtrns").asDocument().toJson()
                 )

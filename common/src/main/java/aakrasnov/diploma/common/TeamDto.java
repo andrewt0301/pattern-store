@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
 
 @Data
@@ -15,8 +16,10 @@ import lombok.ToString;
 public class TeamDto implements Serializable {
     private String id;
 
+    @NonNull
     private String name;
 
+    @NonNull
     private String creatorId;
 
     private String invitation;

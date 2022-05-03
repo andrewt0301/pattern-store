@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
 
 @Data
@@ -24,8 +25,10 @@ public class DocDto implements Serializable {
 
     private String lang;
 
+    @NonNull
     private ScenarioDto scenario;
 
+    @NonNull
     private TeamDto team;
 
     private String timestamp;

@@ -23,29 +23,32 @@ public class Team {
     public static ObjectId COMMON_TEAM_ID = new ObjectId("624f6f6b5bdddf7ee83350a0");
 
     @Id
-    @NonNull
-    private String id;
+    private ObjectId id;
 
     @NonNull
     private String name;
 
     @NonNull
-    private String creatorId;
+    private ObjectId creatorId;
 
     private String invitation;
 
     public static TeamDto toDto(Team team) {
         TeamDto dto = new TeamDto();
-        dto.setId(team.getId());
+        if (team.getId() != null) {
+            dto.setId(team.getId().toHexString());
+        }
         dto.setName(team.getName());
+        dto.setCreatorId(team.getCreatorId().toHexString());
         dto.setInvitation(team.getInvitation());
         return dto;
     }
 
     public static Team fromDto(TeamDto dto) {
         Team team = new Team();
-        team.setId(dto.getId());
+        team.setId(new ObjectId(dto.getId()));
         team.setName(dto.getName());
+        team.setCreatorId(new ObjectId(dto.getCreatorId()));
         team.setInvitation(dto.getInvitation());
         return team;
     }
