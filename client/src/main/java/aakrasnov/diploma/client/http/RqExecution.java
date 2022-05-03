@@ -40,7 +40,7 @@ public final class RqExecution {
             }
         } catch (IOException exc) {
             log.error(errMsg, exc);
-            res.setStatus(HttpStatus.SC_BAD_REQUEST);
+            res.setStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             res.setMsg(errMsg);
         }
         return Optional.empty();

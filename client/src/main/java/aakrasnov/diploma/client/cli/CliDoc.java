@@ -177,7 +177,7 @@ public class CliDoc implements Callable<String> {
         if (cmd.getAll) {
             System.out.println("try later");
         }
-        // TODO: getAllDocs, getDocsByTeamId, updateDoc
+        // TODO: getDocsByTeamId, updateDoc, getDocByUser(user/admin)
         return res.toString();
     }
 }

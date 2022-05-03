@@ -216,12 +216,44 @@ public final class BasicClientDocApi implements ClientDocApi {
 
     @Override
     public DocsRsDto getAllDocsForUser(final User user) {
-        return null;
+        HttpGet rq = new HttpGet(full("auth/docs/user"));
+        DocsRsDto res = new DocsRsDto();
+        new ExceptionCatcher.IOCatcher<>(() -> {
+            addBasicAuthorization(rq, user, res);
+            Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
+                res,
+                String.format("Failed to filter documents by user's teams '%s'", user.getUsername())
+            );
+            if (rsp.isPresent()) {
+                String body = EntityUtils.toString(rsp.get().getEntity());
+                log.info(body);
+                res.setDocs(
+                    Arrays.asList(gson.fromJson(body, DocDto[].class))
+                );
+            }
+        }).runAndSetFail(res);
+        return res;
     }
 
     @Override
     public DocsRsDto getDocsByTeamId(final String teamId, final User user) {
-        return null;
+        HttpGet rq = new HttpGet(full(String.format("auth/docs/team/%s", teamId)));
+        DocsRsDto res = new DocsRsDto();
+        new ExceptionCatcher.IOCatcher<>(() -> {
+            addBasicAuthorization(rq, user, res);
+            Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
+                res,
+                String.format("Failed to filter documents by team id '%s'", teamId)
+            );
+            if (rsp.isPresent()) {
+                String body = EntityUtils.toString(rsp.get().getEntity());
+                log.info(body);
+                res.setDocs(
+                    Arrays.asList(gson.fromJson(body, DocDto[].class))
+                );
+            }
+        }).runAndSetFail(res);
+        return res;
     }
 
     static void addJsonHeaderTo(HttpPost rq) {

@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.stream.Collectors;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -38,7 +39,13 @@ class BasicClientDocApiTest {
 
     public static final String USER_PSWD = "user";
 
+    public static final String ONLYTEST_USERNAME = "onlytest";
+
+    public static final String ONLYTEST_PSWD = "onlytest";
+
     public static final String DOC_COMMON = "625748988af05121cc0d6189";
+
+    public static final String TEAM_PRIVATE = "aaccbbffdd11223344556677";
 
     private static CloseableHttpClient httpClient;
 
@@ -85,7 +92,7 @@ class BasicClientDocApiTest {
     }
 
     @Test
-    public void getDocForAdmin() {
+    public void getDocByIdForAdmin() {
         MatcherAssert.assertThat(
             "Saved document should be obtained for admin",
             new BasicClientDocApi(httpClient, LOCALHOST)
@@ -98,7 +105,63 @@ class BasicClientDocApiTest {
     }
 
     @Test
-    public void getDocWhenUserFromTeam() {
+    public void getAllDocsAvailableForUser() {
+        DocsRsDto res = new BasicClientDocApi(httpClient, LOCALHOST)
+            .getAllDocsForUser(new User(ONLYTEST_USERNAME, ONLYTEST_PSWD));
+        System.out.println(res);
+        MatcherAssert.assertThat(
+            "Status should be OK",
+            res.getStatus(),
+            new IsEqual<>(HttpStatus.SC_OK)
+        );
+        MatcherAssert.assertThat(
+            "Should obtain 2 docs for test user",
+            res.getDocs().size(),
+            new IsEqual<>(2)
+        );
+        MatcherAssert.assertThat(
+            "Should contain 'java' and 'js' languages",
+            res.getDocs().stream()
+                .map(DocDto::getLang)
+                .collect(Collectors.toList()),
+            Matchers.containsInAnyOrder("java", "js")
+        );
+    }
+
+    @Test
+    public void getDocsByTeamIdWhenUserInTeam() {
+        DocsRsDto res = new BasicClientDocApi(httpClient, LOCALHOST)
+            .getDocsByTeamId(TEAM_PRIVATE, new User(USER_USERNAME, USER_PSWD));
+        MatcherAssert.assertThat(
+            "Status should be OK",
+            res.getStatus(),
+            new IsEqual<>(HttpStatus.SC_OK)
+        );
+        MatcherAssert.assertThat(
+            "Should be exactly 1 doc",
+            res.getDocs().size(),
+            new IsEqual<>(1)
+        );
+        MatcherAssert.assertThat(
+            "Scenario should be FOR_TEST",
+            res.getDocs().get(0).getScenario().getType(),
+            new IsEqual<>(ScenarioDto.Type.FOR_TEST)
+        );
+    }
+
+    @Test
+    public void forbiddenGetDocsByTeamIdWhenUserNotInTeam() {
+        DocsRsDto res = new BasicClientDocApi(httpClient, LOCALHOST)
+            .getDocsByTeamId(TEAM_PRIVATE, new User(ONLYTEST_USERNAME, ONLYTEST_PSWD));
+        MatcherAssert.assertThat(
+            "Status should be FORBIDDEN",
+            res.getStatus(),
+            new IsEqual<>(HttpStatus.SC_FORBIDDEN)
+        );
+    }
+
+    @Test
+    public void getDocByIdWhenUserFromTeam() {
         MatcherAssert.assertThat(
             "Saved document should be obtained for user from team",
             new BasicClientDocApi(httpClient, LOCALHOST)
