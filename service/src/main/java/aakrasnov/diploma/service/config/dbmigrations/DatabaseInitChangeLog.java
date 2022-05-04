@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,6 +37,8 @@ public class DatabaseInitChangeLog {
     public static final String USER_ID = "361d5d8b5bd5adf7ee8793e5";
 
     public static final String USER_OTHER_TEAMS_ID = "123321123321123321123321";
+
+    public static final String USER_FOR_CHECK_ID = "aa00bbccddeeff221133aa55";
 
     public static final String ADMIN_ID = "93e56f6b5bdddf7ee8b5bd5a";
 
@@ -88,6 +91,17 @@ public class DatabaseInitChangeLog {
                 .password(passwordEncoder.encode("username"))
                 .role(Role.USER)
                 .teams(Sets.newHashSet(commonTeam(), otherTeamPrivate()))
+                .isActive(true)
+                .build()
+        );
+        // Only private team without common team for this test user.
+        userRepo.save(
+            User.builder()
+                .id(new ObjectId(USER_FOR_CHECK_ID))
+                .username("onlytest")
+                .password(passwordEncoder.encode("onlytest"))
+                .role(Role.USER)
+                .teams(Sets.newHashSet(teamOfUserForCheck()))
                 .isActive(true)
                 .build()
         );
@@ -181,6 +195,22 @@ public class DatabaseInitChangeLog {
                             .build()
                     )
                 ).build()
+        );
+        docRepo.save(
+            Doc.builder()
+                .team(teamOfUserForCheck())
+                .lang("java")
+                .scenario(new Scenario(Scenario.Type.MIGRATION, new HashMap<>()))
+                .patterns(new ArrayList<>())
+                .build()
+        );
+        docRepo.save(
+            Doc.builder()
+                .team(teamOfUserForCheck())
+                .lang("js")
+                .scenario(new Scenario(Scenario.Type.UNKNOWN, new HashMap<>()))
+                .patterns(new ArrayList<>())
+                .build()
         );
     }
 
@@ -300,6 +330,14 @@ public class DatabaseInitChangeLog {
             .id(new ObjectId(TEAM_PRIVATE))
             .name("team2_private")
             .creatorId(new ObjectId(USER_OTHER_TEAMS_ID))
+            .build();
+    }
+
+    private static Team teamOfUserForCheck() {
+        return Team.builder()
+            .id(new ObjectId("c2ec7c2ec7c2ec7c2ec74440"))
+            .name("team only for user check")
+            .creatorId(new ObjectId(USER_FOR_CHECK_ID))
             .build();
     }
 }

@@ -1,7 +1,7 @@
 package aakrasnov.diploma.service.domain;
 
 import aakrasnov.diploma.common.PatternDto;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +23,7 @@ public class Pattern {
     @Id
     private ObjectId id;
 
-    private Date timestamp;
+    private LocalDateTime timestamp;
 
     @NonNull
     private ObjectId authorId;
@@ -35,7 +35,7 @@ public class Pattern {
     public static PatternDto toDto(Pattern pattern) {
         PatternDto dto = new PatternDto();
         dto.setId(pattern.getId().toHexString());
-        dto.setTimestamp(pattern.getTimestamp());
+        dto.setTimestamp(pattern.getTimestamp().toString());
         dto.setAuthorId(pattern.getAuthorId().toHexString());
         dto.setMeta(pattern.getMeta());
         dto.setData(pattern.getData());
@@ -47,7 +47,7 @@ public class Pattern {
         if (dto.getId() != null) {
             pattern.setId(new ObjectId(dto.getId()));
         }
-        pattern.setTimestamp(dto.getTimestamp());
+        pattern.setTimestamp(LocalDateTime.parse(dto.getTimestamp()));
         pattern.setAuthorId(new ObjectId(dto.getAuthorId()));
         pattern.setMeta(dto.getMeta());
         pattern.setData(dto.getData());

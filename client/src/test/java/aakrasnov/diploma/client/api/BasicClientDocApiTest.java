@@ -5,6 +5,7 @@ import aakrasnov.diploma.client.dto.AddDocRsDto;
 import aakrasnov.diploma.client.dto.DocsRsDto;
 import aakrasnov.diploma.client.dto.GetDocRsDto;
 import aakrasnov.diploma.client.dto.UpdateDocRsDto;
+import aakrasnov.diploma.client.utils.TimeConverter;
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
 import aakrasnov.diploma.common.ScenarioDto;
@@ -272,7 +273,7 @@ class BasicClientDocApiTest {
         docNew.setLang("java");
         docNew.setPatterns(new ArrayList<>());
         docNew.setScenario(scenario);
-        docNew.setTimestamp(LocalDateTime.now().format(DocDto.DATE_FORMATTER).toString());
+        docNew.setTimestamp(new TimeConverter(LocalDateTime.now()).asString());
         return docNew;
     }
 

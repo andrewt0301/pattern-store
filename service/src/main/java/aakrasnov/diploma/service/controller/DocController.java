@@ -15,6 +15,7 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,6 +130,24 @@ public class DocController {
         );
     }
 
+    @GetMapping("auth/docs/user")
+    public ResponseEntity<List<DocDto>> getDocByUserId(
+        Principal principal
+    ) {
+        User user = new PrincipalConverter(principal).toUser();
+        final List<DocDto> docDtos;
+        if (user.isAdmin()) {
+            docDtos = docService.getAllDocs();
+        } else {
+            docDtos = docService.filteredDocuments(
+                user.getTeams().stream()
+                    .map(team -> new FilterByTeamId(team.getId().toHexString()))
+                    .collect(Collectors.toList())
+            );
+        }
+        return ResponseEntity.ok(docDtos);
+    }
+
     @PostMapping("auth/docs/filtered")
     public ResponseEntity<List<DocDto>> docsByFilters(
         Principal principal,
@@ -150,10 +169,4 @@ public class DocController {
         docService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    @GetMapping("admin/docs")
-    public List<DocDto> getDocs() {
-        return docService.getAllDocs();
-    }
-
 }

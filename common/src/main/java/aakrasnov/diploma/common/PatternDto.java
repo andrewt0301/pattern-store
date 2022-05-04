@@ -1,7 +1,6 @@
 package aakrasnov.diploma.common;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +17,7 @@ import lombok.ToString;
 public class PatternDto implements Serializable {
     private String id;
 
-    private Date timestamp;
+    private String timestamp;
 
     @NonNull
     private String authorId;
