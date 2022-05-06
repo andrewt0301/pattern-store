@@ -1,0 +1,24 @@
+logging:
+  level:
+    org.springframework: debug
+    org.springframework.security: debug
+
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: store
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+  main:
+    allow-bean-definition-overriding: true
+server:
+  api: /api
+  port: 8080
+
+
+####### Mongock Properties ###########
+mongock:
+  change-logs-scan-package: aakrasnov.diploma.service.config.dbmigrations
