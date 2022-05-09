@@ -5,6 +5,7 @@ import aakrasnov.diploma.client.cache.Index;
 import aakrasnov.diploma.client.cache.IndexFile;
 import aakrasnov.diploma.client.utils.TimeConverter;
 import aakrasnov.diploma.common.DocDto;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.FileInputStream;
@@ -54,7 +55,12 @@ public class IndexJson implements Index {
                 .map(id -> String.format("%s.json", id))
                 .collect(Collectors.toList());
             indexFile.cacheDocs(docDtos, docsPaths);
-            // cache doc files
+            for (int i = 0; i < docDtos.size(); i++) {
+                Files.write(
+                    Paths.get(getPrefix(), docsPaths.get(i)),
+                    new Gson().toJson(docDtos.get(i)).getBytes()
+                );
+            }
             try (FileOutputStream fos = new FileOutputStream(indexFile())) {
                 indexFile.writeTo(fos);
             }

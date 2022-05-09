@@ -4,6 +4,7 @@ import aakrasnov.diploma.client.test.DocDtoSample;
 import aakrasnov.diploma.client.test.PathConverter;
 import aakrasnov.diploma.client.test.TestResource;
 import aakrasnov.diploma.common.DocDto;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,17 +17,29 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReferenceArray;
+import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
+import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 public class IndexJsonCacheDocsTest {
     static final String DOC_1_ID = "123abcde123abcde123abcde";
 
+    @TempDir
+    private Path tmpDir;
+
+    @AfterEach
+    void tearDown() throws IOException {
+        FileUtils.deleteDirectory(tmpDir.toFile());
+    }
+
     @Test
     void cacheDocsWhenIndexFileExist() throws IOException {
-        Path indexPath = Files.createTempFile("cacheDocs", "index.json");
+        Path indexPath = Files.createTempFile(tmpDir, "cacheDocs", "index.json");
         Files.write(indexPath, new TestResource("index.json").asBytes());
         new IndexJson(indexPath).cacheDocs(docsDto(DOC_1_ID));
         JsonObject after = new PathConverter(indexPath).toJsonObj();
@@ -38,7 +51,12 @@ public class IndexJsonCacheDocsTest {
             after.get(IndexFileJsonTest.CACHE_DOC),
             new IsNot<>(new IsNull<>())
         );
-        Files.delete(indexPath);
+        MatcherAssert.assertThat(
+            new PathConverter(
+                Paths.get(tmpDir.toString(), String.format("%s.json", DOC_1_ID))
+            ).toDocDto().getId(),
+            new IsEqual<>(DOC_1_ID)
+        );
     }
 
     @Test
@@ -47,7 +65,7 @@ public class IndexJsonCacheDocsTest {
         CountDownLatch latch = new CountDownLatch(
             Math.min(count, Runtime.getRuntime().availableProcessors() - 1)
         );
-        Path indexPath = Files.createTempFile("cacheDocsSimultaneously", "index.json");
+        Path indexPath = Files.createTempFile(tmpDir, "cacheDocsSimultaneously", "index.json");
         Files.write(indexPath, new TestResource("index.json").asBytes());
         AtomicReferenceArray<String> docsIds = new AtomicReferenceArray<>(count);
         List<CompletableFuture<String>> rqs = new ArrayList<>();
@@ -78,8 +96,13 @@ public class IndexJsonCacheDocsTest {
                 index.get(docsIds.get(i)),
                 new IsNot<>(new IsNull<>())
             );
+            MatcherAssert.assertThat(
+                new PathConverter(
+                    Paths.get(tmpDir.toString(), String.format("%s.json", docsIds.get(i)))
+                ).toDocDto().getId(),
+                new IsEqual<>(docsIds.get(i))
+            );
         }
-        Files.delete(indexPath);
     }
 
     @Test

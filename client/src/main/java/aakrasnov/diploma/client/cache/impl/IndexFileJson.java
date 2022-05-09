@@ -83,7 +83,7 @@ public class IndexFileJson implements IndexFile {
         if (docs.size() != docsPaths.size()) {
             log.error(
                 String.format(
-                    "Failed to cache about docs. Docs: %s, paths_of_documents: %s",
+                    "Failed to cache about docs. Docs: '%s', paths_of_documents: '%s'",
                     docs,
                     docsPaths
                 )

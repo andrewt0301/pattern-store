@@ -1,5 +1,7 @@
 package aakrasnov.diploma.client.test;
 
+import aakrasnov.diploma.common.DocDto;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.BufferedInputStream;
@@ -23,5 +25,12 @@ public final class PathConverter {
                 )
             ).getAsJsonObject();
         }
+    }
+
+    public DocDto toDocDto() throws IOException {
+        return new Gson().fromJson(
+            toJsonObj(),
+            DocDto.class
+        );
     }
 }
