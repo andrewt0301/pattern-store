@@ -7,6 +7,10 @@ import aakrasnov.diploma.client.utils.TimeConverter;
 import aakrasnov.diploma.common.DocDto;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
@@ -14,6 +18,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsEqual;
 import org.hamcrest.core.IsNot;
 import org.hamcrest.core.IsNull;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,11 +27,22 @@ public class IndexFileJsonTest {
 
     private IndexFileJson index;
 
+    private InputStream inputStream;
+
+    private Path indexPath;
+
     @BeforeEach
-    void setUp() {
-        index = new IndexFileJson(
-            new TestResource("cache-index.json").asInputStream()
-        );
+    void setUp() throws IOException {
+        indexPath = Files.createTempFile("indexFileJson", "index.json");
+        Files.write(indexPath, new TestResource("index.json").asBytes());
+        inputStream = Files.newInputStream(indexPath);
+        index = new IndexFileJson(inputStream);
+    }
+
+    @AfterEach
+    void tearDown() throws IOException {
+        inputStream.close();
+        Files.delete(indexPath);
     }
 
     @Test
@@ -77,11 +93,26 @@ public class IndexFileJsonTest {
     }
 
     @Test
+    void removeExistingDocAndReturnCachedDocInfo() {
+        Optional<CachedDocInfo> docInfo = index.removeDoc(CACHE_DOC);
+        MatcherAssert.assertThat(
+            docInfo.isPresent(),
+            new IsEqual<>(true)
+        );
+        MatcherAssert.assertThat(
+            docInfo.get().getDocId(),
+            new IsEqual<>(CACHE_DOC)
+        );
+    }
+
+    @Test
     void addDocs() {
         String docId = "first";
         String timestamp = new TimeConverter(LocalDateTime.now()).asString();
+        String path = String.format("%s.json", docId);
         index.cacheDocs(
-            Collections.singletonList(DocDtoSample.withIdAndTimestamp(docId, timestamp))
+            Collections.singletonList(DocDtoSample.withIdAndTimestamp(docId, timestamp)),
+            Collections.singletonList(path)
         );
         JsonObject after = new Gson().fromJson(index.asString(), JsonObject.class);
         MatcherAssert.assertThat(
@@ -93,6 +124,12 @@ public class IndexFileJsonTest {
                 .get(IndexFileJson.DOC_TIMESTAMP)
                 .getAsString(),
             new IsEqual<>(timestamp)
+        );
+        MatcherAssert.assertThat(
+            after.get(docId).getAsJsonObject()
+                .get(IndexFileJson.DOC_PATH)
+                .getAsString(),
+            new IsEqual<>(path)
         );
     }
 }

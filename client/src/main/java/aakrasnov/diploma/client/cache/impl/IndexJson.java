@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -48,7 +49,12 @@ public class IndexJson implements Index {
         WRITE_LOCK.lock();
         try (FileInputStream fis = new FileInputStream(indexFile())) {
             final IndexFile indexFile = new IndexFileJson(fis);
-            indexFile.cacheDocs(docDtos);
+            List<String> docsPaths = docDtos.stream()
+                .map(DocDto::getId)
+                .map(id -> String.format("%s.json", id))
+                .collect(Collectors.toList());
+            indexFile.cacheDocs(docDtos, docsPaths);
+            // cache doc files
             try (FileOutputStream fos = new FileOutputStream(indexFile())) {
                 indexFile.writeTo(fos);
             }
@@ -67,9 +73,12 @@ public class IndexJson implements Index {
         WRITE_LOCK.lock();
         try (FileInputStream fis = new FileInputStream(indexFile())) {
             final IndexFile indexFile = new IndexFileJson(fis);
-            indexFile.removeDoc(docId);
-            try (FileOutputStream fos = new FileOutputStream(indexFile())) {
-                indexFile.writeTo(fos);
+            Optional<CachedDocInfo> docInfo = indexFile.removeDoc(docId);
+            if (docInfo.isPresent()) {
+                Files.delete(Paths.get(getPrefix(), docInfo.get().getPath()));
+                try (FileOutputStream fos = new FileOutputStream(indexFile())) {
+                    indexFile.writeTo(fos);
+                }
             }
         } catch (IOException exc) {
             log.error(String.format("Failed to invalidate doc '%s'", docId), exc);

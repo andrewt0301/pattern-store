@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -100,14 +101,18 @@ public final class CacheIndexClientDoc implements ClientDocApi {
 
     @Override
     public RsBaseDto deleteById(final String id, final User user) {
-        // TODO: cache invalidate
+        index.invalidateByDocId(id);
         return docApi.deleteById(id, user);
     }
 
     @Override
     public AddDocRsDto add(final DocDto document, final User user) {
         // TODO: add to cache
-        return docApi.add(document, user);
+        AddDocRsDto res = docApi.add(document, user);
+        if (res.getStatus() == HttpStatus.SC_CREATED) {
+            index.cacheDocs(Collections.singletonList(document));
+        }
+        return res;
     }
 
     @Override

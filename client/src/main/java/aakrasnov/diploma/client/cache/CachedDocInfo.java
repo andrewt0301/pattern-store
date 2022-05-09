@@ -32,11 +32,28 @@ public class CachedDocInfo implements Serializable {
         );
     }
 
+    public CachedDocInfo(String docId, String docTimestamp, String path) {
+        this(
+            docId,
+            docTimestamp,
+            path,
+            new TimeConverter(LocalDateTime.now()).asString()
+        );
+    }
+
     public JsonObject toJsonObject() {
         JsonObject jsonObj = new JsonObject();
         jsonObj.addProperty(IndexFileJson.CACHING_TIME, cachingTime);
         jsonObj.addProperty(IndexFileJson.DOC_TIMESTAMP, docTimestamp);
         jsonObj.addProperty(IndexFileJson.DOC_PATH, path);
         return jsonObj;
+    }
+
+    public static CachedDocInfo fromJsonObject(JsonObject obj) {
+        CachedDocInfo docInfo = new CachedDocInfo();
+        docInfo.setDocTimestamp(obj.get(IndexFileJson.DOC_TIMESTAMP).getAsString());
+        docInfo.setPath(obj.get(IndexFileJson.DOC_PATH).getAsString());
+        docInfo.setCachingTime(obj.get(IndexFileJson.CACHING_TIME).getAsString());
+        return docInfo;
     }
 }

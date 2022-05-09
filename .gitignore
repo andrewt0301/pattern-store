@@ -28,7 +28,7 @@ client/target/*
 !client/target/generated-docs
 
 client/*-*-*-*-*.json
-client/cache-index.json
+client/index.json
 client/**.iml
 
 service/target/

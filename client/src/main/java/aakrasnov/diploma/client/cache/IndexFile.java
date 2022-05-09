@@ -26,14 +26,18 @@ public interface IndexFile {
     /**
      * Remove info about cached document by id.
      * @param docId Document id
+     * @return Return information about deleted cached document if it
+     *  is present in the index file, empty otherwise.
      */
-    void removeDoc(String docId);
+    Optional<CachedDocInfo> removeDoc(String docId);
 
     /**
      * Cache passed documents in the index file.
      * @param docs Documents for caching
+     * @param docsPaths Paths to the files with cached documents. Each file contains
+     *  information about one document.
      */
-    void cacheDocs(List<DocDto> docs);
+    void cacheDocs(List<DocDto> docs, List<String> docsPaths);
 
     /**
      * Convert index file to string.

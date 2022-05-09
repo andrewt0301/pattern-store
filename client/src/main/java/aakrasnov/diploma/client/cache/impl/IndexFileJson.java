@@ -15,7 +15,9 @@ import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class IndexFileJson implements IndexFile {
     public static final String CACHING_TIME = "cachingTime";
 
@@ -66,18 +68,36 @@ public class IndexFileJson implements IndexFile {
     }
 
     @Override
-    public void removeDoc(final String docId) {
-        json.remove(docId);
+    public Optional<CachedDocInfo> removeDoc(final String docId) {
+        if (json.has(docId)) {
+            CachedDocInfo docInfo = CachedDocInfo.fromJsonObject(json.get(docId).getAsJsonObject());
+            docInfo.setDocId(docId);
+            json.remove(docId);
+            return Optional.of(docInfo);
+        }
+        return Optional.empty();
     }
 
     @Override
-    public void cacheDocs(final List<DocDto> docs) {
-        docs.forEach(
-            doc -> json.add(
+    public void cacheDocs(final List<DocDto> docs, final List<String> docsPaths) {
+        if (docs.size() != docsPaths.size()) {
+            log.error(
+                String.format(
+                    "Failed to cache about docs. Docs: %s, paths_of_documents: %s",
+                    docs,
+                    docsPaths
+                )
+            );
+        }
+        for (int i = 0; i < docs.size(); i++) {
+            DocDto doc = docs.get(i);
+            json.add(
                 doc.getId(),
-                new CachedDocInfo(doc.getId(), doc.getTimestamp()).toJsonObject()
-            )
-        );
+                new CachedDocInfo(
+                    doc.getId(), doc.getTimestamp(), docsPaths.get(i)
+                ).toJsonObject()
+            );
+        }
     }
 
     @Override
