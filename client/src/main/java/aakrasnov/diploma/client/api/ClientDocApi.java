@@ -91,4 +91,57 @@ public interface ClientDocApi {
      * @return All docs for the specified team, which is one of user's team.
      */
     DocsRsDto getDocsByTeamId(String teamId, User user);
+
+    class Fake implements ClientDocApi {
+
+        @Override
+        public GetDocRsDto getDocFromCommon(final String id) {
+            throw new UnsupportedOperationException("not support in fake implementation");
+        }
+
+        @Override
+        public DocsRsDto filterDocsFromCommon(final List<Filter> filters) {
+            throw new UnsupportedOperationException("not support in fake implementation");
+        }
+
+        @Override
+        public DocsRsDto getAllDocsFromCommon() {
+            throw new UnsupportedOperationException("not support in fake implementation");
+        }
+
+        @Override
+        public GetDocRsDto getDoc(final String id, final User user) {
+            throw new UnsupportedOperationException("not support in fake implementation");
+        }
+
+        @Override
+        public RsBaseDto deleteById(final String id, final User user) {
+            throw new UnsupportedOperationException("not support in fake implementation");
+        }
+
+        @Override
+        public AddDocRsDto add(final DocDto document, final User user) {
+            throw new UnsupportedOperationException("not support in fake implementation");
+        }
+
+        @Override
+        public UpdateDocRsDto update(final String id, final DocDto docUpd, final User user) {
+            throw new UnsupportedOperationException("not support in fake implementation");
+        }
+
+        @Override
+        public DocsRsDto filterDocuments(final List<Filter> filters, final User user) {
+            throw new UnsupportedOperationException("not support in fake implementation");
+        }
+
+        @Override
+        public DocsRsDto getAllDocsForUser(final User user) {
+            throw new UnsupportedOperationException("not support in fake implementation");
+        }
+
+        @Override
+        public DocsRsDto getDocsByTeamId(final String teamId, final User user) {
+            throw new UnsupportedOperationException("not support in fake implementation");
+        }
+    }
 }

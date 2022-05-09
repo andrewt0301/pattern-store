@@ -27,5 +27,8 @@ hs_err_pid*
 client/target/*
 !client/target/generated-docs
 
+client/*-*-*-*-*.json
+client/cache-index.json
+
 service/target/
 common/target/

@@ -1,11 +1,14 @@
-package aakrasnov.diploma.client.cache;
+package aakrasnov.diploma.client.cache.impl;
 
-import aakrasnov.diploma.client.cache.impl.IndexFileJson;
+import aakrasnov.diploma.client.cache.CachedDocInfo;
+import aakrasnov.diploma.client.test.DocDtoSample;
 import aakrasnov.diploma.client.test.TestResource;
+import aakrasnov.diploma.client.utils.TimeConverter;
 import aakrasnov.diploma.common.DocDto;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Optional;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsEqual;
@@ -15,7 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class IndexFileJsonTest {
-    private static final String CACHE_DOC = "111122223333444455556666";
+    static final String CACHE_DOC = "111122223333444455556666";
 
     private IndexFileJson index;
 
@@ -75,6 +78,21 @@ public class IndexFileJsonTest {
 
     @Test
     void addDocs() {
-        // TODO: add test
+        String docId = "first";
+        String timestamp = new TimeConverter(LocalDateTime.now()).asString();
+        index.cacheDocs(
+            Collections.singletonList(DocDtoSample.withIdAndTimestamp(docId, timestamp))
+        );
+        JsonObject after = new Gson().fromJson(index.asString(), JsonObject.class);
+        MatcherAssert.assertThat(
+            after.get(CACHE_DOC),
+            new IsNot<>(new IsNull<>())
+        );
+        MatcherAssert.assertThat(
+            after.get(docId).getAsJsonObject()
+                .get(IndexFileJson.DOC_TIMESTAMP)
+                .getAsString(),
+            new IsEqual<>(timestamp)
+        );
     }
 }

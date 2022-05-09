@@ -1,6 +1,8 @@
 package aakrasnov.diploma.client.cache;
 
 import aakrasnov.diploma.common.DocDto;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -38,4 +40,11 @@ public interface IndexFile {
      * @return String representation of index file.
      */
     String asString();
+
+    /**
+     * Write content of the index file to the output stream.
+     * @param output Output stream for writing
+     * @implNote It does not close output stream.
+     */
+    void writeTo(OutputStream output) throws IOException;
 }

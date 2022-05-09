@@ -3,6 +3,7 @@ package aakrasnov.diploma.client.cache;
 import aakrasnov.diploma.client.cache.impl.IndexFileJson;
 import aakrasnov.diploma.client.utils.TimeConverter;
 import com.google.gson.JsonObject;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CachedDocInfo {
+public class CachedDocInfo implements Serializable {
     private String docId;
 
     private String docTimestamp;

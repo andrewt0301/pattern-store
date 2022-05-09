@@ -8,8 +8,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.BufferedInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -24,10 +26,6 @@ public class IndexFileJson implements IndexFile {
     public static final String DOC_PATH = "path";
 
     private final JsonObject json;
-
-    public IndexFileJson() {
-        this(getEmptyIndex());
-    }
 
     public IndexFileJson(final InputStream input) {
         this(
@@ -87,10 +85,8 @@ public class IndexFileJson implements IndexFile {
         return json.toString();
     }
 
-    private static JsonObject getEmptyIndex() {
-        JsonObject jsonObj = new JsonObject();
-        jsonObj.addProperty(CACHE_CREATION, new TimeConverter(LocalDateTime.now()).asString());
-        return jsonObj;
+    @Override
+    public void writeTo(final OutputStream output) throws IOException {
+        output.write(asString().getBytes());
     }
-
 }
