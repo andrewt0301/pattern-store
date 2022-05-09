@@ -29,6 +29,7 @@ client/target/*
 
 client/*-*-*-*-*.json
 client/cache-index.json
+client/**.iml
 
 service/target/
 common/target/
