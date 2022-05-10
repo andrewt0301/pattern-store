@@ -11,10 +11,13 @@ import aakrasnov.diploma.client.http.RqExecution;
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
 import aakrasnov.diploma.common.RsBaseDto;
+import aakrasnov.diploma.common.cache.DocValidityCheckRsDto;
+import aakrasnov.diploma.common.cache.DocValidityDto;
 import com.google.gson.Gson;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -89,6 +92,32 @@ public final class BasicClientDocApi implements ClientDocApi {
             }
         }).runAndSetFail(res);
         return res;
+    }
+
+    @Override
+    public DocValidityCheckRsDto checkDocValidityByTimestampFromCommon(
+        final String id, final String timestamp
+    ) {
+        HttpPost rq = new HttpPost(full("doc/check-validity-timestamp"));
+        addJsonHeaderTo(rq);
+        final AtomicReference<DocValidityCheckRsDto> res;
+        res = new AtomicReference<>(new DocValidityCheckRsDto());
+        new ExceptionCatcher.IOCatcher<>(() -> {
+            StringEntity entity = new StringEntity(
+                gson.toJson(new DocValidityDto(id, timestamp))
+            );
+            rq.setEntity(entity);
+            Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
+                res.get(),
+                String.format("Failed to check doc '%s' validity by timestamp from common pool", id)
+            );
+            if (rsp.isPresent()) {
+                String body = EntityUtils.toString(rsp.get().getEntity());
+                log.info(body);
+                res.set(gson.fromJson(body, DocValidityCheckRsDto.class));
+            }
+        }).runAndSetFail(res.get());
+        return res.get();
     }
 
     @Override
@@ -188,6 +217,33 @@ public final class BasicClientDocApi implements ClientDocApi {
             }
         }).runAndSetFail(res);
         return res;
+    }
+
+    @Override
+    public DocValidityCheckRsDto checkDocValidityByTimestamp(
+        final String id, final String timestamp, final User user
+    ) {
+        HttpPost rq = new HttpPost(full("auth/doc/check-validity-timestamp"));
+        addJsonHeaderTo(rq);
+        final AtomicReference<DocValidityCheckRsDto> res;
+        res = new AtomicReference<>(new DocValidityCheckRsDto());
+        new ExceptionCatcher.IOCatcher<>(() -> {
+            addBasicAuthorization(rq, user, res.get());
+            StringEntity entity = new StringEntity(
+                gson.toJson(new DocValidityDto(id, timestamp))
+            );
+            rq.setEntity(entity);
+            Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
+                res.get(),
+                String.format("Failed to check doc '%s' validity by timestamp", id)
+            );
+            if (rsp.isPresent()) {
+                String body = EntityUtils.toString(rsp.get().getEntity());
+                log.info(body);
+                res.set(gson.fromJson(body, DocValidityCheckRsDto.class));
+            }
+        }).runAndSetFail(res.get());
+        return res.get();
     }
 
     @Override

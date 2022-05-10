@@ -8,6 +8,7 @@ import aakrasnov.diploma.client.dto.UpdateDocRsDto;
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
 import aakrasnov.diploma.common.RsBaseDto;
+import aakrasnov.diploma.common.cache.DocValidityCheckRsDto;
 import java.util.List;
 
 public interface ClientDocApi {
@@ -25,6 +26,15 @@ public interface ClientDocApi {
      * @return Filtered documents from common pool and http status.
      */
     DocsRsDto filterDocsFromCommon(List<Filter> filters);
+
+    /**
+     * Check validity of the document from common pool
+     * by the specified parameters.
+     * @param id Document id
+     * @param timestamp Document timestamp
+     * @return Result of checking validity of the document by specified fields.
+     */
+    DocValidityCheckRsDto checkDocValidityByTimestampFromCommon(String id, String timestamp);
 
     /**
      * Get all documents from db from common pool.
@@ -68,6 +78,15 @@ public interface ClientDocApi {
     UpdateDocRsDto update(String id, DocDto docUpd, User user);
 
     /**
+     * Check validity of the document by the specified parameters.
+     * @param id Document id
+     * @param timestamp Document timestamp
+     * @param user User identity
+     * @return Result of checking validity of the document by specified fields.
+     */
+    DocValidityCheckRsDto checkDocValidityByTimestamp(String id, String timestamp, User user);
+
+    /**
      * Apply passed filters to the documents.
      * @param filters Filters for applying
      * @param user User identity
@@ -105,6 +124,13 @@ public interface ClientDocApi {
         }
 
         @Override
+        public DocValidityCheckRsDto checkDocValidityByTimestampFromCommon(
+            final String id, final String timestamp
+        ) {
+            throw new UnsupportedOperationException("not support in fake implementation");
+        }
+
+        @Override
         public DocsRsDto getAllDocsFromCommon() {
             throw new UnsupportedOperationException("not support in fake implementation");
         }
@@ -126,6 +152,13 @@ public interface ClientDocApi {
 
         @Override
         public UpdateDocRsDto update(final String id, final DocDto docUpd, final User user) {
+            throw new UnsupportedOperationException("not support in fake implementation");
+        }
+
+        @Override
+        public DocValidityCheckRsDto checkDocValidityByTimestamp(
+            final String id, final String timestamp, final User user
+        ) {
             throw new UnsupportedOperationException("not support in fake implementation");
         }
 

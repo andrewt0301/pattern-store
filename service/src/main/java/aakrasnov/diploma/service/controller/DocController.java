@@ -2,6 +2,8 @@ package aakrasnov.diploma.service.controller;
 
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
+import aakrasnov.diploma.common.cache.DocValidityCheckRsDto;
+import aakrasnov.diploma.common.cache.DocValidityDto;
 import aakrasnov.diploma.service.domain.Doc;
 import aakrasnov.diploma.service.domain.Role;
 import aakrasnov.diploma.service.domain.Team;
@@ -18,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,6 +62,48 @@ public class DocController {
     ) {
         filters.add(FilterByTeamId.COMMON_TEAM_FILTER);
         return ResponseEntity.ok(docService.filteredDocuments(filters));
+    }
+
+    @PostMapping("doc/check-validity-timestamp")
+    public ResponseEntity<DocValidityCheckRsDto> checkCommonDocValidityByIdAndTimestamp(
+        @RequestBody DocValidityDto docValidity
+        ) {
+        DocValidityCheckRsDto res = docService.findByIdAndTimestamp(docValidity);
+        return Optional.ofNullable(res.getDocDto())
+            .filter(doc -> doc.getTeam().getId().equals(Team.COMMON_TEAM_ID.toString()))
+            .map(ignore -> new ResponseEntity<>(res, HttpStatus.OK))
+            .orElseGet(() -> {
+                res.setDocDto(null);
+                res.setServerAnswer(DocValidityCheckRsDto.ServerAnswer.NOT_EXIST);
+                res.setStatus(HttpStatus.NOT_FOUND.value());
+                return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+            });
+    }
+
+    @PostMapping("auth/doc/check-validity-timestamp")
+    public ResponseEntity<DocValidityCheckRsDto> checkDocValidityByIdAndTimestamp(
+        Principal principal,
+        @RequestBody DocValidityDto docValidity
+    ) {
+        DocValidityCheckRsDto res = docService.findByIdAndTimestamp(docValidity);
+        User user = new PrincipalConverter(principal).toUser();
+        return Optional.ofNullable(res.getDocDto())
+            .filter(
+                doc -> user.getTeams().stream()
+                    .map(Team::getId)
+                    .map(ObjectId::toHexString)
+                    .anyMatch(teamId -> teamId.equals(doc.getTeam().getId()))
+            ).map(ignore -> new ResponseEntity<>(res, HttpStatus.OK))
+            .orElseGet(() -> {
+                res.setDocDto(null);
+                if (res.getServerAnswer() != DocValidityCheckRsDto.ServerAnswer.NOT_EXIST) {
+                    res.setStatus(HttpStatus.FORBIDDEN.value());
+                } else {
+                    res.setStatus(HttpStatus.NOT_FOUND.value());
+                }
+                res.setServerAnswer(DocValidityCheckRsDto.ServerAnswer.NOT_EXIST);
+                return new ResponseEntity<>(res, HttpStatus.valueOf(res.getStatus()));
+            });
     }
 
     @GetMapping("auth/doc/{id}")

@@ -1,6 +1,6 @@
 package aakrasnov.diploma.client.cache.impl;
 
-import aakrasnov.diploma.client.test.PathConverter;
+import aakrasnov.diploma.client.utils.PathConverter;
 import aakrasnov.diploma.client.test.TestResource;
 import com.google.gson.JsonObject;
 import java.io.IOException;

@@ -2,6 +2,8 @@ package aakrasnov.diploma.service.service;
 
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
+import aakrasnov.diploma.common.cache.DocValidityCheckRsDto;
+import aakrasnov.diploma.common.cache.DocValidityDto;
 import aakrasnov.diploma.service.domain.Doc;
 import aakrasnov.diploma.service.domain.Role;
 import aakrasnov.diploma.service.domain.User;
@@ -29,6 +31,28 @@ public class DocServiceImpl implements DocService {
     public Optional<DocDto> findById(final String id) {
         return docRepo.findById(id)
             .map(Doc::toDto);
+    }
+
+    @Override
+    public DocValidityCheckRsDto findByIdAndTimestamp(final DocValidityDto docValidity) {
+        DocValidityCheckRsDto resCheck = new DocValidityCheckRsDto();
+        Optional<DocDto> docDto = docRepo.findById(docValidity.getId()).map(Doc::toDto);
+        if (!docDto.isPresent()) {
+            resCheck.setServerAnswer(DocValidityCheckRsDto.ServerAnswer.NOT_EXIST);
+            resCheck.setStatus(HttpStatus.OK.value());
+            return resCheck;
+        }
+        Optional<DocDto> byTimestamp = docDto.filter(
+            dto -> docValidity.getTimestamp().equals(dto.getTimestamp())
+        );
+        if (byTimestamp.isPresent()) {
+            resCheck.setServerAnswer(DocValidityCheckRsDto.ServerAnswer.EXIST_BY_ID_AND_TIMESTAMP);
+        } else {
+            resCheck.setServerAnswer(DocValidityCheckRsDto.ServerAnswer.EXIST_ONLY_BY_ID);
+            resCheck.setDocDto(docDto.get());
+        }
+        resCheck.setStatus(HttpStatus.OK.value());
+        return resCheck;
     }
 
     @Override

@@ -1,6 +1,8 @@
 package aakrasnov.diploma.service.service.api;
 
 import aakrasnov.diploma.common.DocDto;
+import aakrasnov.diploma.common.cache.DocValidityCheckRsDto;
+import aakrasnov.diploma.common.cache.DocValidityDto;
 import aakrasnov.diploma.common.Filter;
 import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.dto.AddDocRsDto;
@@ -15,9 +17,16 @@ public interface DocService {
     /**
      * Find document with patterns by id.
      * @param id Id of the document
-     * @return Found documents or empty in case of absence.
+     * @return Found document or empty in case of absence.
      */
     Optional<DocDto> findById(String id);
+
+    /**
+     * Check the validity of the document by parameters (e.g. id and timestamp).
+     * @param docValidity Document validity parameters
+     * @return Result of checking the validity of document by specified fields.
+     */
+    DocValidityCheckRsDto findByIdAndTimestamp(DocValidityDto docValidity);
 
     /**
      * Add a new document to the database.

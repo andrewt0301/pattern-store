@@ -10,15 +10,12 @@ import aakrasnov.diploma.client.dto.AddDocRsDto;
 import aakrasnov.diploma.client.dto.DocsRsDto;
 import aakrasnov.diploma.client.dto.GetDocRsDto;
 import aakrasnov.diploma.client.dto.UpdateDocRsDto;
+import aakrasnov.diploma.client.utils.PathConverter;
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
 import aakrasnov.diploma.common.RsBaseDto;
-import com.google.gson.Gson;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
+import aakrasnov.diploma.common.cache.DocValidityCheckRsDto;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +23,8 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 
-// TODO: Implement partially upload from local cache and the rest from the server.
+// TODO: Investigate partially upload from local cache and the rest from the server.
+//  In general, it is possible to implement it, but is it necessary?
 @Slf4j
 public final class CacheIndexClientDoc implements ClientDocApi {
 
@@ -51,52 +49,59 @@ public final class CacheIndexClientDoc implements ClientDocApi {
         }
         boolean failForActualDoc = false;
         if (new ActualDoc(docInfo.get()).isActual()) {
-            try (
-                InputStream input = new FileInputStream(
-                    Paths.get(index.getPrefix(), docInfo.get().getPath()).toString()
-                )
-            ) {
-                GetDocRsDto res = new GetDocRsDto();
-                DocDto docDto = new Gson().fromJson(
-                    new InputStreamReader(new BufferedInputStream(input)),
-                    DocDto.class
-                );
-                res.setDocDto(docDto);
-                res.setStatus(HttpStatus.SC_OK);
-                return res;
-            } catch (IOException exc) {
-                log.error(
-                    String.format(
-                        "Failed to get document '%s' from cache. It will try to get from server", id
-                    ),
-                    exc
-                );
-                index.invalidateByDocId(id);
-                failForActualDoc = true;
+            Optional<GetDocRsDto> parsedCached = tryGetDocFromCache(docInfo.get());
+            if (parsedCached.isPresent()) {
+                return parsedCached.get();
             }
+            failForActualDoc = true;
         }
         if (failForActualDoc) {
-            // get from service
+            return docApi.getDocFromCommon(id);
         }
-        // compare docInfo docTimestamp
-        return null;
+        DocValidityCheckRsDto resCheck = docApi.checkDocValidityByTimestampFromCommon(
+            id, docInfo.get().getDocTimestamp()
+        );
+        return processCheckValidity(docInfo.get(), resCheck);
     }
 
     @Override
     public DocsRsDto filterDocsFromCommon(final List<Filter> filters) {
-        // TODO: check count of docs in common and compare with cache.
-        return null;
+        return docApi.filterDocsFromCommon(filters);
+    }
+
+    @Override
+    public DocValidityCheckRsDto checkDocValidityByTimestampFromCommon(
+        final String id, final String timestamp
+    ) {
+        return docApi.checkDocValidityByTimestampFromCommon(id, timestamp);
     }
 
     @Override
     public DocsRsDto getAllDocsFromCommon() {
-        return null;
+        return docApi.getAllDocsFromCommon();
     }
 
     @Override
     public GetDocRsDto getDoc(final String id, final User user) {
-        // TODO: check in cache
-        return null;
+        Optional<CachedDocInfo> docInfo = index.getCachedDocInfo(id);
+        if (!docInfo.isPresent()) {
+            return docApi.getDoc(id, user);
+        }
+        boolean failForActualDoc = false;
+        if (new ActualDoc(docInfo.get()).isActual()) {
+            Optional<GetDocRsDto> parsedCached = tryGetDocFromCache(docInfo.get());
+            if (parsedCached.isPresent()) {
+                return parsedCached.get();
+            }
+            failForActualDoc = true;
+        }
+        if (failForActualDoc) {
+            return docApi.getDoc(id, user);
+        }
+        DocValidityCheckRsDto resCheck = docApi.checkDocValidityByTimestamp(
+            id, docInfo.get().getDocTimestamp(), user
+        );
+        return processCheckValidity(docInfo.get(), resCheck);
     }
 
     @Override
@@ -107,7 +112,6 @@ public final class CacheIndexClientDoc implements ClientDocApi {
 
     @Override
     public AddDocRsDto add(final DocDto document, final User user) {
-        // TODO: add to cache
         AddDocRsDto res = docApi.add(document, user);
         if (res.getStatus() == HttpStatus.SC_CREATED) {
             index.cacheDocs(Collections.singletonList(document));
@@ -117,8 +121,19 @@ public final class CacheIndexClientDoc implements ClientDocApi {
 
     @Override
     public UpdateDocRsDto update(final String id, final DocDto docUpd, final User user) {
-        // TODO: cache invalidate
-        return docApi.update(id, docUpd, user);
+        index.invalidateByDocId(id);
+        UpdateDocRsDto res = docApi.update(id, docUpd, user);
+        if (res.getStatus() == HttpStatus.SC_OK) {
+            index.cacheDocs(Collections.singletonList(res.getDocDto()));
+        }
+        return res;
+    }
+
+    @Override
+    public DocValidityCheckRsDto checkDocValidityByTimestamp(
+        final String id, final String timestamp, final User user
+    ) {
+        return docApi.checkDocValidityByTimestamp(id, timestamp, user);
     }
 
     @Override
@@ -134,5 +149,55 @@ public final class CacheIndexClientDoc implements ClientDocApi {
     @Override
     public DocsRsDto getDocsByTeamId(final String teamId, final User user) {
         return docApi.getDocsByTeamId(teamId, user);
+    }
+
+    private Optional<GetDocRsDto> tryGetDocFromCache(CachedDocInfo docInfo) {
+        try {
+            GetDocRsDto res = new GetDocRsDto();
+            DocDto docDto = new PathConverter(
+                Paths.get(index.getPrefix(), docInfo.getPath())
+            ).toDocDto();
+            res.setDocDto(docDto);
+            res.setStatus(HttpStatus.SC_OK);
+            return Optional.of(res);
+        } catch (IOException exc) {
+            log.error(
+                String.format(
+                    "Failed to get document '%s' from cache. It will try to get doc from server",
+                    docInfo.getDocId()
+                ),
+                exc
+            );
+            index.invalidateByDocId(docInfo.getDocId());
+        }
+        return Optional.empty();
+    }
+
+    private GetDocRsDto processCheckValidity(
+        CachedDocInfo docInfo, DocValidityCheckRsDto resCheck
+    ) {
+        GetDocRsDto res = new GetDocRsDto();
+        String id = docInfo.getDocId();
+        if (resCheck.getServerAnswer() == DocValidityCheckRsDto.ServerAnswer.EXIST_ONLY_BY_ID) {
+            index.invalidateByDocId(id);
+            index.cacheDocs(Collections.singletonList(resCheck.getDocDto()));
+            log.info("Refreshed cache value for doc with id '{}'", id);
+            res.setStatus(HttpStatus.SC_OK);
+            res.setDocDto(resCheck.getDocDto());
+        } else if (resCheck.getServerAnswer() == DocValidityCheckRsDto.ServerAnswer.NOT_EXIST) {
+            String error = String.format("Failed to found document with id '%s'", id);
+            log.error(error);
+            res.setStatus(HttpStatus.SC_NOT_FOUND);
+            res.setMsg(error);
+        } else if (resCheck.getServerAnswer() == DocValidityCheckRsDto.ServerAnswer.EXIST_BY_ID_AND_TIMESTAMP) {
+            log.warn("Document with id '{}' does not exist on the server. Read from cache", id);
+            Optional<GetDocRsDto> parsedCached = tryGetDocFromCache(docInfo);
+            if (parsedCached.isPresent()) {
+                res = parsedCached.get();
+            } else {
+                res.setStatus(HttpStatus.SC_NOT_FOUND);
+            }
+        }
+        return res;
     }
 }

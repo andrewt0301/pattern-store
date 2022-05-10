@@ -1,10 +1,9 @@
 package aakrasnov.diploma.client.cache.impl;
 
 import aakrasnov.diploma.client.test.DocDtoSample;
-import aakrasnov.diploma.client.test.PathConverter;
+import aakrasnov.diploma.client.utils.PathConverter;
 import aakrasnov.diploma.client.test.TestResource;
 import aakrasnov.diploma.common.DocDto;
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.nio.file.Files;

@@ -1,4 +1,4 @@
-package aakrasnov.diploma.client.test;
+package aakrasnov.diploma.client.utils;
 
 import aakrasnov.diploma.common.DocDto;
 import com.google.gson.Gson;
