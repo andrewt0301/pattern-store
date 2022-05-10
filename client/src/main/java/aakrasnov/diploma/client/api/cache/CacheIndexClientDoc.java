@@ -185,19 +185,36 @@ public final class CacheIndexClientDoc implements ClientDocApi {
             res.setStatus(HttpStatus.SC_OK);
             res.setDocDto(resCheck.getDocDto());
         } else if (resCheck.getServerAnswer() == DocValidityCheckRsDto.ServerAnswer.NOT_EXIST) {
-            String error = String.format("Failed to found document with id '%s'", id);
-            log.error(error);
-            res.setStatus(HttpStatus.SC_NOT_FOUND);
-            res.setMsg(error);
-        } else if (resCheck.getServerAnswer() == DocValidityCheckRsDto.ServerAnswer.EXIST_BY_ID_AND_TIMESTAMP) {
             log.warn("Document with id '{}' does not exist on the server. Read from cache", id);
             Optional<GetDocRsDto> parsedCached = tryGetDocFromCache(docInfo);
             if (parsedCached.isPresent()) {
                 res = parsedCached.get();
+                res.setStatus(HttpStatus.SC_OK);
             } else {
+                index.invalidateByDocId(id);
                 res.setStatus(HttpStatus.SC_NOT_FOUND);
             }
+        } else if (resCheck.getServerAnswer() == DocValidityCheckRsDto.ServerAnswer.EXIST_BY_ID_AND_TIMESTAMP) {
+            Optional<GetDocRsDto> parsedCached = tryGetDocFromCache(docInfo);
+            if (parsedCached.isPresent()) {
+                res = parsedCached.get();
+                res.setStatus(HttpStatus.SC_OK);
+            } else {
+                log.warn(
+                    "Failed to parse cached document with id '{}'. Take from server response", id
+                );
+                index.invalidateByDocId(id);
+                res.setStatus(resCheck.getStatus());
+                res.setMsg(resCheck.getMsg());
+                res.setDocDto(resCheck.getDocDto());
+            }
+        } else {
+            String error = String.format("Failed to found document with id '%s'", id);
+            log.error(error);
+            res.setMsg(error);
+            res.setStatus(HttpStatus.SC_NOT_FOUND);
         }
+        log.debug(res.toString());
         return res;
     }
 }

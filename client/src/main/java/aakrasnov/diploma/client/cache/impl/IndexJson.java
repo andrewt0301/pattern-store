@@ -114,7 +114,7 @@ public class IndexJson implements Index {
 
     @Override
     public String getPrefix() {
-        return indexPath.toFile().getParent();
+        return Optional.ofNullable(indexPath.toFile().getParent()).orElse("");
     }
 
     private void createIfNotExist() {

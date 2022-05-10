@@ -23,7 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class IndexFileJsonTest {
-    static final String CACHE_DOC = "111122223333444455556666";
+    public static final String CACHE_DOC = "111122223333444455556666";
 
     private IndexFileJson index;
 

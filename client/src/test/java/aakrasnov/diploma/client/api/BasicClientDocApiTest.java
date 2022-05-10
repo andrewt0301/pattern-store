@@ -109,7 +109,6 @@ class BasicClientDocApiTest {
     public void getAllDocsAvailableForUser() {
         DocsRsDto res = new BasicClientDocApi(httpClient, LOCALHOST)
             .getAllDocsForUser(new User(ONLYTEST_USERNAME, ONLYTEST_PSWD));
-        System.out.println(res);
         MatcherAssert.assertThat(
             "Status should be OK",
             res.getStatus(),

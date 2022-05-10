@@ -29,7 +29,7 @@ public class IndexJsonGetDocInfoTest {
                 CachedDocInfo.builder()
                     .docId("111122223333444455556666")
                     .docTimestamp("2022:03:22 11:01:10")
-                    .path("pathToCachedFile.json")
+                    .path("pathToCachedFileAndDocId.json")
                     .cachingTime("2022:05:03 19:10:17")
                     .build()
             )

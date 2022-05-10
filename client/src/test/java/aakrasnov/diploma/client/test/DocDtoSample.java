@@ -24,9 +24,10 @@ public class DocDtoSample {
     public static DocDto withIdAndTimestamp(String docId, String timestamp) {
         return DocDto.builder()
             .id(docId)
-            .scenario(new ScenarioDto())
+            .scenario(new ScenarioDto(ScenarioDto.Type.FOR_TEST, new HashMap<>()))
             .team(new TeamDto())
             .timestamp(timestamp)
+            .lang("java")
             .build();
     }
 }
