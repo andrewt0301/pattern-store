@@ -5,7 +5,9 @@ import aakrasnov.diploma.client.api.ClientDocApi;
 import aakrasnov.diploma.client.domain.User;
 import aakrasnov.diploma.client.exception.BadInputDocFileException;
 import aakrasnov.diploma.client.exception.ForbiddenOperationException;
+import aakrasnov.diploma.client.exception.IncorrectCommandUsageException;
 import aakrasnov.diploma.client.exception.InputFileNotFoundException;
+import aakrasnov.diploma.client.utils.PathConverter;
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
 import aakrasnov.diploma.common.RsBaseDto;
@@ -34,63 +36,87 @@ public class CliDoc implements Callable<String> {
     @ArgGroup(exclusive = false)
     FilterArg[] filtersArg;
 
+    @ArgGroup(exclusive = false)
+    UpdateDocArg updateDocArg;
+
     static class UserArg {
         @Option(
             names = {"-u", "--username"},
             required = true,
-            description = "Username for authentication"
+            description = "Username for authentication. "
         )
         private String username;
 
         @Option(
             names = {"-p", "--password"},
             required = true,
-            description = "User password"
+            description = "User password. "
         )
         private String password;
     }
 
     static class FilterArg {
         @Option(
-            names = {"--keyFilter", "--keyFltr"},
+            names = {"--keyFilter"},
             required = true,
             description = "Key for filter. Option --filterMode should be passed."
         )
         private String key;
 
         @Option(
-            names = {"--valueFilter", "--valueFlt", "--valFilter", "--valFltr"},
+            names = {"--valueFilter", "--valFilter"},
             required = true,
             description = "Value for filter. Option --filterMode should be passed."
         )
         private String value;
     }
 
+    static class UpdateDocArg {
+        @Option(names = {"--updDocId"},
+            required = true,
+            description = "Id of document for updating. "
+        )
+        private String docId;
+
+        @Option(names = {"--pathUpd"},
+            required = true,
+            description = "Path to the document for update. "
+        )
+        private String pathUpd;
+    }
+
     @ArgGroup(exclusive = true)
     OnlyOne cmd;
 
     static class OnlyOne {
-        @Option(names = {"--getById"},
+        @Option(names = {"--getById", "--docId"},
             required = true,
-            description = "Id of document for obtaining"
+            description = "Id of document for obtaining. "
         )
         private String getDocId;
 
+        @Option(names = {"--getByTeam", "--byTeam"},
+            required = true,
+            description = "Get documents by team id. User should be authenticated and " +
+                          "have access to this team. "
+        )
+        private String getByTeamId;
+
         @Option(names = {"--deleteById"},
             required = true,
-            description = "Id of document for removing"
+            description = "Id of document for removing. "
         )
         private String deleteDocId;
 
         @Option(names = {"--addDocFile"},
             required = true,
-            description = "Path to the file with document for addition"
+            description = "Path to the file with document for addition. "
         )
         private String addDocFile;
 
         @Option(names = {"--filterMode"},
             required = true,
-            description = "This mode should activated for passing filters' values"
+            description = "This mode should be activated for passing filters' values. "
         )
         private boolean filterMode;
 
@@ -98,9 +124,24 @@ public class CliDoc implements Callable<String> {
             required = true,
             description = "Get all documents from database. If you are not authenticated, " +
                           "only docs from common pool will be shown. If you are successfully " +
-                          "authenticated, all available docs for your teams will be shown."
+                          "authenticated, all available docs for your teams will be shown. "
         )
         private boolean getAll;
+
+        @Option(names = {"--getByUser", "--byUser"},
+            required = true,
+            description = "Get documents by user. User should be authenticated. "
+        )
+        private boolean getByUser;
+
+        @Option(names = {"--update"},
+            required = true,
+            description = "This mode should be activated for update of the documents. " +
+                          "It is used together with specifying id of doc for update " +
+                          "and path to the file with a new documents. " +
+                          "User should be authenticated. "
+        )
+        private boolean updateMode;
     }
 
     private final ClientDocApi clientDoc;
@@ -161,7 +202,10 @@ public class CliDoc implements Callable<String> {
                 );
             }
         }
-        if (cmd.filterMode && filtersArg != null) {
+        if (cmd.filterMode) {
+            if (filtersArg == null) {
+                throw new IncorrectCommandUsageException("Please, specify filters");
+            }
             List<Filter> filters = Arrays.stream(filtersArg).map(
                 filter -> new Filter.Wrap(filter.key, filter.value)
             ).collect(Collectors.toList());
@@ -175,9 +219,57 @@ public class CliDoc implements Callable<String> {
             }
         }
         if (cmd.getAll) {
-            System.out.println("try later");
+            if (user == null) {
+                res = clientDoc.getAllDocsFromCommon();
+            } else {
+                res = clientDoc.getAllDocsForUser(new User(user.username, user.password));
+            }
         }
-        // TODO: getDocsByTeamId, updateDoc, getDocByUser(user/admin)
+        if (cmd.getByUser) {
+            if (user == null) {
+                throw new ForbiddenOperationException(
+                    "It is necessary to be authenticated in order to get documents by the user."
+                );
+            }
+            res = clientDoc.getAllDocsForUser(new User(user.username, user.password));
+        }
+        if (cmd.getByTeamId != null) {
+            if (user == null) {
+                throw new ForbiddenOperationException(
+                    "It is necessary to be authenticated in order to get documents by the team."
+                );
+            }
+            res = clientDoc.getDocsByTeamId(
+                cmd.getByTeamId,
+                new User(user.username, user.password)
+            );
+        }
+        if (cmd.updateMode) {
+            if (updateDocArg == null) {
+                throw new IncorrectCommandUsageException("Please, specify info about doc update");
+            }
+            if (user == null) {
+                throw new ForbiddenOperationException(
+                    "It is necessary to be authenticated in order to perform update."
+                );
+            }
+            if (!Files.exists(Paths.get(updateDocArg.pathUpd))) {
+                throw new InputFileNotFoundException(
+                    String.format("Failed to find file for update '%s'", updateDocArg.pathUpd)
+                );
+            }
+            DocDto docDto;
+            try {
+                docDto = new PathConverter(Paths.get(updateDocArg.pathUpd)).toDocDto();
+            } catch (IOException exc) {
+                throw new BadInputDocFileException(
+                    "Failed to convert update file to DocDto", exc
+                );
+            }
+            res = clientDoc.update(
+                updateDocArg.docId, docDto, new User(user.username, user.password)
+            );
+        }
         return res.toString();
     }
 }

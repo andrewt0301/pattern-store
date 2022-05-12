@@ -449,9 +449,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">Synopsis</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>document</strong> [<strong>-u</strong>=<em>&lt;username&gt;</em> <strong>-p</strong>=<em>&lt;password&gt;</em>] [<strong>--keyFltr</strong>=<em>&lt;key&gt;</em> <strong>--valFltr</strong>=<em>&lt;value&gt;</em>]
-         [<strong>--getById</strong>=<em>&lt;getDocId&gt;</em> | <strong>--deleteById</strong>=<em>&lt;deleteDocId&gt;</em> |
-         <strong>--addDocFile</strong>=<em>&lt;addDocFile&gt;</em> | <strong>--filterMode</strong> | <strong>--getAll</strong>]</p>
+<p><strong>document</strong> [<strong>-u</strong>=<em>&lt;username&gt;</em> <strong>-p</strong>=<em>&lt;password&gt;</em>] [<strong>--keyFilter</strong>=<em>&lt;key&gt;</em> <strong>--valFilter</strong>=<em>&lt;value&gt;</em>]
+         [<strong>--updDocId</strong>=<em>&lt;docId&gt;</em> <strong>--pathUpd</strong>=<em>&lt;pathUpd&gt;</em>] [<strong>--docId</strong>=<em>&lt;getDocId&gt;</em> |
+         <strong>--byTeam</strong>=<em>&lt;getByTeamId&gt;</em> | <strong>--deleteById</strong>=<em>&lt;deleteDocId&gt;</em> |
+         <strong>--addDocFile</strong>=<em>&lt;addDocFile&gt;</em> | <strong>--filterMode</strong> | <strong>--getAll</strong> | <strong>--byUser</strong> |
+         <strong>--update</strong>]</p>
 </div>
 </div>
 </div>
@@ -470,37 +472,57 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <dl>
 <dt class="hdlist1"><strong>--addDocFile</strong>=<em>&lt;addDocFile&gt;</em></dt>
 <dd>
-<p>Path to the file with document for addition</p>
+<p>Path to the file with document for addition.</p>
+</dd>
+<dt class="hdlist1"><strong>--byTeam, --getByTeam</strong>=<em>&lt;getByTeamId&gt;</em></dt>
+<dd>
+<p>Get documents by team id. User should be authenticated and have access to this team.</p>
+</dd>
+<dt class="hdlist1"><strong>--byUser, --getByUser</strong></dt>
+<dd>
+<p>Get documents by user. User should be authenticated.</p>
 </dd>
 <dt class="hdlist1"><strong>--deleteById</strong>=<em>&lt;deleteDocId&gt;</em></dt>
 <dd>
-<p>Id of document for removing</p>
+<p>Id of document for removing.</p>
+</dd>
+<dt class="hdlist1"><strong>--docId, --getById</strong>=<em>&lt;getDocId&gt;</em></dt>
+<dd>
+<p>Id of document for obtaining.</p>
 </dd>
 <dt class="hdlist1"><strong>--filterMode</strong></dt>
 <dd>
-<p>This mode should activated for passing filters' values</p>
+<p>This mode should be activated for passing filters' values.</p>
 </dd>
 <dt class="hdlist1"><strong>--getAll</strong></dt>
 <dd>
 <p>Get all documents from database. If you are not authenticated, only docs from common pool will be shown. If you are successfully authenticated, all available docs for your teams will be shown.</p>
 </dd>
-<dt class="hdlist1"><strong>--getById</strong>=<em>&lt;getDocId&gt;</em></dt>
-<dd>
-<p>Id of document for obtaining</p>
-</dd>
-<dt class="hdlist1"><strong>--keyFltr, --keyFilter</strong>=<em>&lt;key&gt;</em></dt>
+<dt class="hdlist1"><strong>--keyFilter</strong>=<em>&lt;key&gt;</em></dt>
 <dd>
 <p>Key for filter. Option --filterMode should be passed.</p>
 </dd>
 <dt class="hdlist1"><strong>-p</strong>, <strong>--password</strong>=<em>&lt;password&gt;</em></dt>
 <dd>
-<p>User password</p>
+<p>User password.</p>
+</dd>
+<dt class="hdlist1"><strong>--pathUpd</strong>=<em>&lt;pathUpd&gt;</em></dt>
+<dd>
+<p>Path to the document for update.</p>
 </dd>
 <dt class="hdlist1"><strong>-u</strong>, <strong>--username</strong>=<em>&lt;username&gt;</em></dt>
 <dd>
-<p>Username for authentication</p>
+<p>Username for authentication.</p>
 </dd>
-<dt class="hdlist1"><strong>--valFltr, --valueFlt, --valFilter, --valueFilter</strong>=<em>&lt;value&gt;</em></dt>
+<dt class="hdlist1"><strong>--update</strong></dt>
+<dd>
+<p>This mode should be activated for update of the documents. It is used together with specifying id of doc for update and path to the file with a new documents. User should be authenticated.</p>
+</dd>
+<dt class="hdlist1"><strong>--updDocId</strong>=<em>&lt;docId&gt;</em></dt>
+<dd>
+<p>Id of document for updating.</p>
+</dd>
+<dt class="hdlist1"><strong>--valFilter, --valueFilter</strong>=<em>&lt;value&gt;</em></dt>
 <dd>
 <p>Value for filter. Option --filterMode should be passed.</p>
 </dd>
@@ -512,7 +534,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="footer">
 <div id="footer-text">
 Version <br>
-Last updated 2022-05-03 15:02:43 +0300
+Last updated 2022-05-13 01:35:33 +0300
 </div>
 </div>
 </body>
