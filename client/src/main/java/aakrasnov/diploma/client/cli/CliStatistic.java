@@ -5,6 +5,7 @@ import aakrasnov.diploma.client.api.ClientStatisticApiImpl;
 import aakrasnov.diploma.client.exception.BadInputIdsFileException;
 import aakrasnov.diploma.client.exception.InputFileNotFoundException;
 import aakrasnov.diploma.client.exception.StatisticFileOutputException;
+import aakrasnov.diploma.client.utils.RsAsGsonPretty;
 import aakrasnov.diploma.common.RsBaseDto;
 import aakrasnov.diploma.common.stata.DocIdDto;
 import aakrasnov.diploma.common.stata.StatisticDto;
@@ -101,10 +102,10 @@ public class CliStatistic implements Callable<String> {
     private boolean appendFile;
 
     @Option(
-        names = {"--prettyString"},
-        description = "Convert got file with statistic to string."
+        names = {"--pretty"},
+        description = "Convert got file with statistic to pretty string."
     )
-    private boolean prettyString;
+    private boolean isPretty;
 
     private final ClientStatisticApi clientStatistic;
 
@@ -144,7 +145,7 @@ public class CliStatistic implements Callable<String> {
                 getIdsFromFile(cmd.downloadsDocsFile)
             );
         }
-        String resText = convertToPrettyIfNeed(res, prettyString);
+        String resText = new RsAsGsonPretty(res, gson).convert(isPretty);
         if (outFile != null) {
             Path path = Paths.get(outFile);
             try {
@@ -230,17 +231,6 @@ public class CliStatistic implements Callable<String> {
             res = clientStatistic.getStatisticForPatterns(ids);
         }
         return res;
-    }
-
-    private String convertToPrettyIfNeed(RsBaseDto res, boolean isPretty) {
-        String resText;
-        if (isPretty) {
-            resText = new GsonBuilder().setPrettyPrinting()
-                .create().toJson(res);
-        } else {
-            resText = gson.toJson(res);
-        }
-        return resText;
     }
 
     private static Set<String> getIdsFromFile(String file) {

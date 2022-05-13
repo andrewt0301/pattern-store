@@ -2,12 +2,12 @@
 .\"     Title: document
 .\"    Author: [see the "AUTHOR(S)" section]
 .\" Generator: Asciidoctor 2.0.10
-.\"      Date: 2022-05-13
+.\"      Date: 2022-05-14
 .\"    Manual: Document Manual
 .\"    Source: 
 .\"  Language: English
 .\"
-.TH "DOCUMENT" "1" "2022-05-13" "" "Document Manual"
+.TH "DOCUMENT" "1" "2022-05-14" "" "Document Manual"
 .ie \n(.g .ds Aq \(aq
 .el       .ds Aq '
 .ss \n[.ss] 0
@@ -31,7 +31,8 @@
 document \- Command for interacting with documents from the database and local cache.
 .SH "SYNOPSIS"
 .sp
-\fBdocument\fP [\fB\-u\fP=\fI<username>\fP \fB\-p\fP=\fI<password>\fP] [\fB\-\-keyFilter\fP=\fI<key>\fP \fB\-\-valFilter\fP=\fI<value>\fP]
+\fBdocument\fP [\fB\-\-cache\fP] [\fB\-\-prettyString\fP] [\fB\-\-file\fP=\fI<outFile>\fP] [\fB\-u\fP=\fI<username>\fP
+\fB\-p\fP=\fI<password>\fP] [\fB\-\-keyFilter\fP=\fI<key>\fP \fB\-\-valFilter\fP=\fI<value>\fP]
 [\fB\-\-updDocId\fP=\fI<docId>\fP \fB\-\-pathUpd\fP=\fI<pathUpd>\fP] [\fB\-\-docId\fP=\fI<getDocId>\fP |
 \fB\-\-byTeam\fP=\fI<getByTeamId>\fP | \fB\-\-deleteById\fP=\fI<deleteDocId>\fP |
 \fB\-\-addDocFile\fP=\fI<addDocFile>\fP | \fB\-\-filterMode\fP | \fB\-\-getAll\fP | \fB\-\-byUser\fP |
@@ -56,6 +57,11 @@ Get documents by team id. User should be authenticated and have access to this t
 Get documents by user. User should be authenticated.
 .RE
 .sp
+\fB\-\-cache\fP
+.RS 4
+This flag allows to make requests which use client cache.
+.RE
+.sp
 \fB\-\-deleteById\fP=\fI<deleteDocId>\fP
 .RS 4
 Id of document for removing.
@@ -64,6 +70,11 @@ Id of document for removing.
 \fB\-\-docId, \-\-getById\fP=\fI<getDocId>\fP
 .RS 4
 Id of document for obtaining.
+.RE
+.sp
+\fB\-\-file\fP=\fI<outFile>\fP
+.RS 4
+Path to the file with output results. If it is not used the results will be printed in the console.
 .RE
 .sp
 \fB\-\-filterMode\fP
@@ -89,6 +100,11 @@ User password.
 \fB\-\-pathUpd\fP=\fI<pathUpd>\fP
 .RS 4
 Path to the document for update.
+.RE
+.sp
+\fB\-\-prettyString\fP
+.RS 4
+Convert got file with statistic to string.
 .RE
 .sp
 \fB\-u\fP, \fB\-\-username\fP=\fI<username>\fP

@@ -4,6 +4,7 @@ import aakrasnov.diploma.client.api.BasicClientDocApi;
 import aakrasnov.diploma.client.api.ClientDocApi;
 import aakrasnov.diploma.client.api.ClientStatisticApi;
 import aakrasnov.diploma.client.api.ClientStatisticApiImpl;
+import aakrasnov.diploma.client.api.cache.CacheIndexClientDoc;
 import aakrasnov.diploma.client.cli.Cli;
 import aakrasnov.diploma.client.cli.CliDoc;
 import aakrasnov.diploma.client.cli.CliStatistic;
@@ -22,7 +23,7 @@ public class ClientApplication {
             // TODO: add autocomplete for CLI
             CommandLine cmd = new CommandLine(new Cli())
                 .addSubcommand(new CommandLine.HelpCommand())
-                .addSubcommand(new CliDoc(clientDoc))
+                .addSubcommand(new CliDoc(clientDoc, new CacheIndexClientDoc(clientDoc)))
                 .addSubcommand(new CliStatistic(clientStatistic));
             cmd.setExecutionStrategy(new CommandLine.RunAll());
             cmd.execute(args);

@@ -2,20 +2,26 @@ package aakrasnov.diploma.client.cli;
 
 import aakrasnov.diploma.client.api.BasicClientDocApi;
 import aakrasnov.diploma.client.api.ClientDocApi;
+import aakrasnov.diploma.client.api.cache.CacheIndexClientDoc;
 import aakrasnov.diploma.client.domain.User;
 import aakrasnov.diploma.client.exception.BadInputDocFileException;
 import aakrasnov.diploma.client.exception.ForbiddenOperationException;
 import aakrasnov.diploma.client.exception.IncorrectCommandUsageException;
 import aakrasnov.diploma.client.exception.InputFileNotFoundException;
+import aakrasnov.diploma.client.exception.StatisticFileOutputException;
 import aakrasnov.diploma.client.utils.PathConverter;
+import aakrasnov.diploma.client.utils.RsAsGsonPretty;
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
 import aakrasnov.diploma.common.RsBaseDto;
 import com.google.gson.Gson;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
@@ -85,6 +91,12 @@ public class CliDoc implements Callable<String> {
         private String pathUpd;
     }
 
+    @Option(names = {"--cache"},
+        required = false,
+        description = "This flag allows to make requests which use client cache."
+    )
+    private boolean isCache;
+
     @ArgGroup(exclusive = true)
     OnlyOne cmd;
 
@@ -144,27 +156,58 @@ public class CliDoc implements Callable<String> {
         private boolean updateMode;
     }
 
+    @Option(
+        names = {"--file"},
+        description = "Path to the file with output results. If it is not used " +
+                      "the results will be printed in the console."
+    )
+    private String outFile;
+
+    @Option(
+        names = {"--pretty"},
+        description = "Convert got file with documents to string."
+    )
+    private boolean ispretty;
+
     private final ClientDocApi clientDoc;
+
+    private final ClientDocApi cacheClientDoc;
 
     private Gson gson;
 
     public CliDoc() {
-        this(new BasicClientDocApi(HttpClients.createDefault(), "http://localhost:8080"));
+        this.clientDoc = new BasicClientDocApi(
+            HttpClients.createDefault(), "http://localhost:8080"
+        );
+        this.cacheClientDoc = new CacheIndexClientDoc(clientDoc);
     }
 
-    public CliDoc(final ClientDocApi clientDoc) {
+    public CliDoc(final ClientDocApi clientDoc, final ClientDocApi cacheClientDoc) {
         this.clientDoc = clientDoc;
+        this.cacheClientDoc = cacheClientDoc;
         gson = new Gson();
     }
 
     @Override
     public String call() {
         RsBaseDto res = new RsBaseDto();
+        if (cmd == null) {
+            throw new IncorrectCommandUsageException("You should select one obligatory command");
+        }
         if (cmd.getDocId != null) {
             if (user != null) {
-                res = clientDoc.getDoc(cmd.getDocId, new User(user.username, user.password));
+                User identity =  new User(user.username, user.password);
+                if (isCache) {
+                    res = cacheClientDoc.getDoc(cmd.getDocId, identity);
+                } else {
+                    res = clientDoc.getDoc(cmd.getDocId, identity);
+                }
             } else {
-                res = clientDoc.getDocFromCommon(cmd.getDocId);
+                if (isCache) {
+                    res = cacheClientDoc.getDocFromCommon(cmd.getDocId);
+                } else {
+                    res = clientDoc.getDocFromCommon(cmd.getDocId);
+                }
             }
         }
         if (cmd.deleteDocId != null) {
@@ -173,7 +216,12 @@ public class CliDoc implements Callable<String> {
                     String.format("Failed to delete document '%s' for empty user", cmd.deleteDocId)
                 );
             }
-            res = clientDoc.deleteById(cmd.deleteDocId, new User(user.username, user.password));
+            User identity =  new User(user.username, user.password);
+            if (isCache) {
+                res = cacheClientDoc.deleteById(cmd.deleteDocId, identity);
+            } else {
+                res = clientDoc.deleteById(cmd.deleteDocId, identity);
+            }
         }
         if (cmd.addDocFile != null) {
             if (user == null) {
@@ -189,13 +237,13 @@ public class CliDoc implements Callable<String> {
                 );
             }
             try {
-                res = clientDoc.add(
-                    gson.fromJson(
-                        new String(Files.readAllBytes(Paths.get(cmd.addDocFile))),
-                        DocDto.class
-                    ),
-                    new User(user.username, user.password)
-                );
+                DocDto toAdd = new PathConverter(Paths.get(cmd.addDocFile)).toDocDto();
+                User identity =  new User(user.username, user.password);
+                if (isCache) {
+                    res = cacheClientDoc.add(toAdd, identity);
+                } else {
+                    res = clientDoc.add(toAdd, identity);
+                }
             } catch (IOException exc) {
                 throw new BadInputDocFileException(
                     String.format("Bad format of input file '%s' with doc", cmd.addDocFile)
@@ -210,19 +258,34 @@ public class CliDoc implements Callable<String> {
                 filter -> new Filter.Wrap(filter.key, filter.value)
             ).collect(Collectors.toList());
             if (user == null) {
-                res = clientDoc.filterDocsFromCommon(filters);
+                if (isCache) {
+                    res = cacheClientDoc.filterDocsFromCommon(filters);
+                } else {
+                    res = clientDoc.filterDocsFromCommon(filters);
+                }
             } else {
-                res = clientDoc.filterDocuments(
-                    filters,
-                    new User(user.username, user.password)
-                );
+                User identity = new User(user.username, user.password);
+                if (isCache) {
+                    res = cacheClientDoc.filterDocuments(filters, identity);
+                } else {
+                    res = clientDoc.filterDocuments(filters, identity);
+                }
             }
         }
         if (cmd.getAll) {
             if (user == null) {
-                res = clientDoc.getAllDocsFromCommon();
+                if (isCache) {
+                    res = cacheClientDoc.getAllDocsFromCommon();
+                } else {
+                    res = clientDoc.getAllDocsFromCommon();
+                }
             } else {
-                res = clientDoc.getAllDocsForUser(new User(user.username, user.password));
+                User identity = new User(user.username, user.password);
+                if (isCache) {
+                    res = cacheClientDoc.getAllDocsForUser(identity);
+                } else {
+                    res = clientDoc.getAllDocsForUser(identity);
+                }
             }
         }
         if (cmd.getByUser) {
@@ -231,7 +294,12 @@ public class CliDoc implements Callable<String> {
                     "It is necessary to be authenticated in order to get documents by the user."
                 );
             }
-            res = clientDoc.getAllDocsForUser(new User(user.username, user.password));
+            User identity = new User(user.username, user.password);
+            if (isCache) {
+                res = cacheClientDoc.getAllDocsForUser(identity);
+            } else {
+                res = clientDoc.getAllDocsForUser(identity);
+            }
         }
         if (cmd.getByTeamId != null) {
             if (user == null) {
@@ -239,10 +307,12 @@ public class CliDoc implements Callable<String> {
                     "It is necessary to be authenticated in order to get documents by the team."
                 );
             }
-            res = clientDoc.getDocsByTeamId(
-                cmd.getByTeamId,
-                new User(user.username, user.password)
-            );
+            User identity = new User(user.username, user.password);
+            if (isCache) {
+                res = cacheClientDoc.getDocsByTeamId(cmd.getByTeamId, identity);
+            } else {
+                res = clientDoc.getDocsByTeamId(cmd.getByTeamId, identity);
+            }
         }
         if (cmd.updateMode) {
             if (updateDocArg == null) {
@@ -266,9 +336,32 @@ public class CliDoc implements Callable<String> {
                     "Failed to convert update file to DocDto", exc
                 );
             }
-            res = clientDoc.update(
-                updateDocArg.docId, docDto, new User(user.username, user.password)
-            );
+            User identity = new User(user.username, user.password);
+            if (isCache) {
+                res = cacheClientDoc.update(updateDocArg.docId, docDto, identity);
+            } else {
+                res = clientDoc.update(updateDocArg.docId, docDto, identity);
+            }
+        }
+        String resText = new RsAsGsonPretty(res, gson).convert(ispretty);
+        if (outFile != null) {
+            Path path = Paths.get(outFile);
+            try {
+                Files.write(
+                    path,
+                    Collections.singleton(resText),
+                    StandardOpenOption.CREATE
+                );
+                System.out.printf("Data was written to the file '%s'%n", outFile);
+            } catch (IOException exc) {
+                throw new StatisticFileOutputException(
+                    String.format("Failed to output data to file '%s'", outFile),
+                    exc
+                );
+            }
+        } else {
+            System.out.println("Result of command:");
+            System.out.println(resText);
         }
         return res.toString();
     }

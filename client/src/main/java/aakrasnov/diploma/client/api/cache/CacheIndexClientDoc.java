@@ -45,7 +45,11 @@ public final class CacheIndexClientDoc implements ClientDocApi {
     public GetDocRsDto getDocFromCommon(final String id) {
         Optional<CachedDocInfo> docInfo = index.getCachedDocInfo(id);
         if (!docInfo.isPresent()) {
-            return docApi.getDocFromCommon(id);
+            GetDocRsDto res = docApi.getDocFromCommon(id);
+            if (res.getStatus() == HttpStatus.SC_OK) {
+                index.cacheDocs(Collections.singletonList(res.getDocDto()));
+            }
+            return res;
         }
         boolean failForActualDoc = false;
         if (new ActualDoc(docInfo.get()).isActual()) {
@@ -83,9 +87,14 @@ public final class CacheIndexClientDoc implements ClientDocApi {
 
     @Override
     public GetDocRsDto getDoc(final String id, final User user) {
+        System.out.println(index.getPrefix());
         Optional<CachedDocInfo> docInfo = index.getCachedDocInfo(id);
         if (!docInfo.isPresent()) {
-            return docApi.getDoc(id, user);
+            GetDocRsDto res = docApi.getDoc(id, user);
+            if (res.getStatus() == HttpStatus.SC_OK) {
+                index.cacheDocs(Collections.singletonList(res.getDocDto()));
+            }
+            return res;
         }
         boolean failForActualDoc = false;
         if (new ActualDoc(docInfo.get()).isActual()) {
@@ -157,6 +166,7 @@ public final class CacheIndexClientDoc implements ClientDocApi {
             DocDto docDto = new PathConverter(
                 Paths.get(index.getPrefix(), docInfo.getPath())
             ).toDocDto();
+            log.debug(String.format("Got doc from cache: %s", docDto.toString()));
             res.setDocDto(docDto);
             res.setStatus(HttpStatus.SC_OK);
             return Optional.of(res);
