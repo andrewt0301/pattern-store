@@ -29,6 +29,7 @@ client/target/*
 
 client/*-*-*-*-*.json
 client/index.json
+client/*.json
 client/**.iml
 
 service/target/
