@@ -2,12 +2,12 @@
 .\"     Title: statistic
 .\"    Author: [see the "AUTHOR(S)" section]
 .\" Generator: Asciidoctor 2.0.10
-.\"      Date: 2022-05-14
+.\"      Date: 2022-05-15
 .\"    Manual: Statistic Manual
 .\"    Source: 
 .\"  Language: English
 .\"
-.TH "STATISTIC" "1" "2022-05-14" "" "Statistic Manual"
+.TH "STATISTIC" "1" "2022-05-15" "" "Statistic Manual"
 .ie \n(.g .ds Aq \(aq
 .el       .ds Aq '
 .ss \n[.ss] 0
@@ -31,7 +31,7 @@
 statistic \- Command for obtaining statistic about usage of documents and patterns.
 .SH "SYNOPSIS"
 .sp
-\fBstatistic\fP [\fB\-\-appendFile\fP] [\fB\-\-merged\fP] [\fB\-\-prettyString\fP] [\fB\-\-file\fP=\fI<outFile>\fP]
+\fBstatistic\fP [\fB\-\-appendFile\fP] [\fB\-\-merged\fP] [\fB\-\-pretty\fP] [\fB\-\-file\fP=\fI<outFile>\fP]
 (\fB\-\-docId\fP=\fI<doc>\fP | \fB\-\-sendStataFile\fP=\fI<statisticFile>\fP |
 \fB\-\-ptrnsId\fP=\fI<patterns>\fP [\fB\-\-ptrnsId\fP=\fI<patterns>\fP]... |
 \fB\-\-ptrnsIdFile\fP=\fI<patternsFile>\fP | \fB\-\-downloadDocsId\fP=\fI<downloadsDocs>\fP
@@ -72,9 +72,9 @@ Path to the file with output results. If it is not used the results will be prin
 Merge results with statistics if this flag is specified.
 .RE
 .sp
-\fB\-\-prettyString\fP
+\fB\-\-pretty\fP
 .RS 4
-Convert got file with statistic to string.
+Convert got file with statistic to pretty string.
 .RE
 .sp
 \fB\-\-ptrnsId, \-\-patternsId\fP=\fI<patterns>\fP

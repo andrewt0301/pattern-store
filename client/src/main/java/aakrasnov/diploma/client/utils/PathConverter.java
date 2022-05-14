@@ -1,6 +1,7 @@
 package aakrasnov.diploma.client.utils;
 
 import aakrasnov.diploma.common.DocDto;
+import aakrasnov.diploma.common.TeamDto;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -31,6 +32,13 @@ public final class PathConverter {
         return new Gson().fromJson(
             toJsonObj(),
             DocDto.class
+        );
+    }
+
+    public TeamDto toTeamDto() throws IOException {
+        return new Gson().fromJson(
+            toJsonObj(),
+            TeamDto.class
         );
     }
 }

@@ -4,7 +4,7 @@ import aakrasnov.diploma.client.api.BasicClientDocApi;
 import aakrasnov.diploma.client.api.ClientDocApi;
 import aakrasnov.diploma.client.api.cache.CacheIndexClientDoc;
 import aakrasnov.diploma.client.domain.User;
-import aakrasnov.diploma.client.exception.BadInputDocFileException;
+import aakrasnov.diploma.client.exception.BadInputFileException;
 import aakrasnov.diploma.client.exception.ForbiddenOperationException;
 import aakrasnov.diploma.client.exception.IncorrectCommandUsageException;
 import aakrasnov.diploma.client.exception.InputFileNotFoundException;
@@ -14,7 +14,6 @@ import aakrasnov.diploma.client.utils.RsAsGsonPretty;
 import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.Filter;
 import aakrasnov.diploma.common.RsBaseDto;
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,6 +43,9 @@ public class CliDoc implements Callable<String> {
 
     @ArgGroup(exclusive = false)
     UpdateDocArg updateDocArg;
+
+    @ArgGroup(exclusive = true)
+    OnlyOne cmd;
 
     static class UserArg {
         @Option(
@@ -97,9 +99,6 @@ public class CliDoc implements Callable<String> {
     )
     private boolean isCache;
 
-    @ArgGroup(exclusive = true)
-    OnlyOne cmd;
-
     static class OnlyOne {
         @Option(names = {"--getById", "--docId"},
             required = true,
@@ -148,9 +147,9 @@ public class CliDoc implements Callable<String> {
 
         @Option(names = {"--update"},
             required = true,
-            description = "This mode should be activated for update of the documents. " +
+            description = "This mode should be activated for update of the document. " +
                           "It is used together with specifying id of doc for update " +
-                          "and path to the file with a new documents. " +
+                          "and path to the file with a new document. " +
                           "User should be authenticated. "
         )
         private boolean updateMode;
@@ -173,8 +172,6 @@ public class CliDoc implements Callable<String> {
 
     private final ClientDocApi cacheClientDoc;
 
-    private Gson gson;
-
     public CliDoc() {
         this.clientDoc = new BasicClientDocApi(
             HttpClients.createDefault(), "http://localhost:8080"
@@ -185,7 +182,6 @@ public class CliDoc implements Callable<String> {
     public CliDoc(final ClientDocApi clientDoc, final ClientDocApi cacheClientDoc) {
         this.clientDoc = clientDoc;
         this.cacheClientDoc = cacheClientDoc;
-        gson = new Gson();
     }
 
     @Override
@@ -195,155 +191,30 @@ public class CliDoc implements Callable<String> {
             throw new IncorrectCommandUsageException("You should select one obligatory command");
         }
         if (cmd.getDocId != null) {
-            if (user != null) {
-                User identity =  new User(user.username, user.password);
-                if (isCache) {
-                    res = cacheClientDoc.getDoc(cmd.getDocId, identity);
-                } else {
-                    res = clientDoc.getDoc(cmd.getDocId, identity);
-                }
-            } else {
-                if (isCache) {
-                    res = cacheClientDoc.getDocFromCommon(cmd.getDocId);
-                } else {
-                    res = clientDoc.getDocFromCommon(cmd.getDocId);
-                }
-            }
+            res = getDocById();
         }
         if (cmd.deleteDocId != null) {
-            if (user == null) {
-                throw new ForbiddenOperationException(
-                    String.format("Failed to delete document '%s' for empty user", cmd.deleteDocId)
-                );
-            }
-            User identity =  new User(user.username, user.password);
-            if (isCache) {
-                res = cacheClientDoc.deleteById(cmd.deleteDocId, identity);
-            } else {
-                res = clientDoc.deleteById(cmd.deleteDocId, identity);
-            }
+            res = deleteDocById();
         }
         if (cmd.addDocFile != null) {
-            if (user == null) {
-                throw new ForbiddenOperationException(
-                    String.format(
-                        "Failed to add from file document '%s' for empty user", cmd.addDocFile
-                    )
-                );
-            }
-            if (!Files.exists(Paths.get(cmd.addDocFile))) {
-                throw new InputFileNotFoundException(
-                    String.format("Failed to find file '%s' for doc uploading", cmd.addDocFile)
-                );
-            }
-            try {
-                DocDto toAdd = new PathConverter(Paths.get(cmd.addDocFile)).toDocDto();
-                User identity =  new User(user.username, user.password);
-                if (isCache) {
-                    res = cacheClientDoc.add(toAdd, identity);
-                } else {
-                    res = clientDoc.add(toAdd, identity);
-                }
-            } catch (IOException exc) {
-                throw new BadInputDocFileException(
-                    String.format("Bad format of input file '%s' with doc", cmd.addDocFile)
-                );
-            }
+            res = addDocFromFile();
         }
         if (cmd.filterMode) {
-            if (filtersArg == null) {
-                throw new IncorrectCommandUsageException("Please, specify filters");
-            }
-            List<Filter> filters = Arrays.stream(filtersArg).map(
-                filter -> new Filter.Wrap(filter.key, filter.value)
-            ).collect(Collectors.toList());
-            if (user == null) {
-                if (isCache) {
-                    res = cacheClientDoc.filterDocsFromCommon(filters);
-                } else {
-                    res = clientDoc.filterDocsFromCommon(filters);
-                }
-            } else {
-                User identity = new User(user.username, user.password);
-                if (isCache) {
-                    res = cacheClientDoc.filterDocuments(filters, identity);
-                } else {
-                    res = clientDoc.filterDocuments(filters, identity);
-                }
-            }
+            res = filterDocs();
         }
         if (cmd.getAll) {
-            if (user == null) {
-                if (isCache) {
-                    res = cacheClientDoc.getAllDocsFromCommon();
-                } else {
-                    res = clientDoc.getAllDocsFromCommon();
-                }
-            } else {
-                User identity = new User(user.username, user.password);
-                if (isCache) {
-                    res = cacheClientDoc.getAllDocsForUser(identity);
-                } else {
-                    res = clientDoc.getAllDocsForUser(identity);
-                }
-            }
+            res = getAllDocs();
         }
         if (cmd.getByUser) {
-            if (user == null) {
-                throw new ForbiddenOperationException(
-                    "It is necessary to be authenticated in order to get documents by the user."
-                );
-            }
-            User identity = new User(user.username, user.password);
-            if (isCache) {
-                res = cacheClientDoc.getAllDocsForUser(identity);
-            } else {
-                res = clientDoc.getAllDocsForUser(identity);
-            }
+            res = getByUser();
         }
         if (cmd.getByTeamId != null) {
-            if (user == null) {
-                throw new ForbiddenOperationException(
-                    "It is necessary to be authenticated in order to get documents by the team."
-                );
-            }
-            User identity = new User(user.username, user.password);
-            if (isCache) {
-                res = cacheClientDoc.getDocsByTeamId(cmd.getByTeamId, identity);
-            } else {
-                res = clientDoc.getDocsByTeamId(cmd.getByTeamId, identity);
-            }
+            res = getByTeamId();
         }
         if (cmd.updateMode) {
-            if (updateDocArg == null) {
-                throw new IncorrectCommandUsageException("Please, specify info about doc update");
-            }
-            if (user == null) {
-                throw new ForbiddenOperationException(
-                    "It is necessary to be authenticated in order to perform update."
-                );
-            }
-            if (!Files.exists(Paths.get(updateDocArg.pathUpd))) {
-                throw new InputFileNotFoundException(
-                    String.format("Failed to find file for update '%s'", updateDocArg.pathUpd)
-                );
-            }
-            DocDto docDto;
-            try {
-                docDto = new PathConverter(Paths.get(updateDocArg.pathUpd)).toDocDto();
-            } catch (IOException exc) {
-                throw new BadInputDocFileException(
-                    "Failed to convert update file to DocDto", exc
-                );
-            }
-            User identity = new User(user.username, user.password);
-            if (isCache) {
-                res = cacheClientDoc.update(updateDocArg.docId, docDto, identity);
-            } else {
-                res = clientDoc.update(updateDocArg.docId, docDto, identity);
-            }
+            res = updateDoc();
         }
-        String resText = new RsAsGsonPretty(res, gson).convert(ispretty);
+        String resText = new RsAsGsonPretty(res).convert(ispretty);
         if (outFile != null) {
             Path path = Paths.get(outFile);
             try {
@@ -364,5 +235,178 @@ public class CliDoc implements Callable<String> {
             System.out.println(resText);
         }
         return res.toString();
+    }
+
+    private RsBaseDto filterDocs() {
+        RsBaseDto res;
+        if (filtersArg == null) {
+            throw new IncorrectCommandUsageException("Please, specify filters");
+        }
+        List<Filter> filters = Arrays.stream(filtersArg).map(
+            filter -> new Filter.Wrap(filter.key, filter.value)
+        ).collect(Collectors.toList());
+        if (user == null) {
+            if (isCache) {
+                res = cacheClientDoc.filterDocsFromCommon(filters);
+            } else {
+                res = clientDoc.filterDocsFromCommon(filters);
+            }
+        } else {
+            User identity = new User(user.username, user.password);
+            if (isCache) {
+                res = cacheClientDoc.filterDocuments(filters, identity);
+            } else {
+                res = clientDoc.filterDocuments(filters, identity);
+            }
+        }
+        return res;
+    }
+
+    private RsBaseDto updateDoc() {
+        RsBaseDto res;
+        if (updateDocArg == null) {
+            throw new IncorrectCommandUsageException("Please, specify info about doc update");
+        }
+        if (user == null) {
+            throw new ForbiddenOperationException(
+                "It is necessary to be authenticated in order to perform update."
+            );
+        }
+        if (!Files.exists(Paths.get(updateDocArg.pathUpd))) {
+            throw new InputFileNotFoundException(
+                String.format("Failed to find file for update '%s'", updateDocArg.pathUpd)
+            );
+        }
+        DocDto docDto;
+        try {
+            docDto = new PathConverter(Paths.get(updateDocArg.pathUpd)).toDocDto();
+        } catch (IOException exc) {
+            throw new BadInputFileException(
+                "Failed to convert update file to DocDto", exc
+            );
+        }
+        User identity = new User(user.username, user.password);
+        if (isCache) {
+            res = cacheClientDoc.update(updateDocArg.docId, docDto, identity);
+        } else {
+            res = clientDoc.update(updateDocArg.docId, docDto, identity);
+        }
+        return res;
+    }
+
+    private RsBaseDto getByTeamId() {
+        RsBaseDto res;
+        if (user == null) {
+            throw new ForbiddenOperationException(
+                "It is necessary to be authenticated in order to get documents by the team."
+            );
+        }
+        User identity = new User(user.username, user.password);
+        if (isCache) {
+            res = cacheClientDoc.getDocsByTeamId(cmd.getByTeamId, identity);
+        } else {
+            res = clientDoc.getDocsByTeamId(cmd.getByTeamId, identity);
+        }
+        return res;
+    }
+
+    private RsBaseDto getByUser() {
+        RsBaseDto res;
+        if (user == null) {
+            throw new ForbiddenOperationException(
+                "It is necessary to be authenticated in order to get documents by the user."
+            );
+        }
+        User identity = new User(user.username, user.password);
+        if (isCache) {
+            res = cacheClientDoc.getAllDocsForUser(identity);
+        } else {
+            res = clientDoc.getAllDocsForUser(identity);
+        }
+        return res;
+    }
+
+    private RsBaseDto getAllDocs() {
+        RsBaseDto res;
+        if (user == null) {
+            if (isCache) {
+                res = cacheClientDoc.getAllDocsFromCommon();
+            } else {
+                res = clientDoc.getAllDocsFromCommon();
+            }
+        } else {
+            User identity = new User(user.username, user.password);
+            if (isCache) {
+                res = cacheClientDoc.getAllDocsForUser(identity);
+            } else {
+                res = clientDoc.getAllDocsForUser(identity);
+            }
+        }
+        return res;
+    }
+
+    private RsBaseDto addDocFromFile() {
+        RsBaseDto res;
+        if (user == null) {
+            throw new ForbiddenOperationException(
+                String.format(
+                    "Failed to add from file document '%s' for empty user", cmd.addDocFile
+                )
+            );
+        }
+        if (!Files.exists(Paths.get(cmd.addDocFile))) {
+            throw new InputFileNotFoundException(
+                String.format("Failed to find file '%s' for doc uploading", cmd.addDocFile)
+            );
+        }
+        try {
+            DocDto toAdd = new PathConverter(Paths.get(cmd.addDocFile)).toDocDto();
+            User identity =  new User(user.username, user.password);
+            if (isCache) {
+                res = cacheClientDoc.add(toAdd, identity);
+            } else {
+                res = clientDoc.add(toAdd, identity);
+            }
+        } catch (IOException exc) {
+            throw new BadInputFileException(
+                String.format("Bad format of input file '%s' with doc", cmd.addDocFile)
+            );
+        }
+        return res;
+    }
+
+    private RsBaseDto deleteDocById() {
+        RsBaseDto res;
+        if (user == null) {
+            throw new ForbiddenOperationException(
+                String.format("Failed to delete document '%s' for empty user", cmd.deleteDocId)
+            );
+        }
+        User identity =  new User(user.username, user.password);
+        if (isCache) {
+            res = cacheClientDoc.deleteById(cmd.deleteDocId, identity);
+        } else {
+            res = clientDoc.deleteById(cmd.deleteDocId, identity);
+        }
+        return res;
+    }
+
+    private RsBaseDto getDocById() {
+        RsBaseDto res;
+        if (user != null) {
+            User identity =  new User(user.username, user.password);
+            if (isCache) {
+                res = cacheClientDoc.getDoc(cmd.getDocId, identity);
+            } else {
+                res = clientDoc.getDoc(cmd.getDocId, identity);
+            }
+        } else {
+            if (isCache) {
+                res = cacheClientDoc.getDocFromCommon(cmd.getDocId);
+            } else {
+                res = clientDoc.getDocFromCommon(cmd.getDocId);
+            }
+        }
+        return res;
     }
 }
