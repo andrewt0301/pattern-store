@@ -6,6 +6,7 @@ import aakrasnov.diploma.client.dto.DocsRsDto;
 import aakrasnov.diploma.client.dto.GetDocRsDto;
 import aakrasnov.diploma.client.dto.UpdateDocRsDto;
 import aakrasnov.diploma.client.http.AddSlash;
+import aakrasnov.diploma.client.http.BasicAuthorization;
 import aakrasnov.diploma.client.http.ExceptionCatcher;
 import aakrasnov.diploma.client.http.RqExecution;
 import aakrasnov.diploma.common.DocDto;
@@ -21,15 +22,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.auth.AuthenticationException;
-import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.util.EntityUtils;
 
 @Slf4j
@@ -145,7 +142,7 @@ public final class BasicClientDocApi implements ClientDocApi {
         HttpGet rq = new HttpGet(full(String.format("auth/doc/%s", id)));
         GetDocRsDto res = new GetDocRsDto();
         new ExceptionCatcher.IOCatcher<>(() -> {
-            addBasicAuthorization(rq, user, res);
+            new BasicAuthorization(rq, res).add(user);
             Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
                 res,
                 String.format("Failed to get document by id '%s'", id)
@@ -163,7 +160,7 @@ public final class BasicClientDocApi implements ClientDocApi {
     public RsBaseDto deleteById(final String id, final User user) {
         HttpDelete rq = new HttpDelete(full(String.format("admin/doc/%s/delete", id)));
         RsBaseDto res = new RsBaseDto();
-        addBasicAuthorization(rq, user, res);
+        new BasicAuthorization(rq, res).add(user);
         new RqExecution(httpClient, rq).execAnSetStatus(
             res,
             String.format("Failed to delete document by id '%s'", id)
@@ -180,7 +177,7 @@ public final class BasicClientDocApi implements ClientDocApi {
         addJsonHeaderTo(rq);
         AddDocRsDto res = new AddDocRsDto();
         new ExceptionCatcher.IOCatcher<>(() -> {
-            addBasicAuthorization(rq, user, res);
+            new BasicAuthorization(rq, res).add(user);
             StringEntity entity = new StringEntity(gson.toJson(document));
             rq.setEntity(entity);
             Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
@@ -203,7 +200,7 @@ public final class BasicClientDocApi implements ClientDocApi {
         addJsonHeaderTo(rq);
         UpdateDocRsDto res = new UpdateDocRsDto();
         new ExceptionCatcher.IOCatcher<>(() -> {
-            addBasicAuthorization(rq, user, res);
+            new BasicAuthorization(rq, res).add(user);
             StringEntity entity = new StringEntity(gson.toJson(docUpd));
             rq.setEntity(entity);
             Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
@@ -228,7 +225,7 @@ public final class BasicClientDocApi implements ClientDocApi {
         final AtomicReference<DocValidityCheckRsDto> res;
         res = new AtomicReference<>(new DocValidityCheckRsDto());
         new ExceptionCatcher.IOCatcher<>(() -> {
-            addBasicAuthorization(rq, user, res.get());
+            new BasicAuthorization(rq, res.get()).add(user);
             StringEntity entity = new StringEntity(
                 gson.toJson(new DocValidityDto(id, timestamp))
             );
@@ -252,7 +249,7 @@ public final class BasicClientDocApi implements ClientDocApi {
         addJsonHeaderTo(rq);
         DocsRsDto res = new DocsRsDto();
         new ExceptionCatcher.IOCatcher<>(() -> {
-            addBasicAuthorization(rq, user, res);
+            new BasicAuthorization(rq, res).add(user);
             StringEntity entity = new StringEntity(gson.toJson(filters));
             rq.setEntity(entity);
             Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
@@ -275,7 +272,7 @@ public final class BasicClientDocApi implements ClientDocApi {
         HttpGet rq = new HttpGet(full("auth/docs/user"));
         DocsRsDto res = new DocsRsDto();
         new ExceptionCatcher.IOCatcher<>(() -> {
-            addBasicAuthorization(rq, user, res);
+            new BasicAuthorization(rq, res).add(user);
             Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
                 res,
                 String.format("Failed to filter documents by user's teams '%s'", user.getUsername())
@@ -296,7 +293,7 @@ public final class BasicClientDocApi implements ClientDocApi {
         HttpGet rq = new HttpGet(full(String.format("auth/docs/team/%s", teamId)));
         DocsRsDto res = new DocsRsDto();
         new ExceptionCatcher.IOCatcher<>(() -> {
-            addBasicAuthorization(rq, user, res);
+            new BasicAuthorization(rq, res).add(user);
             Optional<HttpResponse> rsp = new RqExecution(httpClient, rq).execAnSetStatus(
                 res,
                 String.format("Failed to filter documents by team id '%s'", teamId)
@@ -314,21 +311,6 @@ public final class BasicClientDocApi implements ClientDocApi {
 
     static void addJsonHeaderTo(HttpPost rq) {
         rq.addHeader("Content-type", "application/json");
-    }
-
-    private static void addBasicAuthorization(HttpRequestBase rq, User user, RsBaseDto res) {
-        UsernamePasswordCredentials creds;
-        creds = new UsernamePasswordCredentials(user.getUsername(), user.getPassword());
-        try {
-            rq.addHeader(new BasicScheme().authenticate(creds, rq, null));
-        } catch (AuthenticationException exc) {
-            String err = String.format(
-                "Unable to generate basic scheme header for user '%s'", user
-            );
-            log.error(err, exc);
-            res.setStatus(HttpStatus.SC_UNAUTHORIZED);
-            res.setMsg(err);
-        }
     }
 
     private String full(String uri) {

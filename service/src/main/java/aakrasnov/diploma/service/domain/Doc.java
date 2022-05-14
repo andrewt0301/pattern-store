@@ -30,7 +30,6 @@ public class Doc {
     private Scenario scenario;
 
     // TODO: set of teams
-    @NonNull
     private Team team;
 
     private String timestamp;
@@ -41,7 +40,9 @@ public class Doc {
     public static DocDto toDto(Doc doc) {
         DocDto dto = new DocDto();
         dto.setId(doc.getId().toHexString());
-        dto.setTeam(Team.toDto(doc.getTeam()));
+        if (doc.getTeam() != null) {
+            dto.setTeam(Team.toDto(doc.getTeam()));
+        }
         dto.setLang(doc.getLang());
         dto.setTimestamp(doc.getTimestamp());
         dto.setScenario(Scenario.toDto(doc.getScenario()));
@@ -58,7 +59,9 @@ public class Doc {
         if (dto.getId() != null) {
             doc.setId(new ObjectId(dto.getId()));
         }
-        doc.setTeam(Team.fromDto(dto.getTeam()));
+        if (dto.getTeam() != null) {
+            doc.setTeam(Team.fromDto(dto.getTeam()));
+        }
         doc.setLang(dto.getLang());
         doc.setTimestamp(dto.getTimestamp());
         doc.setScenario(Scenario.fromDto(dto.getScenario()));

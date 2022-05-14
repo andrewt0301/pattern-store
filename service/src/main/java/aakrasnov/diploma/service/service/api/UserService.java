@@ -2,11 +2,14 @@ package aakrasnov.diploma.service.service.api;
 
 import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.dto.AddUserRsDto;
+import aakrasnov.diploma.service.dto.UpdateRsDto;
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
     AddUserRsDto addUser(User user);
+
+    UpdateRsDto updateUser(String id, User userUpd);
 
     List<User> getAll();
 

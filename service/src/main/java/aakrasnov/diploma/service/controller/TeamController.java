@@ -1,11 +1,16 @@
 package aakrasnov.diploma.service.controller;
 
 import aakrasnov.diploma.common.TeamDto;
+import aakrasnov.diploma.service.domain.Team;
+import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.dto.UpdateRsDto;
+import aakrasnov.diploma.service.dto.team.UpdateTeamInviteRsDto;
 import aakrasnov.diploma.service.service.api.TeamService;
+import aakrasnov.diploma.service.service.api.UserService;
 import aakrasnov.diploma.service.utils.PrincipalConverter;
 import java.security.Principal;
 import java.util.Optional;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -24,45 +29,90 @@ import org.springframework.web.bind.annotation.RestController;
 public class TeamController {
     private final TeamService teamService;
 
-    public TeamController(final TeamService teamService) {
+    private final UserService userService;
+
+    public TeamController(final TeamService teamService, final UserService userService) {
         this.teamService = teamService;
+        this.userService = userService;
     }
 
-
-    @GetMapping("team/invitation/{code}")
-    public ResponseEntity<TeamDto> getByInvitationCode(
+    @GetMapping("auth/team/join/{code}")
+    public ResponseEntity<HttpStatus> joinTeamByInvitationCode(
+        Principal principal,
         @PathVariable("code") String code
     ) {
-        return teamService.getByInvitation(code)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        User user = new PrincipalConverter(principal).toUser();
+        Optional<TeamDto> team = teamService.getByInvitation(code);
+        if (!team.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        Set<Team> teams = user.getTeams();
+        teams.add(Team.fromDto(team.get()));
+        user.setTeams(teams);
+        userService.updateUser(user.getId().toHexString(), user);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("auth/team/{id}")
     public ResponseEntity<TeamDto> getById(
+        Principal principal,
         @PathVariable("id") String id
     ) {
-        return teamService.getById(id)
-            .map(ResponseEntity::ok)
-            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return getTeamIfPermitted(principal, teamService.getById(id));
+    }
+
+    @GetMapping("auth/team/invite/{invite}")
+    public ResponseEntity<TeamDto> getByInvitationCode(
+        Principal principal,
+        @PathVariable("invite") String invite
+    ) {
+        return getTeamIfPermitted(principal, teamService.getByInvitation(invite));
     }
 
     @PostMapping("auth/team/create")
-    public ResponseEntity<TeamDto> addTeam(@RequestBody TeamDto teamDto) {
+    public ResponseEntity<TeamDto> addTeam(
+        Principal principal,
+        @RequestBody TeamDto teamDto
+    ) {
+        User user = new PrincipalConverter(principal).toUser();
+        teamDto.setCreatorId(user.getId().toHexString());
         return new ResponseEntity<>(teamService.addTeam(teamDto), HttpStatus.CREATED);
     }
 
-    @PostMapping("auth/team/{id}/update/invite")
-    public ResponseEntity<TeamDto> updateInvitationCode(
+    @GetMapping("auth/team/{id}/update/invite")
+    public ResponseEntity<TeamDto> updateInvitationCodeById(
+        Principal principal,
         @PathVariable("id") String id
     ) {
-        Optional<TeamDto> team = teamService.updateInvitationCode(id);
-        return team.map(ResponseEntity::ok)
-            .orElseGet(() -> new ResponseEntity<>(HttpStatus.BAD_REQUEST));
+        UpdateTeamInviteRsDto updRs = teamService.updateInvitationCode(
+            id, new PrincipalConverter(principal).toUser()
+        );
+        if (!StringUtils.isEmpty(updRs.getMsg())) {
+            log.error(updRs.getMsg());
+        }
+        return new ResponseEntity<>(updRs.getTeamDto(), HttpStatus.valueOf(updRs.getStatus()));
+    }
+
+    @GetMapping("auth/team/invite/{invite}/update/invite")
+    public ResponseEntity<TeamDto> updateInvitationCodeByInvite(
+        Principal principal,
+        @PathVariable("invite") String invite
+    ) {
+        Optional<TeamDto> team = teamService.getByInvitation(invite);
+        if (!team.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        UpdateTeamInviteRsDto updRs = teamService.updateInvitationCode(
+            team.get().getId(), new PrincipalConverter(principal).toUser()
+        );
+        if (!StringUtils.isEmpty(updRs.getMsg())) {
+            log.error(updRs.getMsg());
+        }
+        return new ResponseEntity<>(updRs.getTeamDto(), HttpStatus.valueOf(updRs.getStatus()));
     }
 
     @PostMapping("auth/team/{id}/update")
-    public ResponseEntity<TeamDto> updateTeam(
+    public ResponseEntity<TeamDto> updateTeamById(
         Principal principal,
         @PathVariable("id") String id,
         @RequestBody TeamDto teamUpd
@@ -78,12 +128,48 @@ public class TeamController {
         return new ResponseEntity<>(teamUpd, HttpStatus.valueOf(updRs.getStatus()));
     }
 
+    @PostMapping("auth/team/invite/{invite}/update")
+    public ResponseEntity<TeamDto> updateTeamByInvite(
+        Principal principal,
+        @PathVariable("invite") String invite,
+        @RequestBody TeamDto teamUpd
+    ) {
+        Optional<TeamDto> team = teamService.getByInvitation(invite);
+        if (!team.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        UpdateRsDto updRs = teamService.update(
+            team.get().getId(),
+            teamUpd,
+            new PrincipalConverter(principal).toUser()
+        );
+        if (!StringUtils.isEmpty(updRs.getMsg())) {
+            log.error(updRs.getMsg());
+        }
+        return new ResponseEntity<>(teamUpd, HttpStatus.valueOf(updRs.getStatus()));
+    }
+
     @DeleteMapping("admin/team/{id}/delete")
     public ResponseEntity<HttpStatus> deleteTeamById(
+        Principal principal,
         @PathVariable("id") String id
     ) {
-        teamService.deleteById(id);
+        User user = new PrincipalConverter(principal).toUser();
+        teamService.deleteById(id, user);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private ResponseEntity<TeamDto> getTeamIfPermitted(
+        Principal principal, Optional<TeamDto> teamDto
+    ) {
+        User user = new PrincipalConverter(principal).toUser();
+        if (!teamDto.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        if (user.getTeams().contains(Team.fromDto(teamDto.get()))) {
+            return new ResponseEntity<>(teamDto.get(), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
 }

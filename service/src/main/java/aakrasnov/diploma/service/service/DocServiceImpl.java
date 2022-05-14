@@ -6,6 +6,7 @@ import aakrasnov.diploma.common.cache.DocValidityCheckRsDto;
 import aakrasnov.diploma.common.cache.DocValidityDto;
 import aakrasnov.diploma.service.domain.Doc;
 import aakrasnov.diploma.service.domain.Role;
+import aakrasnov.diploma.service.domain.Team;
 import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.dto.AddDocRsDto;
 import aakrasnov.diploma.service.dto.UpdateRsDto;
@@ -31,6 +32,13 @@ public class DocServiceImpl implements DocService {
     public Optional<DocDto> findById(final String id) {
         return docRepo.findById(id)
             .map(Doc::toDto);
+    }
+
+    @Override
+    public List<DocDto> findByTeam(final Team team) {
+        return docRepo.findByTeam(team).stream()
+            .map(Doc::toDto)
+            .collect(Collectors.toList());
     }
 
     @Override

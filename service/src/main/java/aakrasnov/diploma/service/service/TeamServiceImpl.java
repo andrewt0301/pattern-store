@@ -5,8 +5,10 @@ import aakrasnov.diploma.service.domain.Role;
 import aakrasnov.diploma.service.domain.Team;
 import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.dto.UpdateRsDto;
+import aakrasnov.diploma.service.dto.team.UpdateTeamInviteRsDto;
 import aakrasnov.diploma.service.repo.TeamRepo;
 import aakrasnov.diploma.service.repo.UserRepo;
+import aakrasnov.diploma.service.service.api.DocService;
 import aakrasnov.diploma.service.service.api.TeamService;
 import aakrasnov.diploma.service.utils.TeamInvite;
 import java.util.Optional;
@@ -15,17 +17,24 @@ import org.springframework.http.HttpStatus;
 public class TeamServiceImpl implements TeamService {
     private final TeamRepo teamRepo;
 
+    private final DocService docService;
+
     private final UserRepo userRepo;
 
-    public TeamServiceImpl(final TeamRepo teamRepo, final UserRepo userRepo) {
+    public TeamServiceImpl(
+        final TeamRepo teamRepo,
+        final DocService docService,
+        final UserRepo userRepo
+    ) {
         this.teamRepo = teamRepo;
+        this.docService = docService;
         this.userRepo = userRepo;
     }
 
     @Override
     public TeamDto addTeam(final TeamDto teamDto) {
         return Team.toDto(
-            teamRepo.insert(Team.fromDto(teamDto))
+            teamRepo.save(Team.fromDto(teamDto))
         );
     }
 
@@ -34,7 +43,7 @@ public class TeamServiceImpl implements TeamService {
         Optional<Team> fromDb = teamRepo.findById(id);
         UpdateRsDto rs = new UpdateRsDto();
         if (!fromDb.isPresent()) {
-            rs.setStatus(HttpStatus.BAD_REQUEST.value());
+            rs.setStatus(HttpStatus.NOT_FOUND.value());
             rs.setMsg(String.format("Team with id '%s' was not found", id));
             return rs;
         }
@@ -53,10 +62,26 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public Optional<TeamDto> updateInvitationCode(final String teamId) {
-        return teamRepo.findById(teamId).map(
-            team -> teamRepo.insert(new TeamInvite(team).updateInvite())
-        ).map(Team::toDto);
+    public UpdateTeamInviteRsDto updateInvitationCode(final String teamId, final User user) {
+        UpdateTeamInviteRsDto rs = new UpdateTeamInviteRsDto();
+        Optional<Team> team = teamRepo.findById(teamId);
+        if (!team.isPresent()) {
+            rs.setStatus(HttpStatus.NOT_FOUND.value());
+            rs.setMsg(String.format("Team with id '%s' was not found", teamId));
+            return rs;
+        }
+        if (!Role.ADMIN.equals(user.getRole()) && !user.getId().equals(team.get().getCreatorId())) {
+            rs.setStatus(HttpStatus.FORBIDDEN.value());
+            rs.setMsg("Operation is forbidden. You should be a creator or an admin");
+            return rs;
+        }
+        rs.setTeamDto(
+            Team.toDto(
+                teamRepo.insert(new TeamInvite(team.get()).updateInvite())
+            )
+        );
+        rs.setStatus(HttpStatus.OK.value());
+        return rs;
     }
 
     @Override
@@ -70,7 +95,14 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
-    public void deleteById(final String teamId) {
+    public void deleteById(final String teamId, final User user) {
+        Optional<Team> team = teamRepo.findById(teamId);
+        if (!team.isPresent()) {
+            return;
+        }
         teamRepo.deleteById(teamId);
+        docService.findByTeam(team.get()).stream()
+            .peek(docDto -> docDto.setTeam(null))
+            .forEach(docDto -> docService.update(docDto.getId(), docDto, user));
     }
 }

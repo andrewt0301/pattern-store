@@ -3,6 +3,7 @@ package aakrasnov.diploma.service.service.api;
 import aakrasnov.diploma.common.TeamDto;
 import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.dto.UpdateRsDto;
+import aakrasnov.diploma.service.dto.team.UpdateTeamInviteRsDto;
 import java.util.Optional;
 
 public interface TeamService {
@@ -19,7 +20,7 @@ public interface TeamService {
      * update should be either a creator of the team or an admin.
      * @param id Id of the team for update
      * @param teamDto The team with updated info
-     * @param user User, who performs update
+     * @param user User identity
      * @return Result of operation (OK, BAD_REQUEST, FORBIDDEN) with optional message.
      */
     UpdateRsDto update(String id, TeamDto teamDto, User user);
@@ -27,9 +28,10 @@ public interface TeamService {
     /**
      * Update invitation code of the specified team.
      * @param teamId Team id for which invitation code should be updated
-     * @return Team with a new invitation code if team exists.
+     * @param user User identity
+     * @return Team with a new invitation code if team exists and http status.
      */
-    Optional<TeamDto> updateInvitationCode(String teamId);
+    UpdateTeamInviteRsDto updateInvitationCode(String teamId, User user);
 
     /**
      * Obtain team by id.
@@ -48,6 +50,7 @@ public interface TeamService {
     /**
      * Delete team by the specified id.
      * @param teamId Id of the team which should be deleted.
+     * @param user User identity
      */
-    void deleteById(String teamId);
+    void deleteById(String teamId, User user);
 }

@@ -28,7 +28,6 @@ public class DocDto implements Serializable {
     @NonNull
     private ScenarioDto scenario;
 
-    @NonNull
     private TeamDto team;
 
     private String timestamp;

@@ -4,6 +4,7 @@ import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.cache.DocValidityCheckRsDto;
 import aakrasnov.diploma.common.cache.DocValidityDto;
 import aakrasnov.diploma.common.Filter;
+import aakrasnov.diploma.service.domain.Team;
 import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.dto.AddDocRsDto;
 import aakrasnov.diploma.service.dto.UpdateRsDto;
@@ -20,6 +21,13 @@ public interface DocService {
      * @return Found document or empty in case of absence.
      */
     Optional<DocDto> findById(String id);
+
+    /**
+     * Find documents with patterns by the specified team.
+     * @param team Team of the document
+     * @return Found documents.
+     */
+    List<DocDto> findByTeam(Team team);
 
     /**
      * Check the validity of the document by parameters (e.g. id and timestamp).

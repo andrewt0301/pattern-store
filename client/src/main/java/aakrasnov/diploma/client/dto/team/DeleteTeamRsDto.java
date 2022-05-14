@@ -1,6 +1,5 @@
-package aakrasnov.diploma.client.dto;
+package aakrasnov.diploma.client.dto.team;
 
-import aakrasnov.diploma.common.DocDto;
 import aakrasnov.diploma.common.RsBaseDto;
 import java.io.Serializable;
 import lombok.Data;
@@ -10,7 +9,5 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class UpdateDocRsDto extends RsBaseDto implements Serializable {
-    private DocDto docDto;
+public class DeleteTeamRsDto extends RsBaseDto implements Serializable {
 }
-

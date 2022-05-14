@@ -2,10 +2,12 @@ package aakrasnov.diploma.service.service;
 
 import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.dto.AddUserRsDto;
+import aakrasnov.diploma.service.dto.UpdateRsDto;
 import aakrasnov.diploma.service.repo.UserRepo;
 import aakrasnov.diploma.service.service.api.UserService;
 import java.util.List;
 import java.util.Optional;
+import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -36,6 +38,20 @@ public class UserServiceImpl implements UserService {
         user.setActive(true);
         rs.setUser(userRepo.save(user));
         return rs;
+    }
+
+    @Override
+    public UpdateRsDto updateUser(final String id, final User userUpd) {
+        Optional<User> user = userRepo.findById(id);
+        UpdateRsDto res = new UpdateRsDto();
+        if (!user.isPresent()) {
+            res.setStatus(HttpStatus.NOT_FOUND.value());
+        } else {
+            userUpd.setId(new ObjectId(id));
+            userRepo.save(userUpd);
+        }
+        res.setStatus(HttpStatus.OK.value());
+        return res;
     }
 
     @Override
