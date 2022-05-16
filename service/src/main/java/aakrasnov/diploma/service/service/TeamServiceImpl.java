@@ -11,7 +11,10 @@ import aakrasnov.diploma.service.repo.UserRepo;
 import aakrasnov.diploma.service.service.api.DocService;
 import aakrasnov.diploma.service.service.api.TeamService;
 import aakrasnov.diploma.service.utils.TeamInvite;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 
 public class TeamServiceImpl implements TeamService {
@@ -33,6 +36,7 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamDto addTeam(final TeamDto teamDto) {
+        teamDto.setInvitation(UUID.randomUUID().toString());
         return Team.toDto(
             teamRepo.save(Team.fromDto(teamDto))
         );
@@ -55,6 +59,12 @@ public class TeamServiceImpl implements TeamService {
             return rs;
         }
         teamDto.setId(id);
+        if (StringUtils.isEmpty(teamDto.getInvitation())) {
+            teamDto.setInvitation(fromDb.get().getInvitation());
+        }
+        if (!Objects.equals(fromDb.get().getInvitation(), teamDto.getInvitation())) {
+            teamDto.setInvitation(UUID.randomUUID().toString());
+        }
         Team saved = teamRepo.save(Team.fromDto(teamDto));
         teamDto.setId(saved.getId().toHexString());
         rs.setStatus(HttpStatus.OK.value());
@@ -77,7 +87,7 @@ public class TeamServiceImpl implements TeamService {
         }
         rs.setTeamDto(
             Team.toDto(
-                teamRepo.insert(new TeamInvite(team.get()).updateInvite())
+                teamRepo.save(new TeamInvite(team.get()).updateInvite())
             )
         );
         rs.setStatus(HttpStatus.OK.value());
