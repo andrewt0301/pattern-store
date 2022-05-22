@@ -1,11 +1,16 @@
 At first, common and service modules should be built.
-It can be done by using `mvn clean install` from a particular
-directory. After that run `mvn clean install` from the 
-directory of client.
+Module `common` can be built by following the installation 
+instructions in `commmon/README.md`. Then it is necessary to
+follow instructions from `service/README.md` for building
+`service` module. After that the next command should 
+be run to build `client` module:
+```shell
+mvn clean install
+```
 
 ### CLI
-It is necessary to run the following command
-
+Initially, you need to run server following guide from
+`service/README.md`. It is necessary to run the next command:
 ```shell
 java -cp "target/client-1.0-SNAPSHOT-jar-with-dependencies.jar" aakrasnov.diploma.client.ClientApplication stata --docId hexDocId
 ```
