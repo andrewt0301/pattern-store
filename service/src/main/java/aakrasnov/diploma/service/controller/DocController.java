@@ -14,6 +14,7 @@ import aakrasnov.diploma.service.filter.FilterByTeamId;
 import aakrasnov.diploma.service.service.api.DocService;
 import aakrasnov.diploma.service.utils.PrincipalConverter;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -58,10 +59,11 @@ public class DocController {
 
     @PostMapping("docs/filtered")
     public ResponseEntity<List<DocDto>> docsCommonByFilters(
-        @RequestBody List<Filter> filters
+        @RequestBody(required = false) List<Filter> filters
     ) {
-        filters.add(FilterByTeamId.COMMON_TEAM_FILTER);
-        return ResponseEntity.ok(docService.filteredDocuments(filters));
+        List<Filter> notNullFltrs = Optional.ofNullable(filters).orElse(new ArrayList<>());
+        notNullFltrs.add(FilterByTeamId.COMMON_TEAM_FILTER);
+        return ResponseEntity.ok(docService.filteredDocuments(notNullFltrs));
     }
 
     @PostMapping("doc/check-validity-timestamp")
@@ -112,7 +114,6 @@ public class DocController {
         @PathVariable("id") String id
     ) {
         User user = new PrincipalConverter(principal).toUser();
-        // TODO: private docs. I think it is necessary to create set of teams who can access doc.
         Optional<DocDto> docDto = docService.findById(id);
         return docDto.filter(
             doc -> user.getRole().name().equals(Role.ADMIN.name())

@@ -1,0 +1,1 @@
+{"lang":"java","scenario":{"type":"UNKNOWN"},"team":{"id": "624f6f6b5bdddf7ee83350a0", "name": "team1_common", "creatorId": "361d5d8b5bd5adf7ee8793e5"},"timestamp":"2022:05:18 17:45:07","patterns":[]}
