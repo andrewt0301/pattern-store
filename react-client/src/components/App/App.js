@@ -1,4 +1,4 @@
-import React, {useReducer} from 'react';
+import React, {useEffect, useReducer, useState} from 'react';
 import './App.css';
 import Container from 'react-bootstrap/Container';
 import {Route, Routes, useParams} from "react-router-dom";
@@ -6,8 +6,8 @@ import {DocsCommonPage} from "../DocsCommonPage/DocsCommonPage";
 import {DocById} from "../DocById/DocById";
 import {DocsPrivate} from "../DocsPrivate/DocsPrivate";
 import {DocDelete} from "../DocDelete/DocDelete";
-import {HomePage} from "../HomePage/HomePage";
 import {LoginPage} from "../LoginPage/LoginPage";
+import {userService} from "../Authentication/Authentication";
 
 const displayEmojiName = event => alert(event.target.id);
 
@@ -21,7 +21,15 @@ function showAdditional(additional) {
 function App() {
     const displayAction = false;
     const [show, toggle] = useReducer(state => !state, true);
-
+    const [isAuth, setIsAuth] = useState(false);
+    console.log(isAuth)
+    useEffect(() => {
+        if(isAuth) {
+            console.log("changed")
+            setIsAuth(false)
+        }
+    }, [localStorage.getItem("user")])
+    console.log(isAuth)
     return (
         <Container>
             <div className="mb-2">
@@ -37,11 +45,20 @@ function App() {
                             </li>
                         </ul>
                     </div>
+                    {localStorage.getItem("user") === null
+                    && <div className="nav-item justify-content-end">
+                        <a className="nav-link" href="/login">Login</a>
+                    </div>}
+                    {localStorage.getItem("user") !== null
+                    && <div className="nav-item justify-content-end">
+                        <a className="nav-link" href="/logout">Logout</a>
+                    </div>}
                 </nav>
                 <Routes>
                     <Route path="/" exact={true} element={<Home/>}/>
                     {/*<Route path="/" exact={true} element={<HomePage/>}/>*/}
-                    {/*<Route path="/login" exact={true} element={<LoginPage/>}/>*/}
+                    <Route path="/login" exact={true} element={<LoginRouter/>}/>}
+                    <Route path="/logout" exact={true} element={<LogOutRouter/>}/>
                     <Route path="/docs" exact={true} element={<DocsPrivate/>}/>
                     <Route path="/doc" exact={true} element={<DocById/>}/>
                     <Route path="/docs/filtered" exact={true} element={<DocsCommonPage/>}/>
@@ -59,6 +76,18 @@ function DocByIdRouter() {
     return (
         <DocById docId={docId}/>
     );
+}
+
+function LogOutRouter() {
+    return (
+        <LoginPage authenticated="false"/>
+    )
+}
+
+function LoginRouter() {
+    return (
+        <LoginPage authenticated="false"/>
+    )
 }
 
 function DocDeleteRouter() {

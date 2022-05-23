@@ -7,7 +7,6 @@ export function InputDocIdForm() {
     const [alert, setAlert] = useState(false);
     const navigate = useNavigate();
     const validate = event => {
-        console.log(id)
         if (/^[0-9a-f]{24}$/.test(id)) {
             setAlert(false);
             navigate("/doc/" + id);

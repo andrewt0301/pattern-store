@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from "react-router-dom";
 
-const {userService} = require("../Authentication/Auth");
+const {userService} = require("../Authentication/Authentication");
 
 export class HomePage extends React.Component {
     constructor(props) {
