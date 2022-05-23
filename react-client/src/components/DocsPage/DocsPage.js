@@ -1,23 +1,11 @@
 import Doc from "../Doc/Doc";
 import React, {useEffect, useState} from "react";
-import {getCommonDocById} from "../../services/getCommonDocById";
 import {getCommonDocs} from "../../services/getCommonDocs";
+import {Link} from "react-router-dom";
 
-export function DocPage() {
-    const [doc, setDoc] = useState([]);
+export function DocsPage() {
     const [docs, setDocs] = useState([])
-    const docId = "625748988af05121cc0d6189"
 
-    useEffect(() => {
-        let mounted = true;
-        getCommonDocById(docId)
-            .then(items => {
-                if (mounted) {
-                    setDoc(items)
-                }
-            })
-        return () => mounted = false;
-    }, [])
     useEffect(() => {
         let mounted = true;
         getCommonDocs()
@@ -30,22 +18,6 @@ export function DocPage() {
     }, [])
     return (
         <div>
-            <div className="card">
-                <div className="card-header">
-                    <b>Documents by id</b>
-                </div>
-                <div className="card-body">
-                    <Doc
-                        id={doc.id}
-                        lang={doc.lang}
-                        scenario={doc.scenario}
-                        team={doc.team}
-                        timestamp={doc.timestamp}
-                        patterns={doc.patterns}
-                    />
-                </div>
-            </div>
-
             <div className="text-dark">
                 <b>Common docs</b>
             </div>
@@ -64,20 +36,29 @@ export function DocPage() {
                                             timestamp={item.timestamp}
                                             patterns={item.patterns}
                                         />
+                                        <Link to={`/doc/${item.id}`}>
+                                            <div className="btn btn-primary mb-2 mx-2">View</div>
+                                        </Link>
                                     </div>
                                 )
                         )}
                     </div>
                     <div className="list-group col-sm-3">
-                        <button type="button" className="list-group-item list-group-item-action active">
-                            Filter documents
-                        </button>
-                        <button type="button" className="list-group-item list-group-item-action">
-                            Filter common documents
-                        </button>
-                        <button type="button" className="list-group-item list-group-item-action">
-                            Get document by id
-                        </button>
+                        <Link to="/docs">
+                            <button type="button" className="list-group-item list-group-item-action">
+                                Filter documents
+                            </button>
+                        </Link>
+                        <Link to="/docs/filtered">
+                            <div className="list-group-item list-group-item-action">
+                                Filter common documents
+                            </div>
+                        </Link>
+                        <Link to="/doc">
+                            <button type="button" className="list-group-item list-group-item-action">
+                                Get document by id
+                            </button>
+                        </Link>
                     </div>
                 </div>
             </div>
