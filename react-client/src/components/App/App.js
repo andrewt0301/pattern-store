@@ -1,13 +1,15 @@
 import React, {useEffect, useReducer, useState} from 'react';
 import './App.css';
 import Container from 'react-bootstrap/Container';
-import {Route, Routes, useParams} from "react-router-dom";
+import {Route, Routes, useNavigate, useParams} from "react-router-dom";
 import {DocsCommonPage} from "../DocsCommonPage/DocsCommonPage";
 import {DocById} from "../DocById/DocById";
 import {DocsPrivate} from "../DocsPrivate/DocsPrivate";
 import {DocDelete} from "../DocDelete/DocDelete";
 import {LoginPage} from "../LoginPage/LoginPage";
 import {userService} from "../Authentication/Authentication";
+import {Button} from "react-bootstrap";
+import {LogoutPage} from "../LogoutPage/LogoutPage";
 
 const displayEmojiName = event => alert(event.target.id);
 
@@ -21,15 +23,7 @@ function showAdditional(additional) {
 function App() {
     const displayAction = false;
     const [show, toggle] = useReducer(state => !state, true);
-    const [isAuth, setIsAuth] = useState(false);
-    console.log(isAuth)
-    useEffect(() => {
-        if(isAuth) {
-            console.log("changed")
-            setIsAuth(false)
-        }
-    }, [localStorage.getItem("user")])
-    console.log(isAuth)
+
     return (
         <Container>
             <div className="mb-2">
@@ -58,7 +52,7 @@ function App() {
                     <Route path="/" exact={true} element={<Home/>}/>
                     {/*<Route path="/" exact={true} element={<HomePage/>}/>*/}
                     <Route path="/login" exact={true} element={<LoginRouter/>}/>}
-                    <Route path="/logout" exact={true} element={<LogOutRouter/>}/>
+                    <Route path="/logout" exact={true} element={<LogoutRouter/>}/>
                     <Route path="/docs" exact={true} element={<DocsPrivate/>}/>
                     <Route path="/doc" exact={true} element={<DocById/>}/>
                     <Route path="/docs/filtered" exact={true} element={<DocsCommonPage/>}/>
@@ -78,15 +72,17 @@ function DocByIdRouter() {
     );
 }
 
-function LogOutRouter() {
+function LogoutRouter() {
+    userService.logout()
     return (
-        <LoginPage authenticated="false"/>
+        <LogoutPage/>
     )
 }
 
 function LoginRouter() {
+    const navigate = useNavigate()
     return (
-        <LoginPage authenticated="false"/>
+        <LoginPage navigator={navigate}/>
     )
 }
 

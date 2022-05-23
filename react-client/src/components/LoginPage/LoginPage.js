@@ -1,6 +1,5 @@
 import React from 'react';
 import {userService} from "../Authentication/Authentication";
-import {useNavigate} from "react-router-dom";
 
 export class LoginPage extends React.Component {
     constructor(props) {
@@ -11,8 +10,7 @@ export class LoginPage extends React.Component {
             password: "",
             submitted: false,
             loading: false,
-            error: "",
-            authenticated: props.authenticated === "true"
+            error: ""
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -33,17 +31,18 @@ export class LoginPage extends React.Component {
         this.setState({loading: true});
         userService.login(username, password)
             .then(
-                user => this.setState({authenticated: true, loading: false}),
+                user => {
+                    this.props.navigator("/")
+                    window.location.reload()
+                },
                 error => this.setState({error, loading: false})
             );
     }
 
     render() {
         const {username, password, submitted, loading, error} = this.state;
-        console.log(this.state)
         return (
-            this.state.authenticated ? <LoginPageNavigate/>
-                : <div className="col-md-4 col-md-offset-3">
+            <div className="col-md-4 col-md-offset-3">
                 <h2>Login</h2>
                 <form name="form" onSubmit={this.handleSubmit}>
                     <div className={"form-group" + (submitted && !username ? " has-error" : '')}>
@@ -83,9 +82,4 @@ export class LoginPage extends React.Component {
             </div>
         );
     }
-}
-
-function LoginPageNavigate() {
-    const navigate = useNavigate();
-    return navigate("/")
 }
