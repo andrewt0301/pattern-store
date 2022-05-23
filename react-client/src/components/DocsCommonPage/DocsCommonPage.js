@@ -2,8 +2,9 @@ import Doc from "../Doc/Doc";
 import React, {useEffect, useState} from "react";
 import {getCommonDocs} from "../../services/getCommonDocs";
 import {Link} from "react-router-dom";
+import {DocActionColumn} from "../DocActionColumn/DocActionColumn";
 
-export function DocsPage() {
+export function DocsCommonPage() {
     const [docs, setDocs] = useState([])
 
     useEffect(() => {
@@ -43,22 +44,8 @@ export function DocsPage() {
                                 )
                         )}
                     </div>
-                    <div className="list-group col-sm-3">
-                        <Link to="/docs">
-                            <button type="button" className="list-group-item list-group-item-action">
-                                Filter documents
-                            </button>
-                        </Link>
-                        <Link to="/docs/filtered">
-                            <div className="list-group-item list-group-item-action">
-                                Filter common documents
-                            </div>
-                        </Link>
-                        <Link to="/doc">
-                            <button type="button" className="list-group-item list-group-item-action">
-                                Get document by id
-                            </button>
-                        </Link>
+                    <div className="col-sm-3">
+                        <DocActionColumn/>
                     </div>
                 </div>
             </div>

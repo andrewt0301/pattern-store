@@ -2,9 +2,9 @@ import React, {useReducer} from 'react';
 import './App.css';
 import Container from 'react-bootstrap/Container';
 import {Route, Routes, useParams} from "react-router-dom";
-import {DocsPage} from "../DocsPage/DocsPage";
+import {DocsCommonPage} from "../DocsCommonPage/DocsCommonPage";
 import {DocById} from "../DocById/DocById";
-import {DocsFiltered} from "../DocsFiltered/DocsFiltered";
+import {DocsPrivate} from "../DocsPrivate/DocsPrivate";
 import {DocDelete} from "../DocDelete/DocDelete";
 import {HomePage} from "../HomePage/HomePage";
 import {LoginPage} from "../LoginPage/LoginPage";
@@ -42,9 +42,9 @@ function App() {
                     <Route path="/" exact={true} element={<Home/>}/>
                     {/*<Route path="/" exact={true} element={<HomePage/>}/>*/}
                     {/*<Route path="/login" exact={true} element={<LoginPage/>}/>*/}
-                    <Route path="/docs" exact={true} element={<DocsPage/>}/>
+                    <Route path="/docs" exact={true} element={<DocsPrivate/>}/>
                     <Route path="/doc" exact={true} element={<DocById/>}/>
-                    <Route path="/docs/filtered" exact={true} element={<DocsFiltered/>}/>
+                    <Route path="/docs/filtered" exact={true} element={<DocsCommonPage/>}/>
                     <Route path="/doc/:docId" exact={true} element={<DocByIdRouter/>}/>
                     <Route path="/doc/:docId/delete" exact={true} element={<DocDeleteRouter/>}/>
                     <Route path="/contacts" exact={true} element={<Contacts/>}/>

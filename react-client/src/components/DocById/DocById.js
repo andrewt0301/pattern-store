@@ -3,6 +3,7 @@ import React, {useEffect, useState} from "react";
 import {getCommonDocById} from "../../services/getCommonDocById";
 import {Link} from "react-router-dom";
 import {InputDocIdForm} from "../InputDocIdForm/InputDocIdForm";
+import {DocActionColumn} from "../DocActionColumn/DocActionColumn";
 
 export function DocById({
                             docId
@@ -24,25 +25,30 @@ export function DocById({
         return (<InputDocIdForm/>)
     }
     return (
-        <div className="card col-8">
-            <div className="card-header">
-                <b>Document by id</b>
+        <div className="row">
+            <div className="card col-8 mx-2">
+                <div className="card-header">
+                    <b>Document by id</b>
+                </div>
+                <div className="card-body">
+                    <Doc
+                        id={doc.id}
+                        lang={doc.lang}
+                        scenario={doc.scenario}
+                        team={doc.team}
+                        timestamp={doc.timestamp}
+                        patterns={doc.patterns}
+                    />
+                </div>
+                <div className="d-grid gap-2 d-md-block mb-2" aria-label="Buttons for actions">
+                    <Link to={`/doc/${doc.id}/delete`}>
+                        <div className="btn btn-primary mx-2 ">Delete</div>
+                    </Link>
+                    <div className="btn btn-primary mx-2">Show patterns</div>
+                </div>
             </div>
-            <div className="card-body">
-                <Doc
-                    id={doc.id}
-                    lang={doc.lang}
-                    scenario={doc.scenario}
-                    team={doc.team}
-                    timestamp={doc.timestamp}
-                    patterns={doc.patterns}
-                />
-            </div>
-            <div className="d-grid gap-2 d-md-block mb-2" aria-label="Buttons for actions">
-                <Link to={`/doc/${doc.id}/delete`}>
-                    <div className="btn btn-primary mx-2 ">Delete</div>
-                </Link>
-                <div className="btn btn-primary mx-2">Show patterns</div>
+            <div className="col-sm-3">
+                <DocActionColumn/>
             </div>
         </div>
     );
