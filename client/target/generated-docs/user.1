@@ -1,13 +1,13 @@
 '\" t
-.\"     Title: pattern-store
+.\"     Title: user
 .\"    Author: [see the "AUTHOR(S)" section]
 .\" Generator: Asciidoctor 2.0.10
 .\"      Date: 2022-05-25
-.\"    Manual: Pattern-store Manual
+.\"    Manual: User Manual
 .\"    Source: 
 .\"  Language: English
 .\"
-.TH "PATTERN\-STORE" "1" "2022-05-25" "" "Pattern\-store Manual"
+.TH "USER" "1" "2022-05-25" "" "User Manual"
 .ie \n(.g .ds Aq \(aq
 .el       .ds Aq '
 .ss \n[.ss] 0
@@ -28,10 +28,21 @@
 .  LINKSTYLE blue R < >
 .\}
 .SH "NAME"
-pattern\-store \- CLI for pattern\-store client.  The list of available commands is below.
+user \- Command for user registration.
 .SH "SYNOPSIS"
 .sp
-\fBpattern\-store\fP
+\fBuser\fP [\fB\-u\fP=\fI<username>\fP \fB\-p\fP=\fI<password>\fP]
 .SH "DESCRIPTION"
 .sp
-CLI for pattern\-store client.  The list of available commands is below.
+Command for user registration.
+.SH "OPTIONS"
+.sp
+\fB\-p\fP, \fB\-\-password\fP=\fI<password>\fP
+.RS 4
+User password for registration.
+.RE
+.sp
+\fB\-u\fP, \fB\-\-username\fP=\fI<username>\fP
+.RS 4
+Username for registration.
+.RE

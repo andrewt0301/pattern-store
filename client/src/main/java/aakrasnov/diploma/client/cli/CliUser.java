@@ -2,14 +2,12 @@ package aakrasnov.diploma.client.cli;
 
 import aakrasnov.diploma.client.api.ClientUserApi;
 import aakrasnov.diploma.client.api.ClientUserApiImpl;
-import aakrasnov.diploma.client.domain.User;
 import aakrasnov.diploma.client.exception.IncorrectCommandUsageException;
 import aakrasnov.diploma.common.Role;
 import aakrasnov.diploma.common.RsBaseDto;
 import aakrasnov.diploma.common.UserDto;
 import java.util.concurrent.Callable;
 import org.apache.http.impl.client.HttpClients;
-import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
