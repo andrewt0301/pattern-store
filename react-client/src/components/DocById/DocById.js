@@ -44,7 +44,13 @@ export function DocById({
                     <Link to={`/doc/${doc.id}/delete`}>
                         <div className="btn btn-primary mx-2 ">Delete</div>
                     </Link>
-                    <div className="btn btn-primary mx-2">Show patterns</div>
+                    {/*<div className="btn btn-primary mx-2">Show patterns</div>*/}
+                    <Link to={`/doc/${doc.id}/feedback/add`}>
+                        <div className="btn btn-primary mx-2">Leave feedback</div>
+                    </Link>
+                    <Link to={`/doc/${doc.id}/feedback/view`}>
+                        <div className="btn btn-primary mx-2">View feedback</div>
+                    </Link>
                 </div>
             </div>
             <div className="col-sm-3">

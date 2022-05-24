@@ -19,7 +19,7 @@ export function DocsCommonPage() {
     }, [])
     return (
         <div>
-            <div className="text-dark">
+            <div className="text-dark m-3">
                 <b>Common docs</b>
             </div>
             <div className="container">

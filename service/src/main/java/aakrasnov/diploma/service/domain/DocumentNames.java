@@ -7,4 +7,5 @@ public interface DocumentNames {
     String STATISTIC_PTRNS = "statistic_patterns";
     String TEAMS = "teams";
     String USERS = "users";
+    String FEEDBACK = "feedback";
 }

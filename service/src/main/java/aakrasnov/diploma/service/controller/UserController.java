@@ -2,6 +2,7 @@ package aakrasnov.diploma.service.controller;
 
 import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.dto.AddUserRsDto;
+import aakrasnov.diploma.service.dto.UserAuthRsDto;
 import aakrasnov.diploma.service.service.api.UserService;
 import aakrasnov.diploma.service.utils.PrincipalConverter;
 import com.google.gson.Gson;
@@ -45,10 +46,13 @@ public class UserController {
     }
 
     @PostMapping("auth/users/authenticate")
-    ResponseEntity<User> authenticateUser(
+    ResponseEntity<UserAuthRsDto> authenticateUser(
         Principal principal
     ) {
-        return ResponseEntity.ok(new PrincipalConverter(principal).toUser());
+        User user = new PrincipalConverter(principal).toUser();
+        UserAuthRsDto rs = UserAuthRsDto.fromUser(user);
+        rs.setStatus(HttpStatus.OK.value());
+        return ResponseEntity.ok(rs);
     }
 
     @PostMapping("admin/user")

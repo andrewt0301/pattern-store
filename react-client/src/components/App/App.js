@@ -12,6 +12,8 @@ import {LogoutPage} from "../LogoutPage/LogoutPage";
 import {Home} from "../HomePage/HomePage";
 import {Navigate} from "react-router";
 import {ProtectedRoute} from "../helpers/ProtectedRoute";
+import {DocFeedbackAdd} from "../DocFeedbackAdd/DocFeedbackAdd";
+import {DocFeedbackView} from "../DocFeedbackView/DocFeedbackView";
 
 const displayEmojiName = event => alert(event.target.id);
 
@@ -63,6 +65,8 @@ function App() {
                     <Route path="/doc" exact={true} element={<DocById/>}/>
                     <Route path="/docs/filtered" exact={true} element={<DocsCommonPage/>}/>
                     <Route path="/doc/:docId" exact={true} element={<DocByIdRouter/>}/>
+                    <Route path="/doc/:docId/feedback/add" exact={true} element={<DocFeedbackAddRouter/>}/>
+                    <Route path="/doc/:docId/feedback/view" exact={true} element={<DocFeedbackViewRouter/>}/>
                     <Route path="/doc/:docId/delete" exact={true} element={
                         <ProtectedRoute user={userStrg}>
                             <DocDeleteRouter/>
@@ -100,6 +104,20 @@ function DocDeleteRouter() {
     let {docId} = useParams();
     return (
         <DocDelete docId={docId}/>
+    );
+}
+
+function DocFeedbackAddRouter() {
+    let {docId} = useParams();
+    return (
+        <DocFeedbackAdd docId={docId}/>
+    );
+}
+
+function DocFeedbackViewRouter() {
+    let {docId} = useParams();
+    return (
+        <DocFeedbackView docId={docId}/>
     );
 }
 

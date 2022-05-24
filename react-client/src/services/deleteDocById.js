@@ -1,4 +1,4 @@
-import {API_PATH_ADMIN, API_PATH_AUTH} from "./common";
+import {API_PATH_ADMIN} from "./common";
 
 export function deleteDocById(docId) {
     let obj = {
@@ -7,8 +7,6 @@ export function deleteDocById(docId) {
         headers: {
             "Authorization": "Basic " + JSON.parse(localStorage.getItem("user"))
         }
-        // body: 'A=1&B=2'
     }
     return fetch(API_PATH_ADMIN + "doc/" + docId + "/delete", obj)
-        // .then(response => response.json())
 }

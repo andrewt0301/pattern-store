@@ -3,7 +3,6 @@ import {API_PATH_AUTH} from "../../services/common";
 export const userService = {
     login,
     logout
-    // getAll
 };
 
 function login(username, password) {
@@ -21,6 +20,7 @@ function login(username, password) {
                 let userFront = window.btoa(username + ":" + password);
                 localStorage.setItem("user", JSON.stringify(userFront));
                 localStorage.setItem("username", JSON.stringify(user.username));
+                localStorage.setItem("userId", JSON.stringify(user.id));
                 localStorage.setItem("userRole", JSON.stringify(user.role));
             }
             return user;
@@ -31,15 +31,8 @@ function logout() {
     localStorage.removeItem("user");
     localStorage.removeItem("username");
     localStorage.removeItem("userRole");
+    localStorage.removeItem("userId");
 }
-
-// function getAll() {
-//     const rqOptions = {
-//         method: "GET",
-//         headers: AuthHeader()
-//     };
-//     return fetch(`${API_PATH_ADMIN}users`, rqOptions).then(handleResponse);
-// }
 
 function handleResponse(response) {
     return response.text().then(text => {
