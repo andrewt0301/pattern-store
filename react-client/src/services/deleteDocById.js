@@ -10,4 +10,5 @@ export function deleteDocById(docId) {
         // body: 'A=1&B=2'
     }
     return fetch(API_PATH_ADMIN + "doc/" + docId + "/delete", obj)
+        // .then(response => response.json())
 }
