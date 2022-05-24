@@ -123,7 +123,7 @@ public final class CacheIndexClientDoc implements ClientDocApi {
     public AddDocRsDto add(final DocDto document, final User user) {
         AddDocRsDto res = docApi.add(document, user);
         if (res.getStatus() == HttpStatus.SC_CREATED) {
-            index.cacheDocs(Collections.singletonList(document));
+            index.cacheDocs(Collections.singletonList(res.getDocDto()));
         }
         return res;
     }
