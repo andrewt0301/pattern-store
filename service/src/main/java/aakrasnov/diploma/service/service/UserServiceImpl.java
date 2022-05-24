@@ -1,5 +1,6 @@
 package aakrasnov.diploma.service.service;
 
+import aakrasnov.diploma.common.UserDto;
 import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.dto.AddUserRsDto;
 import aakrasnov.diploma.service.dto.UpdateRsDto;
@@ -23,20 +24,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AddUserRsDto addUser(final User user) {
+    public AddUserRsDto addUser(final UserDto dto) {
         AddUserRsDto rs = new AddUserRsDto();
-        if (userRepo.findByUsername(user.getUsername()).isPresent()) {
+        if (userRepo.findByUsername(dto.getUsername()).isPresent()) {
             rs.setStatus(HttpStatus.BAD_REQUEST.value());
             rs.setMsg(
-                String.format("User with username '%s' already exists", user.getUsername())
+                String.format("User with username '%s' already exists", dto.getUsername())
             );
             return rs;
         }
-        final String pswd = user.getPassword();
-        user.setPassword(passwordEncoder.encode(pswd));
+        final String pswd = dto.getPassword();
+        dto.setPassword(passwordEncoder.encode(pswd));
         // TODO: probably it would be better to activate manually
-        user.setActive(true);
-        rs.setUser(userRepo.save(user));
+        dto.setActive(true);
+        rs.setUser(userRepo.save(User.fromDto(dto)));
         return rs;
     }
 

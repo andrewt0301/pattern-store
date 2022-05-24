@@ -1,9 +1,12 @@
 package aakrasnov.diploma.service.domain;
 
+import aakrasnov.diploma.common.UserDto;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -68,5 +71,45 @@ public class User implements UserDetails {
 
     public boolean isAdmin() {
         return Role.ADMIN.equals(role);
+    }
+
+    public static User fromDto(UserDto dto) {
+        User user = new User();
+        if (dto.getId() != null) {
+            user.setId(new ObjectId(dto.getId()));
+        }
+        user.setUsername(dto.getUsername());
+        user.setPassword(dto.getPassword());
+        user.setRole(Role.valueOf(dto.getRole().name()));
+        user.setTeams(
+            Optional.ofNullable(dto.getTeams())
+                .map(
+                    teams -> teams.stream()
+                    .map(Team::fromDto)
+                    .collect(Collectors.toSet())
+                ).orElse(new HashSet<>())
+        );
+        user.setActive(dto.isActive());
+        return user;
+    }
+
+    public static UserDto toDto(User user) {
+        UserDto dto = new UserDto();
+        if (user.getId() != null) {
+            dto.setId(user.getId().toHexString());
+        }
+        dto.setUsername(user.getUsername());
+        dto.setPassword(user.getPassword());
+        dto.setRole(aakrasnov.diploma.common.Role.valueOf(user.getRole().name()));
+        dto.setTeams(
+            Optional.ofNullable(user.getTeams())
+                .map(
+                    teams -> teams.stream()
+                        .map(Team::toDto)
+                        .collect(Collectors.toSet())
+                ).orElse(new HashSet<>())
+        );
+        dto.setActive(user.isEnabled());
+        return dto;
     }
 }

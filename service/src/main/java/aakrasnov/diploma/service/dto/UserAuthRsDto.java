@@ -9,10 +9,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString(of = {"id", "username", "role"})
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class UserAuthRsDto extends RsBaseDto implements Serializable {

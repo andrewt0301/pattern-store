@@ -6,11 +6,14 @@ import aakrasnov.diploma.client.api.ClientStatisticApi;
 import aakrasnov.diploma.client.api.ClientStatisticApiImpl;
 import aakrasnov.diploma.client.api.ClientTeamApi;
 import aakrasnov.diploma.client.api.ClientTeamApiImpl;
+import aakrasnov.diploma.client.api.ClientUserApi;
+import aakrasnov.diploma.client.api.ClientUserApiImpl;
 import aakrasnov.diploma.client.api.cache.CacheIndexClientDoc;
 import aakrasnov.diploma.client.cli.Cli;
 import aakrasnov.diploma.client.cli.CliDoc;
 import aakrasnov.diploma.client.cli.CliStatistic;
 import aakrasnov.diploma.client.cli.CliTeam;
+import aakrasnov.diploma.client.cli.CliUser;
 import java.io.IOException;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -24,12 +27,14 @@ public class ClientApplication {
             ClientDocApi clientDoc = new BasicClientDocApi(httpClient, BASE);
             ClientStatisticApi clientStatistic = new ClientStatisticApiImpl(httpClient, BASE);
             ClientTeamApi clientTeam = new ClientTeamApiImpl(httpClient, BASE);
+            ClientUserApi clientUser = new ClientUserApiImpl(httpClient, BASE);
             // TODO: add autocomplete for CLI
             CommandLine cmd = new CommandLine(new Cli())
                 .addSubcommand(new CommandLine.HelpCommand())
                 .addSubcommand(new CliDoc(clientDoc, new CacheIndexClientDoc(clientDoc)))
                 .addSubcommand(new CliStatistic(clientStatistic))
-                .addSubcommand(new CliTeam(clientTeam));
+                .addSubcommand(new CliTeam(clientTeam))
+                .addSubcommand(new CliUser(clientUser));
             cmd.setExecutionStrategy(new CommandLine.RunAll());
             cmd.execute(args);
             if (args.length == 0) {
