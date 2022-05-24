@@ -67,6 +67,9 @@ public class TeamServiceImpl implements TeamService {
         }
         Team saved = teamRepo.save(Team.fromDto(teamDto));
         teamDto.setId(saved.getId().toHexString());
+        docService.findByTeam(fromDb.get()).stream()
+            .peek(docDto -> docDto.setTeam(Team.toDto(saved)))
+            .forEach(docDto -> docService.update(docDto.getId(), docDto, user));
         rs.setStatus(HttpStatus.OK.value());
         return rs;
     }
@@ -90,6 +93,9 @@ public class TeamServiceImpl implements TeamService {
                 teamRepo.save(new TeamInvite(team.get()).updateInvite())
             )
         );
+        docService.findByTeam(team.get()).stream()
+            .peek(docDto -> docDto.setTeam(rs.getTeamDto()))
+            .forEach(docDto -> docService.update(docDto.getId(), docDto, user));
         rs.setStatus(HttpStatus.OK.value());
         return rs;
     }

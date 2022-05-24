@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"id", "name"})
+@EqualsAndHashCode(of = {"id"})
 @ToString(of = {"id", "name"})
 @Document(DocumentNames.TEAMS)
 public class Team {
