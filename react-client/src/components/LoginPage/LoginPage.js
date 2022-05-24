@@ -47,7 +47,7 @@ export class LoginPage extends React.Component {
                 <form name="form" onSubmit={this.handleSubmit}>
                     <div className={"form-group" + (submitted && !username ? " has-error" : '')}>
                         <label htmlFor="username">Username</label>
-                        <input type="text" className="form-control"
+                        <input type="text" className="form-control my-1"
                                name="username"
                                value={username}
                                placeholder="username"
@@ -58,7 +58,7 @@ export class LoginPage extends React.Component {
                     </div>
                     <div className={"form-group" + (submitted && !password ? " has-error" : "")}>
                         <label htmlFor="password">Password</label>
-                        <input type="password" className="form-control"
+                        <input type="password" className="form-control my-1"
                                name="password"
                                value={password}
                                placeholder="password"

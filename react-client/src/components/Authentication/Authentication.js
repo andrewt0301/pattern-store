@@ -20,6 +20,8 @@ function login(username, password) {
             if (user) {
                 let userFront = window.btoa(username + ":" + password);
                 localStorage.setItem("user", JSON.stringify(userFront));
+                localStorage.setItem("username", JSON.stringify(user.username));
+                localStorage.setItem("userRole", JSON.stringify(user.role));
             }
             return user;
         });
@@ -27,6 +29,8 @@ function login(username, password) {
 
 function logout() {
     localStorage.removeItem("user");
+    localStorage.removeItem("username");
+    localStorage.removeItem("userRole");
 }
 
 // function getAll() {
