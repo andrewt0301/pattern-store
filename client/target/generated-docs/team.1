@@ -1,0 +1,107 @@
+'\" t
+.\"     Title: team
+.\"    Author: [see the "AUTHOR(S)" section]
+.\" Generator: Asciidoctor 2.0.10
+.\"      Date: 2022-05-24
+.\"    Manual: Team Manual
+.\"    Source: 
+.\"  Language: English
+.\"
+.TH "TEAM" "1" "2022-05-24" "" "Team Manual"
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.ss \n[.ss] 0
+.nh
+.ad l
+.de URL
+\fI\\$2\fP <\\$1>\\$3
+..
+.als MTO URL
+.if \n[.g] \{\
+.  mso www.tmac
+.  am URL
+.    ad l
+.  .
+.  am MTO
+.    ad l
+.  .
+.  LINKSTYLE blue R < >
+.\}
+.SH "NAME"
+team \- Command for interacting with teams which give access to the documents.
+.SH "SYNOPSIS"
+.sp
+\fBteam\fP [\fB\-u\fP=\fI<username>\fP \fB\-p\fP=\fI<password>\fP] [\fB\-\-id\fP=\fI<getTeamId>\fP | \fB\-\-invite\fP=\fI<getTeamInvite>\fP
+| \fB\-\-joinByInvite\fP=\fI<joinInvite>\fP | \fB\-\-addTeam\fP=\fI<addTeamFile>\fP |
+\fB\-\-updInviteById\fP=\fI<updInviteById>\fP | \fB\-\-updInviteByInvite\fP=\fI<updInviteByInvite>\fP
+| \fB\-\-deleteId\fP=\fI<deleteId>\fP | \fB\-\-update\fP] [\fB\-\-pathUpd\fP=\fI<pathUpd>\fP
+[\fB\-\-updTeamId\fP=\fI<teamId>\fP | \fB\-\-updTeamInvite\fP=\fI<teamInvite>\fP]]
+.SH "DESCRIPTION"
+.sp
+Command for interacting with teams which give access to the documents.
+.SH "OPTIONS"
+.sp
+\fB\-\-addTeam\fP=\fI<addTeamFile>\fP
+.RS 4
+Path to the file with team for addition.
+.RE
+.sp
+\fB\-\-deleteId\fP=\fI<deleteId>\fP
+.RS 4
+Id of team for team removing.
+.RE
+.sp
+\fB\-\-id, \-\-getById\fP=\fI<getTeamId>\fP
+.RS 4
+Id of team for obtaining.
+.RE
+.sp
+\fB\-\-invite, \-\-getByInvite\fP=\fI<getTeamInvite>\fP
+.RS 4
+Invitation code of team for obtaining.
+.RE
+.sp
+\fB\-\-joinByInvite\fP=\fI<joinInvite>\fP
+.RS 4
+Invitation code for joining a user to the team.
+.RE
+.sp
+\fB\-p\fP, \fB\-\-password\fP=\fI<password>\fP
+.RS 4
+User password.
+.RE
+.sp
+\fB\-\-pathUpd\fP=\fI<pathUpd>\fP
+.RS 4
+Path to the team for update.
+.RE
+.sp
+\fB\-u\fP, \fB\-\-username\fP=\fI<username>\fP
+.RS 4
+Username for authentication.
+.RE
+.sp
+\fB\-\-update\fP
+.RS 4
+This mode should be activated for update of the team. It is used together with specifying id or invite of team for update and path to the file with a new team.
+.RE
+.sp
+\fB\-\-updInviteById\fP=\fI<updInviteById>\fP
+.RS 4
+Id of team for invitation code updating.
+.RE
+.sp
+\fB\-\-updInviteByInvite\fP=\fI<updInviteByInvite>\fP
+.RS 4
+Invitation code of team for invitation code updating.
+.RE
+.sp
+\fB\-\-updTeamId\fP=\fI<teamId>\fP
+.RS 4
+Id of team for updating.
+.RE
+.sp
+\fB\-\-updTeamInvite\fP=\fI<teamInvite>\fP
+.RS 4
+Invitation code of team for updating.
+.RE

@@ -142,6 +142,7 @@
                         <argument>aakrasnov.diploma.client.cli.Cli</argument>
                         <argument>aakrasnov.diploma.client.cli.CliStatistic</argument>
                         <argument>aakrasnov.diploma.client.cli.CliDoc</argument>
+                        <argument>aakrasnov.diploma.client.cli.CliTeam</argument>
                     </arguments>
                 </configuration>
                 <dependencies>

@@ -15,11 +15,11 @@ import java.nio.file.Paths;
 import java.util.concurrent.Callable;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.client.HttpClients;
-import picocli.CommandLine;
 import picocli.CommandLine.ArgGroup;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@CommandLine.Command(
+@Command(
     name = "team",
     description = "Command for interacting with teams which give access to the documents."
 )
@@ -87,7 +87,7 @@ public class CliTeam implements Callable<String> {
         )
         private String getTeamInvite;
 
-        @Option(names = {"--joinCode"},
+        @Option(names = {"--joinByInvite"},
             required = true,
             description = "Invitation code for joining a user to the team. "
         )

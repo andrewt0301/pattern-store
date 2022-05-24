@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.10">
-<title>pattern-store(1)</title>
+<title>team(1)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -438,10 +438,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="manpage">
 <div id="header">
-<h1>pattern-store(1) Manual Page</h1>
+<h1>team(1) Manual Page</h1>
 <h2 id="_name">Name</h2>
 <div class="sectionbody">
-<p>pattern-store - CLI for pattern-store client.  The list of available commands is below.</p>
+<p>team - Command for interacting with teams which give access to the documents.</p>
 </div>
 </div>
 <div id="content">
@@ -449,7 +449,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_synopsis">Synopsis</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>pattern-store</strong></p>
+<p><strong>team</strong> [<strong>-u</strong>=<em>&lt;username&gt;</em> <strong>-p</strong>=<em>&lt;password&gt;</em>] [<strong>--id</strong>=<em>&lt;getTeamId&gt;</em> | <strong>--invite</strong>=<em>&lt;getTeamInvite&gt;</em>
+     | <strong>--joinByInvite</strong>=<em>&lt;joinInvite&gt;</em> | <strong>--addTeam</strong>=<em>&lt;addTeamFile&gt;</em> |
+     <strong>--updInviteById</strong>=<em>&lt;updInviteById&gt;</em> | <strong>--updInviteByInvite</strong>=<em>&lt;updInviteByInvite&gt;</em>
+     | <strong>--deleteId</strong>=<em>&lt;deleteId&gt;</em> | <strong>--update</strong>] [<strong>--pathUpd</strong>=<em>&lt;pathUpd&gt;</em>
+     [<strong>--updTeamId</strong>=<em>&lt;teamId&gt;</em> | <strong>--updTeamInvite</strong>=<em>&lt;teamInvite&gt;</em>]]</p>
 </div>
 </div>
 </div>
@@ -457,7 +461,68 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_description">Description</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>CLI for pattern-store client.  The list of available commands is below.</p>
+<p>Command for interacting with teams which give access to the documents.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_options">Options</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>--addTeam</strong>=<em>&lt;addTeamFile&gt;</em></dt>
+<dd>
+<p>Path to the file with team for addition.</p>
+</dd>
+<dt class="hdlist1"><strong>--deleteId</strong>=<em>&lt;deleteId&gt;</em></dt>
+<dd>
+<p>Id of team for team removing.</p>
+</dd>
+<dt class="hdlist1"><strong>--id, --getById</strong>=<em>&lt;getTeamId&gt;</em></dt>
+<dd>
+<p>Id of team for obtaining.</p>
+</dd>
+<dt class="hdlist1"><strong>--invite, --getByInvite</strong>=<em>&lt;getTeamInvite&gt;</em></dt>
+<dd>
+<p>Invitation code of team for obtaining.</p>
+</dd>
+<dt class="hdlist1"><strong>--joinByInvite</strong>=<em>&lt;joinInvite&gt;</em></dt>
+<dd>
+<p>Invitation code for joining a user to the team.</p>
+</dd>
+<dt class="hdlist1"><strong>-p</strong>, <strong>--password</strong>=<em>&lt;password&gt;</em></dt>
+<dd>
+<p>User password.</p>
+</dd>
+<dt class="hdlist1"><strong>--pathUpd</strong>=<em>&lt;pathUpd&gt;</em></dt>
+<dd>
+<p>Path to the team for update.</p>
+</dd>
+<dt class="hdlist1"><strong>-u</strong>, <strong>--username</strong>=<em>&lt;username&gt;</em></dt>
+<dd>
+<p>Username for authentication.</p>
+</dd>
+<dt class="hdlist1"><strong>--update</strong></dt>
+<dd>
+<p>This mode should be activated for update of the team. It is used together with specifying id or invite of team for update and path to the file with a new team.</p>
+</dd>
+<dt class="hdlist1"><strong>--updInviteById</strong>=<em>&lt;updInviteById&gt;</em></dt>
+<dd>
+<p>Id of team for invitation code updating.</p>
+</dd>
+<dt class="hdlist1"><strong>--updInviteByInvite</strong>=<em>&lt;updInviteByInvite&gt;</em></dt>
+<dd>
+<p>Invitation code of team for invitation code updating.</p>
+</dd>
+<dt class="hdlist1"><strong>--updTeamId</strong>=<em>&lt;teamId&gt;</em></dt>
+<dd>
+<p>Id of team for updating.</p>
+</dd>
+<dt class="hdlist1"><strong>--updTeamInvite</strong>=<em>&lt;teamInvite&gt;</em></dt>
+<dd>
+<p>Invitation code of team for updating.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
