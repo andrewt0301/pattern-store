@@ -14,12 +14,20 @@ network with following command:
 docker network create ptst-network
 ```
 In this case in `.env` file the value of variable `NETWORK_NAME`
-should be equal to `ptst-network`. Next you need to create 
-directories for MongoDb and specify path to them in `.env`
-file (e.g. `MONGO_DATA_HOST_PATH`, `MONGO_LOG_HOST_PATH`, 
-`MONGO_INITDB_SCRIPTS_HOST_PATH`). Examples of path could be
-found in `.env` file of root directory.
+should be equal to `ptst-network`.
 
+This section is optional as it is configured in root project
+directory, but you would likely want to change it. 
+Next you need to create directories for MongoDb and specify
+path to them in `.env` file (e.g. `MONGO_DATA_HOST_PATH`, 
+`MONGO_LOG_HOST_PATH`, `MONGO_INITDB_SCRIPTS_HOST_PATH`). 
+Examples of path could be found in `.env` file of root 
+directory. In the `initdb.d` directory you need to 
+create file `create-user.sh` with such content:
+```shell
+#!/bin/bash
+mongo "$MONGO_INITDB_DATABASE" --eval "db.createUser({ roles: [{ role: 'dbOwner', db: '$MONGO_INITDB_DATABASE' }] })"
+```
 \
 After that you should build service with next 
 command from root directory:
