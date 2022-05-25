@@ -35,4 +35,4 @@ client/**.iml
 service/target/
 common/target/
 
-mongodb/
+mongodb/**
