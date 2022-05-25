@@ -1,25 +1,39 @@
 package aakrasnov.diploma.service.service;
 
+import aakrasnov.diploma.common.TeamDto;
 import aakrasnov.diploma.common.UserDto;
+import aakrasnov.diploma.service.domain.Team;
 import aakrasnov.diploma.service.domain.User;
 import aakrasnov.diploma.service.dto.AddUserRsDto;
 import aakrasnov.diploma.service.dto.UpdateRsDto;
 import aakrasnov.diploma.service.repo.UserRepo;
+import aakrasnov.diploma.service.service.api.TeamService;
 import aakrasnov.diploma.service.service.api.UserService;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepo userRepo;
 
+    private final TeamService teamService;
+
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(final UserRepo userRepo, final PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(
+        final UserRepo userRepo,
+        final TeamService teamService,
+        final PasswordEncoder passwordEncoder
+    ) {
         this.userRepo = userRepo;
+        this.teamService = teamService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -37,6 +51,14 @@ public class UserServiceImpl implements UserService {
         dto.setPassword(passwordEncoder.encode(pswd));
         // TODO: probably it would be better to activate manually
         dto.setActive(true);
+        Set<TeamDto> teams = Optional.ofNullable(dto.getTeams()).orElse(new HashSet<>());
+        Optional<TeamDto> common = teamService.getById(Team.COMMON_TEAM_ID.toHexString());
+        if (common.isPresent()) {
+            teams.add(common.get());
+        } else {
+            log.warn("Failed to find common team by id {}", Team.COMMON_TEAM_ID.toHexString());
+        }
+        dto.setTeams(teams);
         rs.setUser(userRepo.save(User.fromDto(dto)));
         return rs;
     }

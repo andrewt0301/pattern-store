@@ -3,6 +3,7 @@ package aakrasnov.diploma.service.config;
 import aakrasnov.diploma.service.repo.UserRepo;
 import aakrasnov.diploma.service.service.DbUserDetailsService;
 import aakrasnov.diploma.service.service.UserServiceImpl;
+import aakrasnov.diploma.service.service.api.TeamService;
 import aakrasnov.diploma.service.service.api.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +19,12 @@ public class UserConfig {
     }
 
     @Bean
-    public UserService userService(UserRepo userRepo, PasswordEncoder passwordEncoder) {
-        return new UserServiceImpl(userRepo, passwordEncoder);
+    public UserService userService(
+        UserRepo userRepo,
+        TeamService teamService,
+        PasswordEncoder passwordEncoder
+    ) {
+        return new UserServiceImpl(userRepo, teamService, passwordEncoder);
     }
 
     @Bean
