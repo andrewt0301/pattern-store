@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+monitoring/grafana/**
+!monitoring/grafana/empty.txt
+
+monitoring/prometheus/**
+!monitoring/prometheus/empty.txt

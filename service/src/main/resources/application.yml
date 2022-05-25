@@ -1,7 +1,7 @@
 logging:
   level:
-    org.springframework: info
-    org.springframework.security: debug
+    org.springframework: error
+    org.springframework.security: error
 
 spring:
   data:
@@ -22,3 +22,17 @@ server:
 ####### Mongock Properties ###########
 mongock:
   change-logs-scan-package: aakrasnov.diploma.service.config.dbmigrations
+
+## Metircs
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
