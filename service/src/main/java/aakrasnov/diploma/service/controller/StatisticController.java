@@ -7,11 +7,12 @@ import aakrasnov.diploma.common.stata.GetStataDocRsDto;
 import aakrasnov.diploma.common.stata.GetStataMergedDocRsDto;
 import aakrasnov.diploma.common.stata.GetStataMergedPtrnsRsDto;
 import aakrasnov.diploma.common.stata.GetStataPtrnsRsDto;
+import aakrasnov.diploma.common.stata.IdsDto;
 import aakrasnov.diploma.common.stata.StatisticDto;
 import aakrasnov.diploma.service.service.api.StatisticService;
 import aakrasnov.diploma.service.utils.MyTmpTest;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,18 +49,21 @@ public class StatisticController {
 
     @PostMapping("patterns/usage")
     public ResponseEntity<GetStataPtrnsRsDto> getStatisticForPatterns(
-        @RequestBody Set<String> patternIds
+        @RequestBody IdsDto patternIds
     ) {
-        GetStataPtrnsRsDto res = statisticService.getStatisticForPatterns(patternIds);
+        GetStataPtrnsRsDto res = statisticService.getStatisticForPatterns(
+            new HashSet<>(patternIds.getIds())
+        );
         return new ResponseEntity<>(res, HttpStatus.valueOf(res.getStatus()));
     }
 
     @PostMapping("patterns/usage/merged")
     public ResponseEntity<GetStataMergedPtrnsRsDto> getStatisticMergedForPatterns(
-        @RequestBody Set<String> patternIds
+        @RequestBody IdsDto patternIds
     ) {
-        GetStataMergedPtrnsRsDto res = statisticService
-            .getStatisticMergedForPatterns(patternIds);
+        GetStataMergedPtrnsRsDto res = statisticService.getStatisticMergedForPatterns(
+            new HashSet<>(patternIds.getIds())
+        );
         return new ResponseEntity<>(res, HttpStatus.valueOf(res.getStatus()));
     }
 
@@ -83,9 +87,11 @@ public class StatisticController {
 
     @PostMapping("docs/downloads/count")
     public ResponseEntity<GetDownloadDocsRsDto> getDownloadsCountForDocs(
-        @RequestBody Set<String> docIds
+        @RequestBody IdsDto docIds
     ) {
-        GetDownloadDocsRsDto res = statisticService.getDownloadsCountForDocs(docIds);
+        GetDownloadDocsRsDto res = statisticService.getDownloadsCountForDocs(
+            new HashSet<>(docIds.getIds())
+        );
         return new ResponseEntity<>(res, HttpStatus.valueOf(res.getStatus()));
     }
 }

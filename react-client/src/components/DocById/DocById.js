@@ -51,6 +51,9 @@ export function DocById({
                     <Link to={`/doc/${doc.id}/feedback/view`}>
                         <div className="btn btn-primary mx-2">View feedback</div>
                     </Link>
+                    <Link to={`/doc/${doc.id}/statistic`}>
+                        <div className="btn btn-primary mx-2">Show statistic</div>
+                    </Link>
                 </div>
             </div>
             <div className="col-sm-3">

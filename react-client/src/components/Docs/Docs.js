@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {DocActionColumn} from "../DocActionColumn/DocActionColumn";
 import React from "react";
 
-export function DocsContainer(props) {
+export function Docs(props) {
     return (<div>
         <div className="text-dark m-3">
             <b>{props.title}</b>

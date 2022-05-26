@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {DocsContainer} from "../DocsContainer/DocsContainer";
+import {Docs} from "../Docs/Docs";
 import {getDocsByUser} from "../../services/getDocsByUser";
 
 export function DocsPrivate() {
@@ -15,6 +15,6 @@ export function DocsPrivate() {
         return () => mounted = false;
     }, [])
     return (
-        <DocsContainer title="Common documents" docs={docs}/>
+        <Docs title="Common documents" docs={docs}/>
     );
 }

@@ -14,6 +14,8 @@ import {Navigate} from "react-router";
 import {ProtectedRoute} from "../helpers/ProtectedRoute";
 import {DocFeedbackAdd} from "../DocFeedbackAdd/DocFeedbackAdd";
 import {DocFeedbackView} from "../DocFeedbackView/DocFeedbackView";
+import {DocStatistic} from "../DocStatistic/DocStatistic";
+import {PatternStatistic} from "../PatternStatistic/PatternStatistic";
 
 const displayEmojiName = event => alert(event.target.id);
 
@@ -72,6 +74,8 @@ function App() {
                             <DocDeleteRouter/>
                         </ProtectedRoute>
                     }/>
+                    <Route path="/doc/:docId/statistic" exact={true} element={<DocStatisticRouter/>}/>
+                    <Route path="/pattern/:patternId/statistic" exact={true} element={<PatternStatisticRouter/>}/>
                     <Route path="/contacts" exact={true} element={<Contacts/>}/>
                 </Routes>
             </div>
@@ -118,6 +122,20 @@ function DocFeedbackViewRouter() {
     let {docId} = useParams();
     return (
         <DocFeedbackView docId={docId}/>
+    );
+}
+
+function DocStatisticRouter() {
+    let {docId} = useParams();
+    return (
+        <DocStatistic docId={docId}/>
+    );
+}
+
+function PatternStatisticRouter() {
+    let {patternId} = useParams();
+    return (
+        <PatternStatistic patternId={patternId}/>
     );
 }
 

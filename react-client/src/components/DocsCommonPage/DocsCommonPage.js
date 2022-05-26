@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {getCommonDocs} from "../../services/getCommonDocs";
-import {DocsContainer} from "../DocsContainer/DocsContainer";
+import {Docs} from "../Docs/Docs";
 
 export function DocsCommonPage() {
     const [docs, setDocs] = useState([])
@@ -15,6 +15,6 @@ export function DocsCommonPage() {
         return () => mounted = false;
     }, [])
     return (
-        <DocsContainer title="Common documents" docs={docs}/>
+        <Docs title="Common documents" docs={docs}/>
     );
 }
