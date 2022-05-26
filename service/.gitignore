@@ -37,3 +37,8 @@ monitoring/grafana/**
 
 monitoring/prometheus/**
 !monitoring/prometheus/empty.txt
+
+mongodb/
+!mongodb/initdb.d
+!mongodb/log/empty.txt
+!mongodb/data/empty.txt

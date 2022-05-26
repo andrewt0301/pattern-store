@@ -7,3 +7,10 @@ Service documentation: [here](./service/README.md)
 Client documentation: [here](./client/README.md)  
 CLI documentation: [here](./client/target/generated-docs)  
 OpenAPI documentation: http://localhost:8080/swagger-ui/index.html
+
+## Build
+In order to build parent multimodule project you need to run from root 
+directory:
+```shell
+mvn clean install
+```
