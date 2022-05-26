@@ -1,6 +1,6 @@
 import Doc from "../Doc/Doc";
 import React, {useEffect, useState} from "react";
-import {getCommonDocById} from "../../services/getCommonDocById";
+import {getDocById} from "../../services/getDocById";
 import {Link} from "react-router-dom";
 import {InputDocIdForm} from "../InputDocIdForm/InputDocIdForm";
 import {DocActionColumn} from "../DocActionColumn/DocActionColumn";
@@ -12,7 +12,7 @@ export function DocById({
 
     useEffect(() => {
         let mounted = true;
-        docId && getCommonDocById(docId)
+        docId && getDocById(docId)
             .then(item => {
                 if (mounted) {
                     setDoc(item)

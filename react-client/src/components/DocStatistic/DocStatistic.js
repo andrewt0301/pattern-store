@@ -6,6 +6,7 @@ import {getDocUsage} from "../../services/statistic/getDocUsage";
 import {Table} from "react-bootstrap";
 import {getDocUsageMerged} from "../../services/statistic/getDocUsageMerged";
 import {showUsages} from "../helpers/showUsages";
+import {showUsagesMerged} from "../helpers/showUsagesMerged";
 
 export function DocStatistic(docId) {
     const [docDownloadCount, setDocDownloadCount] = useState([0])
@@ -92,31 +93,6 @@ export function DocStatistic(docId) {
     )
 }
 
-function showUsagesMerged(usages) {
-    return (
-        <Table>
-            <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Pattern id</th>
-                <th scope="col">Count</th>
-            </tr>
-            </thead>
-            <tbody>
-            {usages && Object.entries(usages).map(
-                (usage, idx) => (
-                    <tr key={idx}>
-                        <th scope="row">{idx}</th>
-                        <td>{usage[0]}</td>
-                        <td>{usage[1]}</td>
-                    </tr>
-                )
-            )}
-            </tbody>
-        </Table>
-    )
-}
-
 export function UnmountClosedDocUsage(props) {
     return (
         <UnmountClosed isOpened={props.isDocUsage}>
@@ -144,11 +120,11 @@ export function UnmountClosedDocUsageMerged(props) {
             <div>
                 <h6>Doc id: {props.docUsageMerged && props.docUsageMerged[0]?.documentId}</h6>
                 <p><b>Successful</b> usages of patterns</p>
-                {showUsagesMerged(props.docUsageMerged.success)}
+                {showUsagesMerged(props.docUsageMerged.success, true)}
                 <p><b>Failure</b> usages of patterns</p>
-                {showUsagesMerged(props.docUsageMerged.failure)}
+                {showUsagesMerged(props.docUsageMerged.failure, true)}
                 <p><b>Downloads</b> of patterns</p>
-                {showUsagesMerged(props.docUsageMerged.download)}
+                {showUsagesMerged(props.docUsageMerged.download, true)}
             </div>
         </UnmountClosed>
     )

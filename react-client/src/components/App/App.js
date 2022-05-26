@@ -10,21 +10,12 @@ import {LoginPage} from "../LoginPage/LoginPage";
 import {userService} from "../Authentication/Authentication";
 import {LogoutPage} from "../LogoutPage/LogoutPage";
 import {Home} from "../HomePage/HomePage";
-import {Navigate} from "react-router";
 import {ProtectedRoute} from "../helpers/ProtectedRoute";
 import {DocFeedbackAdd} from "../DocFeedbackAdd/DocFeedbackAdd";
 import {DocFeedbackView} from "../DocFeedbackView/DocFeedbackView";
 import {DocStatistic} from "../DocStatistic/DocStatistic";
 import {PatternStatistic} from "../PatternStatistic/PatternStatistic";
-
-const displayEmojiName = event => alert(event.target.id);
-
-function showAdditional(additional) {
-    const alertInformation = Object.entries(additional)
-        .map(information => `${information[0]}: ${information[1]}`)
-        .join('\n');
-    alert(alertInformation)
-}
+import {PatternStatisticMerged} from "../PatternStatisticMerged/PatternStatisticMerged";
 
 function App() {
     let userStrg = localStorage.getItem("user")
@@ -75,7 +66,9 @@ function App() {
                         </ProtectedRoute>
                     }/>
                     <Route path="/doc/:docId/statistic" exact={true} element={<DocStatisticRouter/>}/>
-                    <Route path="/pattern/:patternId/statistic" exact={true} element={<PatternStatisticRouter/>}/>
+                    <Route path="/statistic/pattern/:patternId" exact={true} element={<PatternStatisticRouter/>}/>
+                    <Route path="/statistic/pattern/:patternId/merged" exact={true}
+                           element={<PatternStatisticMergedRouter/>}/>
                     <Route path="/contacts" exact={true} element={<Contacts/>}/>
                 </Routes>
             </div>
@@ -136,6 +129,13 @@ function PatternStatisticRouter() {
     let {patternId} = useParams();
     return (
         <PatternStatistic patternId={patternId}/>
+    );
+}
+
+function PatternStatisticMergedRouter() {
+    let {patternId} = useParams();
+    return (
+        <PatternStatisticMerged patternId={patternId}/>
     );
 }
 

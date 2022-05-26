@@ -46,6 +46,7 @@ docker-compose down
 ```
 
 ## Start with cmd
+In this case MongoDb server should be started.
 Service starting could be done by using the command from 
 service project directory:
 ```shell

@@ -2,7 +2,7 @@ import {Table} from "react-bootstrap";
 import React from "react";
 import {Link} from "react-router-dom";
 
-export function showUsages(usages, docActions) {
+export function showUsagesMerged(usages, docActions) {
     return (
         <Table>
             <thead>
@@ -14,21 +14,20 @@ export function showUsages(usages, docActions) {
             </tr>
             </thead>
             <tbody>
-            {usages && usages.map(
+            {usages && Object.entries(usages).map(
                 (usage, idx) => (
                     <tr key={idx}>
                         <th scope="row">{idx}</th>
-                        <td>{usage.patternId}</td>
-                        <td>{usage.count}</td>
+                        <td>{usage[0]}</td>
+                        <td>{usage[1]}</td>
                         {docActions && <td>
-                            <Link to={`/statistic/pattern/${usage.patternId}`}>
+                            <Link to={`/statistic/pattern/${usage[0]}`}>
                                 <div className="btn btn-primary mx-1">Statistic</div>
                             </Link>
-                            <Link to={`/statistic/pattern/${usage.patternId}/merged`}>
+                            <Link to={`/statistic/pattern/${usage[0]}/merged`}>
                                 <div className="btn btn-primary mx-1">Merged statistic</div>
                             </Link>
-                        </td>
-                        }
+                        </td>}
                     </tr>
                 )
             )}
