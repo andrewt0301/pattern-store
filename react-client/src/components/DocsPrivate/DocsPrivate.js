@@ -1,15 +1,20 @@
-import {DocActionColumn} from "../DocActionColumn/DocActionColumn";
-import React from "react";
+import React, {useEffect, useState} from "react";
+import {DocsContainer} from "../DocsContainer/DocsContainer";
+import {getDocsByUser} from "../../services/getDocsByUser";
 
 export function DocsPrivate() {
+    const [docs, setDocs] = useState([])
+    useEffect(() => {
+        let mounted = true;
+        getDocsByUser()
+            .then(items => {
+                if (mounted) {
+                    setDocs(items)
+                }
+            })
+        return () => mounted = false;
+    }, [])
     return (
-        <div className="row">
-            <div className="col-sm-8">
-                <h2>Here will be private documents with filter</h2>
-            </div>
-            <div className="col-sm-3">
-                <DocActionColumn/>
-            </div>
-        </div>
-    )
+        <DocsContainer title="Common documents" docs={docs}/>
+    );
 }
