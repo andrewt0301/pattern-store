@@ -7,6 +7,7 @@ import aakrasnov.diploma.common.stata.GetStataDocRsDto;
 import aakrasnov.diploma.common.stata.GetStataMergedDocRsDto;
 import aakrasnov.diploma.common.stata.GetStataMergedPtrnsRsDto;
 import aakrasnov.diploma.common.stata.GetStataPtrnsRsDto;
+import aakrasnov.diploma.common.stata.IdsDto;
 import aakrasnov.diploma.common.stata.StatisticDto;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +25,7 @@ public interface ClientStatisticApi {
      * @param patternIds Patterns ids
      * @return Statistic for patterns with status.
      */
-    GetStataPtrnsRsDto getStatisticForPatterns(Set<String> patternIds);
+    GetStataPtrnsRsDto getStatisticForPatterns(IdsDto patternIds);
 
     /**
      * Merge statistic for the patterns if they are included in several
@@ -32,7 +33,7 @@ public interface ClientStatisticApi {
      * @param patternIds Patterns ids
      * @return Merged statistic for patterns with status.
      */
-    GetStataMergedPtrnsRsDto getStatisticMergedForPatterns(Set<String> patternIds);
+    GetStataMergedPtrnsRsDto getStatisticMergedForPatterns(IdsDto patternIds);
 
     /**
      * Get statistic for the document. It can be included in
@@ -56,5 +57,5 @@ public interface ClientStatisticApi {
      * @return Download count for the documents in mapping (e.g.{"docId_1":5})
      *  with status.
      */
-    GetDownloadDocsRsDto getDownloadsCountForDocs(Set<String> docIds);
+    GetDownloadDocsRsDto getDownloadsCountForDocs(IdsDto docIds);
 }

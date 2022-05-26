@@ -8,15 +8,16 @@ import aakrasnov.diploma.client.exception.StatisticFileOutputException;
 import aakrasnov.diploma.client.utils.RsAsGsonPretty;
 import aakrasnov.diploma.common.RsBaseDto;
 import aakrasnov.diploma.common.stata.DocIdDto;
+import aakrasnov.diploma.common.stata.IdsDto;
 import aakrasnov.diploma.common.stata.StatisticDto;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -136,14 +137,14 @@ public class CliStatistic implements Callable<String> {
             res = getFromPatternsIdFile(cmd.patternsFile, merged);
         }
         if (cmd.downloadsDocs != null) {
-            res = clientStatistic.getDownloadsCountForDocs(
-                new HashSet<>(Arrays.asList(cmd.downloadsDocs))
-            );
+            IdsDto idsDto = new IdsDto();
+            idsDto.setIds(Arrays.asList(cmd.downloadsDocs));
+            res = clientStatistic.getDownloadsCountForDocs(idsDto);
         }
         if (cmd.downloadsDocsFile != null) {
-            res = clientStatistic.getDownloadsCountForDocs(
-                getIdsFromFile(cmd.downloadsDocsFile)
-            );
+            IdsDto idsDto = new IdsDto();
+            idsDto.setIds(new ArrayList<>(getIdsFromFile(cmd.downloadsDocsFile)));
+            res = clientStatistic.getDownloadsCountForDocs(idsDto);
         }
         String resText = new RsAsGsonPretty(res, gson).convert(isPretty);
         if (outFile != null) {
@@ -213,11 +214,12 @@ public class CliStatistic implements Callable<String> {
 
     private RsBaseDto getByPatternsId(String[] patterns, boolean isMerged) {
         RsBaseDto res;
-        Set<String> ids = new HashSet<>(Arrays.asList(patterns));
+        IdsDto idsDto = new IdsDto();
+        idsDto.setIds(Arrays.asList(patterns));
         if (isMerged) {
-            res = clientStatistic.getStatisticMergedForPatterns(ids);
+            res = clientStatistic.getStatisticMergedForPatterns(idsDto);
         } else {
-            res = clientStatistic.getStatisticForPatterns(ids);
+            res = clientStatistic.getStatisticForPatterns(idsDto);
         }
         return res;
     }
@@ -225,10 +227,12 @@ public class CliStatistic implements Callable<String> {
     private RsBaseDto getFromPatternsIdFile(String patternsFile, boolean isMerged) {
         RsBaseDto res;
         Set<String> ids = getIdsFromFile(patternsFile);
+        IdsDto idsDto = new IdsDto();
+        idsDto.setIds(new ArrayList<>(ids));
         if (isMerged) {
-            res = clientStatistic.getStatisticMergedForPatterns(ids);
+            res = clientStatistic.getStatisticMergedForPatterns(idsDto);
         } else {
-            res = clientStatistic.getStatisticForPatterns(ids);
+            res = clientStatistic.getStatisticForPatterns(idsDto);
         }
         return res;
     }

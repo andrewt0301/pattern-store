@@ -10,6 +10,7 @@ import aakrasnov.diploma.common.stata.GetStataDocRsDto;
 import aakrasnov.diploma.common.stata.GetStataMergedDocRsDto;
 import aakrasnov.diploma.common.stata.GetStataMergedPtrnsRsDto;
 import aakrasnov.diploma.common.stata.GetStataPtrnsRsDto;
+import aakrasnov.diploma.common.stata.IdsDto;
 import aakrasnov.diploma.common.stata.StatisticDto;
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -67,7 +68,7 @@ public class ClientStatisticApiImpl implements ClientStatisticApi {
     }
 
     @Override
-    public GetStataPtrnsRsDto getStatisticForPatterns(final Set<String> patternIds) {
+    public GetStataPtrnsRsDto getStatisticForPatterns(final IdsDto patternIds) {
         HttpPost rq = new HttpPost(full("statistic/patterns/usage"));
         BasicClientDocApi.addJsonHeaderTo(rq);
         GetStataPtrnsRsDto res = new GetStataPtrnsRsDto();
@@ -91,7 +92,7 @@ public class ClientStatisticApiImpl implements ClientStatisticApi {
     }
 
     @Override
-    public GetStataMergedPtrnsRsDto getStatisticMergedForPatterns(final Set<String> patternIds) {
+    public GetStataMergedPtrnsRsDto getStatisticMergedForPatterns(final IdsDto patternIds) {
         HttpPost rq = new HttpPost(full("statistic/patterns/usage/merged"));
         BasicClientDocApi.addJsonHeaderTo(rq);
         GetStataMergedPtrnsRsDto res = new GetStataMergedPtrnsRsDto();
@@ -167,7 +168,7 @@ public class ClientStatisticApiImpl implements ClientStatisticApi {
     }
 
     @Override
-    public GetDownloadDocsRsDto getDownloadsCountForDocs(final Set<String> docIds) {
+    public GetDownloadDocsRsDto getDownloadsCountForDocs(final IdsDto docIds) {
         HttpPost rq = new HttpPost(full("statistic/docs/downloads/count"));
         BasicClientDocApi.addJsonHeaderTo(rq);
         GetDownloadDocsRsDto res = new GetDownloadDocsRsDto();

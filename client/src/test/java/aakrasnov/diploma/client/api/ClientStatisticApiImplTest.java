@@ -6,15 +6,15 @@ import aakrasnov.diploma.common.stata.GetDownloadDocsRsDto;
 import aakrasnov.diploma.common.stata.GetStataDocRsDto;
 import aakrasnov.diploma.common.stata.GetStataMergedDocRsDto;
 import aakrasnov.diploma.common.stata.GetStataPtrnsRsDto;
+import aakrasnov.diploma.common.stata.IdsDto;
 import aakrasnov.diploma.common.stata.StatisticDto;
 import aakrasnov.diploma.common.stata.UsageDto;
-import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -81,9 +81,10 @@ class ClientStatisticApiImplTest {
     void getStatisticByPatternsId() {
         String frst = PATTERN_1_ID;
         String scnd = PATTERN_2_ID;
-        Set<String> patternIds = ImmutableSet.of(frst, scnd);
+        IdsDto idsDto = new IdsDto();
+        idsDto.setIds(Arrays.asList(frst, scnd));
         GetStataPtrnsRsDto res = new ClientStatisticApiImpl(httpClient, LOCALHOST)
-            .getStatisticForPatterns(patternIds);
+            .getStatisticForPatterns(idsDto);
         MatcherAssert.assertThat(
             "Status should be OK",
             res.getStatus(),
@@ -105,8 +106,10 @@ class ClientStatisticApiImplTest {
 
     @Test
     void getMergedStatisticByPatternId() {
+        IdsDto idsDto = new IdsDto();
+        idsDto.setIds(Collections.singletonList(PATTERN_1_ID));
         GetStataPtrnsRsDto res = new ClientStatisticApiImpl(httpClient, LOCALHOST)
-            .getStatisticForPatterns(ImmutableSet.of(PATTERN_1_ID));
+            .getStatisticForPatterns(idsDto);
         MatcherAssert.assertThat(
             "Status should be OK",
             res.getStatus(),
@@ -170,8 +173,10 @@ class ClientStatisticApiImplTest {
     void getStatisticDocsDownloadsCount() {
         String frst = "11335577992244668800abcd";
         String scnd = BasicClientDocApiTest.DOC_COMMON;
+        IdsDto idsDto = new IdsDto();
+        idsDto.setIds(Arrays.asList(frst, scnd));
         GetDownloadDocsRsDto res = new ClientStatisticApiImpl(httpClient, LOCALHOST)
-            .getDownloadsCountForDocs(ImmutableSet.of(frst, scnd));
+            .getDownloadsCountForDocs(idsDto);
         MatcherAssert.assertThat(
             "Status should be OK",
             res.getStatus(),
