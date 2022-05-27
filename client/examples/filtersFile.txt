@@ -1,0 +1,4 @@
+{
+	"lang": "java",
+	"scenario.type": "UNKNOWN"	
+}

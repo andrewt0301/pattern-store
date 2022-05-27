@@ -31,11 +31,12 @@
 document \- Command for interacting with documents from the database and local cache.
 .SH "SYNOPSIS"
 .sp
-\fBdocument\fP [\fB\-\-cache\fP] [\fB\-\-pretty\fP] [\fB\-\-file\fP=\fI<outFile>\fP] [\fB\-u\fP=\fI<username>\fP \fB\-p\fP=\fI<password>\fP]
-[\fB\-\-keyFilter\fP=\fI<key>\fP \fB\-\-valFilter\fP=\fI<value>\fP] [\fB\-\-updDocId\fP=\fI<docId>\fP
-\fB\-\-pathUpd\fP=\fI<pathUpd>\fP] [\fB\-\-docId\fP=\fI<getDocId>\fP | \fB\-\-byTeam\fP=\fI<getByTeamId>\fP |
-\fB\-\-deleteById\fP=\fI<deleteDocId>\fP | \fB\-\-addDocFile\fP=\fI<addDocFile>\fP | \fB\-\-filterMode\fP
-| \fB\-\-getAll\fP | \fB\-\-byUser\fP | \fB\-\-update\fP]
+\fBdocument\fP [\fB\-\-cache\fP] [\fB\-\-pretty\fP] [\fB\-\-file\fP=\fI<outFile>\fP] [\fB\-\-filtersFile\fP=\fI<filtersFile>\fP]
+[\fB\-u\fP=\fI<username>\fP \fB\-p\fP=\fI<password>\fP] [\fB\-\-keyFilter\fP=\fI<key>\fP \fB\-\-valFilter\fP=\fI<value>\fP]
+[\fB\-\-updDocId\fP=\fI<docId>\fP \fB\-\-pathUpd\fP=\fI<pathUpd>\fP] [\fB\-\-docId\fP=\fI<getDocId>\fP |
+\fB\-\-byTeam\fP=\fI<getByTeamId>\fP | \fB\-\-deleteById\fP=\fI<deleteDocId>\fP |
+\fB\-\-addDocFile\fP=\fI<addDocFile>\fP | \fB\-\-filterMode\fP | \fB\-\-getAll\fP | \fB\-\-byUser\fP |
+\fB\-\-update\fP]
 .SH "DESCRIPTION"
 .sp
 Command for interacting with documents from the database and local cache.
@@ -79,6 +80,11 @@ Path to the file with output results. If it is not used the results will be prin
 \fB\-\-filterMode\fP
 .RS 4
 This mode should be activated for passing filters\(aq values.
+.RE
+.sp
+\fB\-\-filtersFile\fP=\fI<filtersFile>\fP
+.RS 4
+File with filters. Option \-\-filterMode should be passed.
 .RE
 .sp
 \fB\-\-getAll\fP

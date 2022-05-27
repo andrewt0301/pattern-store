@@ -19,11 +19,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.impl.client.HttpClients;
 import picocli.CommandLine.ArgGroup;
 import picocli.CommandLine.Command;
@@ -33,6 +35,7 @@ import picocli.CommandLine.Option;
     name = "document", aliases = {"doc"},
     description = "Command for interacting with documents from the database and local cache."
 )
+@Slf4j
 public class CliDoc implements Callable<String> {
 
     @ArgGroup(exclusive = false)
@@ -98,6 +101,12 @@ public class CliDoc implements Callable<String> {
         description = "This flag allows to make requests which use client cache."
     )
     private boolean isCache;
+
+    @Option(
+        names = {"--filtersFile"},
+        description = "File with filters. Option --filterMode should be passed."
+    )
+    private Path filtersFile;
 
     static class OnlyOne {
         @Option(names = {"--getById", "--docId"},
@@ -239,12 +248,45 @@ public class CliDoc implements Callable<String> {
 
     private RsBaseDto filterDocs() {
         RsBaseDto res;
-        if (filtersArg == null) {
+        if (filtersArg == null && filtersFile == null) {
             throw new IncorrectCommandUsageException("Please, specify filters");
         }
-        List<Filter> filters = Arrays.stream(filtersArg).map(
-            filter -> new Filter.Wrap(filter.key, filter.value)
-        ).collect(Collectors.toList());
+        List<Filter> filters = new ArrayList<>();
+        if (filtersArg != null) {
+             filters.addAll(Arrays.stream(filtersArg).map(
+                filter -> new Filter.Wrap(filter.key, filter.value)
+            ).collect(Collectors.toList()));
+        }
+        if (filtersFile != null) {
+            if (!Files.exists(filtersFile)) {
+                String msg = String.format(
+                    "Failed to find file with filters '%s'", filtersFile
+                );
+                if (filters.size() == 0) {
+                    throw new InputFileNotFoundException(msg);
+                } else {
+                    log.warn(String.format("%s. Use filters from command line", msg));
+                }
+            }
+            try {
+                filters.addAll(
+                    new PathConverter(filtersFile).toJsonObj()
+                        .entrySet().stream().map(
+                           entry -> new Filter.Wrap(entry.getKey(), entry.getValue().getAsString())
+                    ).collect(Collectors.toList())
+                );
+            } catch (IOException exc) {
+                String msg = String.format(
+                    "Failed to read file with filters '%s'", filtersFile
+                );
+                if (filters.size() == 0) {
+                    throw new BadInputFileException(msg, exc);
+                } else {
+                    log.warn(String.format("%s. Use filters from command line", msg), exc);
+                }
+            }
+
+        }
         if (user == null) {
             if (isCache) {
                 res = cacheClientDoc.filterDocsFromCommon(filters);
