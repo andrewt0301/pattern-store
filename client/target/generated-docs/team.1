@@ -2,12 +2,12 @@
 .\"     Title: team
 .\"    Author: [see the "AUTHOR(S)" section]
 .\" Generator: Asciidoctor 2.0.10
-.\"      Date: 2022-05-26
+.\"      Date: 2022-05-27
 .\"    Manual: Team Manual
 .\"    Source: 
 .\"  Language: English
 .\"
-.TH "TEAM" "1" "2022-05-26" "" "Team Manual"
+.TH "TEAM" "1" "2022-05-27" "" "Team Manual"
 .ie \n(.g .ds Aq \(aq
 .el       .ds Aq '
 .ss \n[.ss] 0
@@ -31,11 +31,12 @@
 team \- Command for interacting with teams which give access to the documents.
 .SH "SYNOPSIS"
 .sp
-\fBteam\fP [\fB\-u\fP=\fI<username>\fP \fB\-p\fP=\fI<password>\fP] [\fB\-\-id\fP=\fI<getTeamId>\fP | \fB\-\-invite\fP=\fI<getTeamInvite>\fP
-| \fB\-\-joinByInvite\fP=\fI<joinInvite>\fP | \fB\-\-addTeam\fP=\fI<addTeamFile>\fP |
-\fB\-\-updInviteById\fP=\fI<updInviteById>\fP | \fB\-\-updInviteByInvite\fP=\fI<updInviteByInvite>\fP
-| \fB\-\-deleteId\fP=\fI<deleteId>\fP | \fB\-\-update\fP] [\fB\-\-pathUpd\fP=\fI<pathUpd>\fP
-[\fB\-\-updTeamId\fP=\fI<teamId>\fP | \fB\-\-updTeamInvite\fP=\fI<teamInvite>\fP]]
+\fBteam\fP [\fB\-u\fP=\fI<username>\fP \fB\-p\fP=\fI<password>\fP] [\fB\-\-id\fP=\fI<getTeamId>\fP |
+\fB\-\-getByInvite\fP=\fI<getTeamInvite>\fP | \fB\-\-joinByInvite\fP=\fI<joinInvite>\fP |
+\fB\-\-addTeam\fP=\fI<addTeamFile>\fP | \fB\-\-updInviteById\fP=\fI<updInviteById>\fP |
+\fB\-\-updInviteByInvite\fP=\fI<updInviteByInvite>\fP | \fB\-\-deleteId\fP=\fI<deleteId>\fP |
+\fB\-\-update\fP] [\fB\-\-pathUpd\fP=\fI<pathUpd>\fP [\fB\-\-updTeamId\fP=\fI<teamId>\fP |
+\fB\-\-updTeamInvite\fP=\fI<teamInvite>\fP]]
 .SH "DESCRIPTION"
 .sp
 Command for interacting with teams which give access to the documents.
@@ -51,14 +52,14 @@ Path to the file with team for addition.
 Id of team for team removing.
 .RE
 .sp
+\fB\-\-getByInvite\fP=\fI<getTeamInvite>\fP
+.RS 4
+Invitation code of team for obtaining.
+.RE
+.sp
 \fB\-\-id, \-\-getById\fP=\fI<getTeamId>\fP
 .RS 4
 Id of team for obtaining.
-.RE
-.sp
-\fB\-\-invite, \-\-getByInvite\fP=\fI<getTeamInvite>\fP
-.RS 4
-Invitation code of team for obtaining.
 .RE
 .sp
 \fB\-\-joinByInvite\fP=\fI<joinInvite>\fP

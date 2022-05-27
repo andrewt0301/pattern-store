@@ -81,7 +81,7 @@ public class CliTeam implements Callable<String> {
         )
         private String getTeamId;
 
-        @Option(names = {"--getByInvite", "--invite"},
+        @Option(names = {"--getByInvite"},
             required = true,
             description = "Invitation code of team for obtaining. "
         )
