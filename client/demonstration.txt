@@ -1,0 +1,38 @@
+// Добавление нового пользователя
+java -cp "target/client-1.0-SNAPSHOT-jar-with-dependencies.jar" aakrasnov.diploma.client.ClientApplication user -u user5 -p user
+
+// Ошибка при добавлении пользователя с тем же логином
+java -cp "target/client-1.0-SNAPSHOT-jar-with-dependencies.jar" aakrasnov.diploma.client.ClientApplication user -u user5 -p user
+
+// Добавление новой команды
+java -cp "target/client-1.0-SNAPSHOT-jar-with-dependencies.jar" aakrasnov.diploma.client.ClientApplication team -u user -p user --addTeam=examples/teamAdd.txt
+
+// Присоединение другого пользователя к команде
+java -cp "target/client-1.0-SNAPSHOT-jar-with-dependencies.jar" aakrasnov.diploma.client.ClientApplication team -u admin -p admin --joinByInvite="0fb93892-5380-4a21-a9e1-06c78105a01e"
+
+// Обновление пригласительного кода
+java -cp "target/client-1.0-SNAPSHOT-jar-with-dependencies.jar" aakrasnov.diploma.client.ClientApplication team -u user -p user --updInviteByInvite="0fb93892-5380-4a21-a9e1-06c78105a01e"
+
+// Получение общедоступного документа по id с выводом в файл в отформатированном виде
+java -cp "target/client-1.0-SNAPSHOT-jar-with-dependencies.jar" aakrasnov.diploma.client.ClientApplication document --getById=625748988af05121cc0d6189 --file="outById.txt" --pretty
+
+// Попытка получить документ, к которому нет доступа
+java -cp "target/client-1.0-SNAPSHOT-jar-with-dependencies.jar" aakrasnov.diploma.client.ClientApplication document -u username -p username --getById=628f9a90178b015181328004 
+
+// Получение документа по id с кэшированием (с опечаткой)
+java -cp "target/client-1.0-SNAPSHOT-jar-with-dependencies.jar" aakrasnov.diploma.client.ClientApplication document --getById=625748988af05121cc0d6189 --cached
+
+// Фильтрация общедоступных документов по одному фильтру
+java -cp "target/client-1.0-SNAPSHOT-jar-with-dependencies.jar" aakrasnov.diploma.client.ClientApplication document --filterMode --keyFilter=scenario.type --valFilter=MIGRATION
+
+// Фильтрация документов пользователя по нескольким фильтрам
+java -cp "target/client-1.0-SNAPSHOT-jar-with-dependencies.jar" aakrasnov.diploma.client.ClientApplication document -u username -p username --filterMode --filtersFile=examples/filtersFile.txt --file="outFilters.txt" --pretty
+
+// Отправка статистики
+java -cp "target/client-1.0-SNAPSHOT-jar-with-dependencies.jar" aakrasnov.diploma.client.ClientApplication stata --sendStatisticFile=examples/sendStatistic.txt
+
+// Объединённая статистика по документу
+java -cp "target/client-1.0-SNAPSHOT-jar-with-dependencies.jar" aakrasnov.diploma.client.ClientApplication stata --docId=11335577992244668800abcd --file=outDocIdMerged.txt --merged --pretty
+
+// Объединённая статистика по шаблону
+java -cp "target/client-1.0-SNAPSHOT-jar-with-dependencies.jar" aakrasnov.diploma.client.ClientApplication stata --ptrnsId=111111111111111111111111 --ptrnsId=222222222222222222222222 --file=outPtrnsIds.txt --pretty --merged
